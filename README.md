@@ -11,3 +11,9 @@ pip install -r requirements.txt
 cd sustainableCityManagement
 python manage.py runserver
 ```
+
+For testing :
+
+Use http://localhost:8000/main/wiki?type=basketball
+
+Use http://localhost:8000/main/trial
