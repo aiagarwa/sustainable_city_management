@@ -35,8 +35,21 @@ import {
   dashboardEmailStatisticsChart,
   dashboardNASDAQChart,
 } from "variables/charts.js";
+import axios from 'axios';
 
 class Dashboard extends React.Component {
+  state = {
+    btcPrice: null
+  }
+
+  componentDidMount() {
+    axios.get('https://api.coindesk.com/v1/bpi/currentprice/BTC.json')
+      .then(res => {
+        const price = Math.trunc(parseFloat(res.data.bpi.USD.rate.replace(',', '')));
+        this.setState({ btcPrice: price });
+      });
+  }
+
   render() {
     return (
       <>
@@ -79,8 +92,8 @@ class Dashboard extends React.Component {
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Revenue</p>
-                        <CardTitle tag="p">$ 1,345</CardTitle>
+                        <p className="card-category">1 BTC</p>
+                        <CardTitle tag="p">$ {this.state.btcPrice}</CardTitle>
                         <p />
                       </div>
                     </Col>
