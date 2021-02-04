@@ -68,6 +68,20 @@ var routes = [
     component: Icons,
     layout: "/admin",
   },
+  {
+    path: "/emergency",
+    name: "Emergency Services",
+    icon: "fas fa-ambulance",
+    component: Icons,
+    layout: "/admin",
+  },
+  {
+    path: "/footfalls",
+    name: "Footfalls",
+    icon: "fas fa-shoe-prints",
+    component: Icons,
+    layout: "/admin",
+  },
   // {
   //   path: "/icons",
   //   name: "Icons",
