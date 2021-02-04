@@ -17,6 +17,7 @@
 
 */
 import Dashboard from "views/Dashboard.js";
+import Bikes from "views/Bikes.js";
 // import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 // import Typography from "views/Typography.js";
@@ -37,7 +38,7 @@ var routes = [
     path: "/bikes",
     name: "Bikes",
     icon: "fas fa-bicycle",
-    component: Icons,
+    component: Bikes,
     layout: "/admin",
   },
   {

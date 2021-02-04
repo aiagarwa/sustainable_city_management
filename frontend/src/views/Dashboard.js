@@ -60,14 +60,15 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <Row>
                     <Col md="4" xs="5">
+                      
                       <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-globe text-warning" />
+                        <i className="fas fa-thunderstorm-sun fa-2x fa-fw"> </i>
                       </div>
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Capacity</p>
-                        <CardTitle tag="p">150GB</CardTitle>
+                        <p className="card-category">Weather</p>
+                        <CardTitle tag="p">-7 C</CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -76,11 +77,12 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt" /> Update Now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i> Update Now
                   </div>
                 </CardFooter>
               </Card>
             </Col>
+            {/*
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -133,19 +135,20 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
+            */}
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
                   <Row>
                     <Col md="4" xs="5">
                       <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-favourite-28 text-primary" />
+                        <i class="fas fa-wind fa-2x fa-fw"></i>
                       </div>
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Followers</p>
-                        <CardTitle tag="p">+45K</CardTitle>
+                        <p className="card-category">Air Quality Index</p>
+                        <CardTitle tag="p">+8.9 mp/h</CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -154,7 +157,7 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt" /> Update now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" /> Update now
                   </div>
                 </CardFooter>
               </Card>
