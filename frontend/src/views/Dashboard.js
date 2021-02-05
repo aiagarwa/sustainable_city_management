@@ -29,17 +29,36 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import Chart from "react-apexcharts";
 // core components
 import {
   dashboard24HoursPerformanceChart,
   dashboardEmailStatisticsChart,
-  dashboardNASDAQChart,
+  // dashboardNASDAQChart,
 } from "variables/charts.js";
 import axios from 'axios';
 
 class Dashboard extends React.Component {
-  state = {
-    btcPrice: null
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      btcPrice: null,
+      options: {
+        chart: {
+          id: "basic-bar"
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+        }
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [30, 40, 45, 50, 49, 60, 70, 91]
+        }
+      ]
+    };
   }
 
   componentDidMount() {
@@ -60,7 +79,7 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <Row>
                     <Col md="4" xs="5">
-                      
+
                       <div className="icon-big text-center icon-warning">
                         <i className="fas fa-thunderstorm-sun fa-2x fa-fw"> </i>
                       </div>
@@ -221,18 +240,20 @@ class Dashboard extends React.Component {
                   <p className="card-category">Line Chart with Points</p>
                 </CardHeader>
                 <CardBody>
-                  <Line
-                    data={dashboardNASDAQChart.data}
-                    options={dashboardNASDAQChart.options}
-                    width={400}
-                    height={100}
-                  />
+                  <div className="mixed-chart">
+                    <Chart
+                      options={this.state.options}
+                      series={this.state.series}
+                      type="bar"
+                      height="250"
+                    />
+                  </div>
                 </CardBody>
                 <CardFooter>
-                  <div className="chart-legend">
+                  {/* <div className="chart-legend">
                     <i className="fa fa-circle text-info" /> Tesla Model S{" "}
                     <i className="fa fa-circle text-warning" /> BMW 5 Series
-                  </div>
+                  </div> */}
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
