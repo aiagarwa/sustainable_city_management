@@ -17,11 +17,14 @@ def fetch_Location():
     return(locations)
 
 # Finding Bikestand location closest to given bike.
-def shortest_longLatDistance(location, locationDict):
+def shortest_LatLongDistance(location, locationDict):
     distances = {}
     for item in locationDict:
         distances[item] = hs.haversine(location, locationDict[item])
-    return(min(distances, key=distances.get))
+    # print(type(min(distances)))
+    key_min = min(distances.keys(), key=(lambda k: distances[k]))
+    min_distLocation = min(distances, key=distances.get)
+    return(min_distLocation, distances[key_min])
 
 
 # Function for fetching the data from the URL.
@@ -41,10 +44,15 @@ def bikeAPI(historical = False):
     tmp_result = json.loads(response.text)
     locations = []
     tmp_loc = []
+    counter_avail = 0
     for item in tmp_result: # Getting the closest locations of each bike.
-        item["Location"] = shortest_longLatDistance((item["Latitude"], item["Longitude"]),fetch_Location())
+        item["Location"], distance = shortest_LatLongDistance((item["Latitude"], item["Longitude"]),fetch_Location())
+        if float(distance) <= 0.025:
+            item["Availability"] = True
+            counter_avail += 1
+        else:
+            item["Availability"] = False
     locations = fetch_Location()
-
 
     for loc in locations.keys(): # Making dictionary for updation.
         loc_Density[loc] = 0 
@@ -54,10 +62,19 @@ def bikeAPI(historical = False):
         loc_Density[loc] = count
 
     for loc in locations.keys(): # Building the result.
-        result_response.append({"Location" : loc,
-                                "Density" : loc_Density[loc],
-                                "Latitude" : locations[loc][0], 
-                                "Longitude" : locations[loc][1]})
+        counter = 0 
+        for item in tmp_result:
+            if item["Location"] == loc:
+                if item["Availability"] == True:
+                    counter += 1
+        result_response.append({"LOCATION" : loc,
+                                "DENSITY" : loc_Density[loc],
+                                "AVAILABLE" : counter,
+                                "IN-USE" : (loc_Density[loc] - counter),
+                                "LATITUDE" : locations[loc][0], 
+                                "LONGITUDE" : locations[loc][1]})
+
 
     return(result_response)
 
+# bikeAPI()

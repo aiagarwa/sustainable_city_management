@@ -1,6 +1,7 @@
 import os
 import random
 import tempfile
+import uuid
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,18 +14,24 @@ from . import fetch_bikeAPI
 
 
 @api_view(['GET'])
-def bike_details(request):
+def suggestBikeRelocate(request):
     startTime = processTiming.time()
+    call_uuid = uuid.uuid4()
     try :
         result = fetch_bikeAPI.bikeAPI()
-        task = "bikeAPI_Location_Density"
+        ID = "bike_API"
         return JsonResponse(
             {
-            "Status" : "Success",
-            "Task" : task,
-            "Result" : result,
-            "Time_Stamp" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+            "API_ID" : ID,
+            "CALL_UUID" : call_uuid,
+            "DATA" : {
+                "RESULT" : result
+            },
+            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
             )
     except (KeyError):
-        return JsonResponse({"Upload status" : "Failed"})
+        return JsonResponse(            {
+            "API_ID" : ID,
+            "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI.",
+            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))})
 
