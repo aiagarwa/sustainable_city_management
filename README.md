@@ -14,5 +14,5 @@ python manage.py runserver
 
 For Bike Location density :
 
-Use  http://127.0.0.1:8000/main/fetch_bikeAPI
+Use  http://127.0.0.1:8000/main/live_stands_details/
 

@@ -17,21 +17,21 @@ from . import fetch_bikeAPI
 def suggestBikeRelocate(request):
     startTime = processTiming.time()
     call_uuid = uuid.uuid4()
-    try :
-        result = fetch_bikeAPI.bikeAPI()
-        ID = "bike_API"
-        return JsonResponse(
-            {
-            "API_ID" : ID,
-            "CALL_UUID" : call_uuid,
-            "DATA" : {
-                "RESULT" : result
-            },
-            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-            )
-    except (KeyError):
-        return JsonResponse(            {
-            "API_ID" : ID,
-            "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI.",
-            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))})
+    ID = "bike_API"
+    # try :
+    result = fetch_bikeAPI.bikeAPI()
+    return JsonResponse(
+        {
+        "API_ID" : ID,
+        "CALL_UUID" : call_uuid,
+        "DATA" : {
+            "RESULT" : result
+        },
+        "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+        )
+    # except (KeyError):
+    #     return JsonResponse(            {
+    #         "API_ID" : ID,
+    #         "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI.",
+    #         "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))})
 
