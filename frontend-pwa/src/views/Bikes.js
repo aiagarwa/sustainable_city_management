@@ -17,6 +17,7 @@
 
 */
 import React from "react";
+import axios from "axios";
 // react plugin used to create google maps
 import {
   withScriptjs,
@@ -26,7 +27,15 @@ import {
 } from "react-google-maps";
 import Chart from "react-apexcharts";
 // reactstrap components
-import { Card, CardTitle, CardFooter, CardHeader, CardBody, Row, Col } from "reactstrap";
+import {
+  Card,
+  CardTitle,
+  CardFooter,
+  CardHeader,
+  CardBody,
+  Row,
+  Col,
+} from "reactstrap";
 
 const MapWrapper = withScriptjs(
   withGoogleMap((props) => (
@@ -174,25 +183,31 @@ const MapWrapper = withScriptjs(
 );
 
 class Bikes extends React.Component {
-
+  componentDidMount() {
+    axios
+      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+      .then((res) => {
+        console.log(res.data);
+      });
+  }
   constructor(props) {
     super(props);
 
     this.state = {
       options: {
         chart: {
-          id: "basic-bar"
+          id: "basic-bar",
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-        }
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+        },
       },
       series: [
         {
           name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91]
-        }
-      ]
+          data: [30, 40, 45, 50, 49, 60, 70, 91],
+        },
+      ],
     };
   }
 
@@ -211,7 +226,7 @@ class Bikes extends React.Component {
                     style={{ position: "relative", overflow: "hidden" }}
                   >
                     <MapWrapper
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"
+                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpQRvpHCpKSy6rZH34sH_mRblw7dXuT3k"
                       loadingElement={<div style={{ height: `100%` }} />}
                       containerElement={<div style={{ height: `100%` }} />}
                       mapElement={<div style={{ height: `100%` }} />}
@@ -226,7 +241,9 @@ class Bikes extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <CardTitle tag="h5">Bikes Usage</CardTitle>
-                  <p className="card-category">Evolution of bikes usage over time</p>
+                  <p className="card-category">
+                    Evolution of bikes usage over time
+                  </p>
                 </CardHeader>
                 <CardBody>
                   <div className="mixed-chart">
@@ -246,7 +263,7 @@ class Bikes extends React.Component {
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
-                    </div>
+                  </div>
                 </CardFooter>
               </Card>
             </Col>
