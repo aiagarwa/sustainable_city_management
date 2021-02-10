@@ -78,34 +78,33 @@ def suggestBikeRelocate_graph(request):
     call_uuid = uuid.uuid4()
     ID = "bike_API_Graph"
     result = {}
-    try :
-        print(0)
-        inputType = request.query_params.get("location_based","")
-        days_data = int(request.query_params.get("days_historic",""))
-        if inputType == "yes":
-            result = fetch_bikeAPI.graphVals(days_historical = days_data)
-        elif inputType == "no":
-            result = fetch_bikeAPI.graphVals(locationsBased = False, days_historical = days_data)
-        else:
-            return JsonResponse({
-                    "API_ID" : ID,
-                    "ERROR" : "Give valid query parameters.",
-                    "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                    )
-        return JsonResponse(
-            {
-            "API_ID" : ID,
-            "CALL_UUID" : call_uuid,
-            "DATA" : {
-                "RESULT" : result
-            },
-            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-            )
-
-    except (KeyError, TypeError):
+    # try :
+    inputType = request.query_params.get("location_based","")
+    days_data = int(request.query_params.get("days_historic",""))
+    if inputType == "yes":
+        result = fetch_bikeAPI.graphVals(days_historical = days_data)
+    elif inputType == "no":
+        result = fetch_bikeAPI.graphVals(locationsBased = False, days_historical = days_data)
+    else:
         return JsonResponse({
-                            "API_ID" : ID,
-                            "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI, and check the query parameters.",
-                            "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                            )
+                "API_ID" : ID,
+                "ERROR" : "Give valid query parameters.",
+                "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+                )
+    return JsonResponse(
+        {
+        "API_ID" : ID,
+        "CALL_UUID" : call_uuid,
+        "DATA" : {
+            "RESULT" : result
+        },
+        "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+        )
+
+    # except (KeyError, TypeError):
+    #     return JsonResponse({
+    #                         "API_ID" : ID,
+    #                         "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI, and check the query parameters.",
+    #                         "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+    #                         )
 
