@@ -3,8 +3,8 @@
 # Important notes
 - Requires Node 14.15.4 (LTS)
 - Launch React:
-    - `$> npm install`
-    - `$> npm start`
+    - `$> yarn install`
+    - `$> yarn start`
 
 
 

@@ -1,0 +1,87 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.2",
+    "web-vitals": "^0.2.4",
+    "workbox-background-sync": "^5.1.3",
+    "workbox-broadcast-update": "^5.1.3",
+    "workbox-cacheable-response": "^5.1.3",
+    "workbox-core": "^5.1.3",
+    "workbox-expiration": "^5.1.3",
+    "workbox-google-analytics": "^5.1.3",
+    "workbox-navigation-preload": "^5.1.3",
+    "workbox-precaching": "^5.1.3",
+    "workbox-range-requests": "^5.1.3",
+    "workbox-routing": "^5.1.3",
+    "workbox-strategies": "^5.1.3",
+    "workbox-streams": "^5.1.3",
+
+    "@types/googlemaps": "3.39.6",
+    "@types/markerclustererplus": "2.1.33",
+    "@types/react": "16.9.35",
+    "ajv": "6.12.2",
+    "apexcharts": "^3.24.0",
+    "bootstrap": "4.5.0",
+    "chart.js": "2.9.3",
+    "history": "4.10.1",
+    "jquery": "3.5.1",
+    "node-sass": "4.14.1",
+    "perfect-scrollbar": "1.5.0",
+    "react-apexcharts": "^1.3.7",
+    "react-chartjs-2": "2.9.0",
+    "react-google-maps": "9.4.5",
+    "react-notification-alert": "0.0.12",
+    "react-router": "5.2.0",
+    "react-router-dom": "5.2.0",
+    "reactstrap": "8.4.1",
+    "typescript": "3.9.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
+    "compile-sass": "node-sass src/assets/scss/paper-dashboard.scss src/assets/css/paper-dashboard.css",
+    "minify-sass": "node-sass src/assets/scss/paper-dashboard.scss src/assets/css/paper-dashboard.min.css --output-style compressed",
+    "map-sass": "node-sass src/assets/scss/paper-dashboard.scss src/assets/css/paper-dashboard.css --source-map true"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "optionalDependencies": {
+    "@types/googlemaps": "3.39.6",
+    "@types/markerclustererplus": "2.1.33",
+    "@types/react": "16.9.35",
+    "ajv": "6.12.2",
+    "jquery": "3.5.1",
+    "typescript": "3.9.5"
+  },
+  "devDependencies": {
+    "gulp": "4.0.2",
+    "gulp-append-prepend": "1.0.8"
+  }
+}

@@ -25,7 +25,6 @@
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
-    "react-service-worker": "^0.1.1",
     "reactstrap": "8.4.1",
     "typescript": "3.9.5"
   },
