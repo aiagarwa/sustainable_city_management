@@ -1,5 +1,6 @@
 import requests
 import json
+import collections
 from collections import Counter
 import copy
 from datetime import datetime, timedelta
@@ -21,7 +22,6 @@ def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_histo
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
     result_response = {} # Storing end result.
     tmp_result = json.loads(response.text)
-    print(tmp_result)
     for item in tmp_result:
         for stand_details in item["historic"]:
             available_bike_stands = stand_details["available_bike_stands"]
@@ -72,6 +72,7 @@ def graphVals(locationsBased = True, days_historical = 2):
             day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
             dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
             tmpDict[loc]["IN_USE"][day_ahead] = dataDict[loc]["IN_USE"]
+            tmpDict[loc]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[loc]["IN_USE"].items()))
         return tmpDict
 
     if locationsBased == False:
@@ -106,7 +107,9 @@ def graphVals(locationsBased = True, days_historical = 2):
             dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
         tmpDict[keyVal]["IN_USE"][day_ahead] = in_use_total//days_historical
         tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"]//days_historical
+        tmpDict[keyVal]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[keyVal]["IN_USE"].items()))
+
         return tmpDict
 
 
-bikeAPI(historical = True, days_historical = 2)
+# bikeAPI(historical = True, days_historical = 2)
