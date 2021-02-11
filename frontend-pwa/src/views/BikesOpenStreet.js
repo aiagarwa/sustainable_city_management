@@ -30,6 +30,10 @@ import {
   CardBody,
   Row,
   Col,
+  FormGroup,
+  Form,
+  Label,
+  Input,
 } from "reactstrap";
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
@@ -38,8 +42,8 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow
+  iconUrl: icon,
+  shadowUrl: iconShadow
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -48,17 +52,25 @@ const position = [51.505, -0.09]
 
 class BikesOpenStreet extends React.Component {
   componentDidMount() {
-    // axios
-    //   .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
-    //   .then((res) => {
-    //     console.log(res.data);
-    //   });
-    const {markers} = this.state;
-    markers.push({
-      position: [51.505, -0.09],
-      content: "Test :-)"
-    });
-    this.setState({markers});
+    axios
+      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+      .then((res) => {
+        console.log(res.data);
+        const { markers } = this.state;
+
+        const bikeStations = res.data.DATA.RESULT;
+
+        for (const station of Object.keys(bikeStations)) {
+          markers.push({
+            position: [bikeStations[station].LATITUDE, bikeStations[station].LONGITUDE],
+            content: station
+          });
+        }
+
+        markers.sort((a,b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
+
+        this.setState({ markers });
+      });
   }
 
   constructor(props) {
@@ -95,17 +107,17 @@ class BikesOpenStreet extends React.Component {
                   <div
                     className="leaflet-container"
                   >
-                    <MapContainer style={{ width: '100%', height: '600px'}} center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+                    <MapContainer style={{ width: '100%', height: '600px' }} center={[53.34, -6.28]} zoom={12} scrollWheelZoom={false}>
                       <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(({position, content}, idx) => 
+                      {this.state.markers.map(({ position, content }, idx) =>
                         <Marker key={`marker-${idx}`} position={position}>
-                        <Popup>
-                          <span>{content}</span>
-                        </Popup>
-                      </Marker>
+                          <Popup>
+                            <span>{content}</span>
+                          </Popup>
+                        </Marker>
                       )}
                     </MapContainer>
                   </div>
@@ -123,6 +135,18 @@ class BikesOpenStreet extends React.Component {
                   </p>
                 </CardHeader>
                 <CardBody>
+
+                  <FormGroup row>
+                    <Col sm={12} md={4}>
+                      <Label>Bike station selection</Label>
+                      <Input type="select" name="select">
+                        <option>All</option>
+                        {this.state.markers.map(({ position, content }, index) =>
+                        <option>{content}</option>)}
+                      </Input>
+                    </Col>
+                  </FormGroup>
+
                   <div className="mixed-chart">
                     <Chart
                       options={this.state.options}
