@@ -17,7 +17,7 @@
 
 */
 import Dashboard from "views/Dashboard.js";
-import Bikes from "views/Bikes.js";
+// import Bikes from "views/Bikes.js";
 // import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 import BikesOpenStreet from "views/BikesOpenStreet.js";
@@ -35,13 +35,13 @@ var routes = [
     component: Dashboard,
     layout: "/admin",
   },
-  {
-    path: "/bikes",
-    name: "Bikes",
-    icon: "fas fa-bicycle",
-    component: Bikes,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/bikes",
+  //   name: "Bikes",
+  //   icon: "fas fa-bicycle",
+  //   component: Bikes,
+  //   layout: "/admin",
+  // },
   {
     path: "/bikesOpenStreet",
     name: "Bikes Open Street",

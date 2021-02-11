@@ -31,20 +31,41 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
+
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
 const position = [51.505, -0.09]
 
 class BikesOpenStreet extends React.Component {
   componentDidMount() {
-    axios
-      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
-      .then((res) => {
-        console.log(res.data);
-      });
+    // axios
+    //   .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   });
+    const {markers} = this.state;
+    markers.push({
+      position: [51.505, -0.09],
+      content: "Test :-)"
+    });
+    this.setState({markers});
   }
+
   constructor(props) {
     super(props);
 
     this.state = {
+      markers: [],
       options: {
         chart: {
           id: "basic-bar",
@@ -72,20 +93,20 @@ class BikesOpenStreet extends React.Component {
                 <CardHeader>Open Street Maps</CardHeader>
                 <CardBody>
                   <div
-                    id="map"
-                    className="map"
-                    style={{ position: "relative", overflow: "hidden" }}
+                    className="leaflet-container"
                   >
-                    <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+                    <MapContainer style={{ width: '100%', height: '600px'}} center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
                       <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      <Marker position={position}>
+                      {this.state.markers.map(({position, content}, idx) => 
+                        <Marker key={`marker-${idx}`} position={position}>
                         <Popup>
-                          A pretty CSS3 popup. <br /> Easily customizable.
+                          <span>{content}</span>
                         </Popup>
                       </Marker>
+                      )}
                     </MapContainer>
                   </div>
                 </CardBody>
