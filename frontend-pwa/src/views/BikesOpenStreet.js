@@ -71,6 +71,28 @@ class BikesOpenStreet extends React.Component {
 
         this.setState({ markers });
       });
+    
+    axios
+      .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
+      .then((res) => {
+        const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
+        const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
+        console.log(x, y);
+        this.setState({
+          options: {
+            chart: {
+              id: "basic-bar",
+            },
+            xaxis: {
+              categories: x
+            }
+          },
+          series: [{
+            name: "Bikes in use",
+            data: y
+          }]
+        })
+      });
   }
 
   constructor(props) {
@@ -142,7 +164,7 @@ class BikesOpenStreet extends React.Component {
                       <Input type="select" name="select">
                         <option>All</option>
                         {this.state.markers.map(({ position, content }, index) =>
-                        <option>{content}</option>)}
+                        <option key={index}>{content}</option>)}
                       </Input>
                     </Col>
                   </FormGroup>
