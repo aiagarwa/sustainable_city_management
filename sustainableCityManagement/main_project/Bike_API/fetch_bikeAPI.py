@@ -21,6 +21,7 @@ def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_histo
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
     result_response = {} # Storing end result.
     tmp_result = json.loads(response.text)
+    print(tmp_result)
     for item in tmp_result:
         for stand_details in item["historic"]:
             available_bike_stands = stand_details["available_bike_stands"]
@@ -44,7 +45,7 @@ def graphVals(locationsBased = True, days_historical = 2):
     dataDict = bikeAPI(historical=True)
     tmpDict = copy.deepcopy(dataDict)
     now_time = datetime.now()
-    curr_day = (now_time - timedelta(days=0)).strftime("%d-%m-%Y")
+    curr_day = (now_time - timedelta(days=0)).strftime("%Y-%m-%d")
     for item in tmpDict:
         tmpDict[item]["TOTAL_STANDS"] = {curr_day : tmpDict[item]["TOTAL_STANDS"]}
         tmpDict[item]["IN_USE"] = {curr_day : tmpDict[item]["IN_USE"]}
@@ -54,22 +55,21 @@ def graphVals(locationsBased = True, days_historical = 2):
         Locations = list(dataDict.keys())
         if days_historical == 1:
             tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%d-%m-%Y")
+            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
             for loc in tmpCall:
-                # dataDict[loc]["TOTAL_STANDS"] = dataDict[loc]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
                 tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
                 dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
                 tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
         else:
             for i in range(1,days_historical):
                 tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%d-%m-%Y")
+                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
                 for loc in tmpCall:
                     tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
                     dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
                     tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
         for loc in dataDict:
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%d-%m-%Y")
+            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
             dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
             tmpDict[loc]["IN_USE"][day_ahead] = dataDict[loc]["IN_USE"]
         return tmpDict
@@ -82,7 +82,7 @@ def graphVals(locationsBased = True, days_historical = 2):
         Locations = list(dataDict.keys())
         if days_historical == 1:
             tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%d-%m-%Y")
+            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
             for loc in tmpCall:
                 # dataDict[loc]["TOTAL_STANDS"] = dataDict[loc]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
                 tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
@@ -92,18 +92,21 @@ def graphVals(locationsBased = True, days_historical = 2):
             for i in range(days_historical):
                 in_use_total = 0
                 tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%d-%m-%Y")
+                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
                 for loc in tmpCall:
                     tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
                     dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
                     in_use_total = in_use_total + tmpCall[loc]["IN_USE"]
                     tmpDict[keyVal]["IN_USE"][day] = in_use_total
         in_use_total = 0
-        day_ahead = (now_time - timedelta(days=-1)).strftime("%d-%m-%Y")
+        day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
         for item in dataDict:
             in_use_total = in_use_total + dataDict[item]["IN_USE"]
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%d-%m-%Y")
+            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
             dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
         tmpDict[keyVal]["IN_USE"][day_ahead] = in_use_total//days_historical
         tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"]//days_historical
         return tmpDict
+
+
+bikeAPI(historical = True, days_historical = 2)
