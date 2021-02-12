@@ -11,7 +11,7 @@ connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainable
 class BikeAvailability(EmbeddedDocument):
     available_bike_stands = IntField()
     available_bikes = IntField()
-    time = StringField(max_length=200)
+    time = StringField(max_length=200, unique=True)
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
 class BikeStands(Document):
@@ -123,8 +123,10 @@ def fetch_Data_from_DB_for_minutes(minutes):
     now_time = datetime.now(pytz.utc)
     curr_time = now_time.strftime("%Y%m%d%H%M")
     curr_time_formatted = datetime.strptime(curr_time,"%Y%m%d%H%M")
+    print(curr_time_formatted)
     delay_time = (now_time - timedelta(minutes=minutes)).strftime("%Y%m%d%H%M")
     delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
+    print (delay_time_formatted)
     result_data = {}
     list_result_data = []
     for item in dicts:
@@ -137,9 +139,8 @@ def fetch_Data_from_DB_for_minutes(minutes):
                 datetime_object = datetime.strptime(details["time"], "%Y-%m-%dT%H:%M:%SZ")
                 datetimeNewFormat = datetime_object.strftime("%Y%m%d%H%M")
                 datetime_object_formatted = datetime.strptime(datetimeNewFormat,"%Y%m%d%H%M")
-                print(type(datetime_object_formatted))
                 temp_historical = {}
-                if (datetime_object_formatted>delay_time_formatted and datetime_object_formatted<curr_time_formatted):
+                if (datetime_object_formatted>=delay_time_formatted and datetime_object_formatted<=curr_time_formatted):
                     temp_historical = {
                                         "available_bikes" : details["available_bikes"], 
                                         "available_bike_stands" : details["available_bike_stands"],
@@ -161,7 +162,7 @@ def fetch_Data_from_DB_for_minutes(minutes):
 #     for j in item.historical:
 #         print(j["time"])
 
-# fetch_Data_from_DB_for_minutes(5)
+fetch_Data_from_DB_for_minutes(10)
 
-save_historic_data_in_DB(2)
+# save_historic_data_in_DB(2)
     
