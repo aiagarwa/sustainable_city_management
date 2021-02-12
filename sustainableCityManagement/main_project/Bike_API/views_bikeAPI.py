@@ -18,58 +18,58 @@ def suggestBikeRelocate(request):
     startTime = processTiming.time()
     call_uuid = uuid.uuid4()
     ID = "bike_API"
-    try :
-        inputType = request.query_params.get("type","")
-        if inputType == "live":
-            result = fetch_bikeAPI.bikeAPI()
-            return JsonResponse(
-                {
-                "API_ID" : ID,
-                "CALL_UUID" : call_uuid,
-                "DATA" : {
-                    "RESULT" : result
-                },
-                "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                )
-        elif inputType == "historical":
-            days_data = request.query_params.get("days_historic","")
-            result = fetch_bikeAPI.bikeAPI(historical = True, days_historical = int(days_data))
-            return JsonResponse(
-                {
-                "API_ID" : ID,
-                "CALL_UUID" : call_uuid,
-                "DATA" : {
-                    "RESULT" : result
-                },
-                "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                )
+    # try :
+    inputType = request.query_params.get("type","")
+    if inputType == "live":
+        result = fetch_bikeAPI.bikeAPI()
+        return JsonResponse(
+            {
+            "API_ID" : ID,
+            "CALL_UUID" : call_uuid,
+            "DATA" : {
+                "RESULT" : result
+            },
+            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+            )
+    elif inputType == "historical":
+        days_data = request.query_params.get("days_historic","")
+        result = fetch_bikeAPI.bikeAPI(historical = True, days_historical = int(days_data))
+        return JsonResponse(
+            {
+            "API_ID" : ID,
+            "CALL_UUID" : call_uuid,
+            "DATA" : {
+                "RESULT" : result
+            },
+            "TIMESTAMP" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+            )
 
-        elif inputType == "locations":
-            result = fetch_bikeAPI.bikeAPI(locations = True)
-            return JsonResponse(
-                {
-                "API_ID" : ID,
-                "CALL_UUID" : call_uuid,
-                "DATA" : {
-                    "RESULT" : result
-                },
-                "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                )
+    elif inputType == "locations":
+        result = fetch_bikeAPI.bikeAPI(locations = True)
+        return JsonResponse(
+            {
+            "API_ID" : ID,
+            "CALL_UUID" : call_uuid,
+            "DATA" : {
+                "RESULT" : result
+            },
+            "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+            )
 
-        else:
-                return JsonResponse({
-                        "API_ID" : ID,
-                        "ERROR" : "Give valid query parameters.",
-                        "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                        )
+    else:
+            return JsonResponse({
+                    "API_ID" : ID,
+                    "ERROR" : "Give valid query parameters.",
+                    "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+                    )
 
 
-    except (KeyError, TypeError):
-        return JsonResponse({
-                            "API_ID" : ID,
-                            "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI, and check the query parameters.",
-                            "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-                            )
+    # except (KeyError, TypeError):
+    #     return JsonResponse({
+    #                         "API_ID" : ID,
+    #                         "ERROR" : "suggestBikeRelocate API not working, check fetch_bikeAPI, and check the query parameters.",
+    #                         "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
+    #                         )
 
 
 @api_view(['GET'])

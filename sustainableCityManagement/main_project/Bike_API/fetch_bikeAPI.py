@@ -4,28 +4,33 @@ import collections
 from collections import Counter
 import copy
 from datetime import datetime, timedelta
+from .store_bike import fetch_Data_from_DB_for_day, fetch_Data_from_DB_for_minutes
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_historical = 0):    
     now_time = datetime.now()
     curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
-    url = ""
+    # url = ""
+    tmp_result = []
     if historical == True :
-        delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
-        url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
-    else:
-        delay_time =  (now_time - timedelta(minutes=minutes_delay)).strftime("%Y%m%d%H%M")
-        url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
 
-    payload={} 
-    headers = {}
-    response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
+        # url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
+        delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
+        delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
+        tmp_result = fetch_Data_from_DB_for_day(delay_time_formatted)
+    else:
+
+        # url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
+        tmp_result = fetch_Data_from_DB_for_minutes(minutes_delay)
+    # payload={} 
+    # headers = {}
+    # response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
     result_response = {} # Storing end result.
-    tmp_result = json.loads(response.text)
+    # tmp_result = json.loads(response.text)
     for item in tmp_result:
-        for stand_details in item["historic"]:
+        for stand_details in item["historical"]:
             available_bike_stands = stand_details["available_bike_stands"]
-            bike_stands = stand_details["bike_stands"]
+            bike_stands = stand_details["available_bikes"]
             timestamp = stand_details["time"]
         if locations == True:
             result_response[item["name"]] = {
