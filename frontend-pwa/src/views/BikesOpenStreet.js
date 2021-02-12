@@ -67,17 +67,30 @@ class BikesOpenStreet extends React.Component {
           });
         }
 
-        markers.sort((a,b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
+        markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
 
         this.setState({ markers });
       });
-    
+
     axios
       .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
+
+        // const resArray = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE).map((key) => [Number(key), res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE[key]]);
+        // console.log(resArray);
+        // resArray.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0))
+        // console.log(resArray);
+        // let x = [], y = [];
+        // for (const e of resArray) {
+        //   x.push(e[0]);
+        //   y.push(e[1]);
+        // }
+        // console.log(x);
+        // console.log(y);
+
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
-        console.log(x, y);
+
         this.setState({
           options: {
             chart: {
@@ -164,7 +177,7 @@ class BikesOpenStreet extends React.Component {
                       <Input type="select" name="select">
                         <option>All</option>
                         {this.state.markers.map(({ position, content }, index) =>
-                        <option key={index}>{content}</option>)}
+                          <option key={index}>{content}</option>)}
                       </Input>
                     </Col>
                   </FormGroup>

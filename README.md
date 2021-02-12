@@ -12,6 +12,12 @@ cd sustainableCityManagement
 python manage.py runserver
 ```
 
+Crontab setting (to regularly fetch data from third-party APIs):
+```
+python manage.py cronjob add
+python manage.py cronjob show
+```
+
 For Bike Location density :
 
 Use  http://127.0.0.1:8000/main/bikestands_details/?type=live for latest data.
