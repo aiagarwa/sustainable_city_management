@@ -2,6 +2,7 @@ from mongoengine import *
 import requests
 import json
 from datetime import datetime, timedelta
+import pytz
 
 # Connect to Database
 connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainableCityManagement')
@@ -22,8 +23,8 @@ class BikeStands(Document):
     meta = {'collection': 'BikeUsage'}
 
 # This method gets the data from API for a single day and store in DB.
-def bikedata(days_historical):
-    now_time = datetime.now()
+def bikedata_day(days_historical):
+    now_time = datetime.now(pytz.utc)
     curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
     url = ""
     delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
@@ -43,6 +44,38 @@ def bikedata(days_historical):
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
+                bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
+                bikestands.historical.append(bikesAvailability)
+            bikestands.save() # Saves Bike Availability Data
+        else:
+            print("Empty")
+
+# This method gets the data from API for a single day and store in DB.
+def bikedata_minutes():
+    now_time = datetime.now(pytz.utc)
+    curr_time = now_time.strftime("%Y%m%d%H%M") 
+    url = ""
+    delay_time =  (now_time - timedelta(minutes=5)).strftime("%Y%m%d%H%M")
+    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time)
+    # url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom=202102120810&dto=202102120815"
+    # print(url)
+    payload={} 
+    headers = {}
+    response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
+    result_response = {} # Storing end result.
+    tmp_result = json.loads(response.text)
+    # print(response)
+    for item in tmp_result:
+        biketemp = BikeStands._get_collection().count_documents({ 'name': item["name"] }) # Get the number of documents with a particular location name
+        if biketemp < 1 :
+            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+            bikestands.save()  # Saves Location details in MongoDB as a Document if it does not exist
+        else:
+            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+        bikestands = bikestands._qs.filter(name = item["name"]).first()
+        if bikestands is not None:
+            for stand_details in item["historic"]:
+                # print(stand_details["time"])
                 bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
@@ -83,8 +116,12 @@ def final_result(dateForData):
     return list_result_data
 
 # Main
-save_historic_data_in_DB(2)
-temp = final_result(datetime.strptime("20210210","%Y%m%d"))
-print(temp[1])
+# save_historic_data_in_DB(2)
+# temp = final_result(datetime.strptime("20210210","%Y%m%d"))
+# print(temp[1])
 
+bikedata_minutes()
+for  item in BikeStands.objects(name="CITY QUAY"):
+    for j in item.historical:
+        print(j["time"])
     

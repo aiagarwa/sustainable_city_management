@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -126,3 +127,5 @@ STATIC_URL = '/static/'
 DEBUG=True
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+
+CRONJOBS = [("*/5 * * * *","main_project.Bike_API.store_bike.bikedata_minutes")]
