@@ -9,8 +9,8 @@ connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainable
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 class BikeAvailability(EmbeddedDocument):
+    bike_stands = IntField()
     available_bike_stands = IntField()
-    available_bikes = IntField()
     time = StringField(max_length=200) #, unique=True)
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
@@ -44,7 +44,7 @@ def bikedata_day(days_historical):
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
-                bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
@@ -76,7 +76,7 @@ def bikedata_minutes():
         if bikestands is not None:
             for stand_details in item["historic"]:
                 # print(stand_details["time"])
-                bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
@@ -106,8 +106,8 @@ def fetch_Data_from_DB_for_day(dateForData):
                 if (datetime_object.year == dateForData.year and  datetime_object.month == dateForData.month and datetime_object.day == dateForData.day):
                     datetimeNewFormat = datetime_object.strftime("%d%m%Y%H%M")
                     temp_historical = {
-                                        "available_bikes" : details["available_bikes"], 
-                                        "available_bike_stands" : details["available_bike_stands"],
+                                        "available_bike_stands" : details["available_bike_stands"], 
+                                        "bike_stands" : details["bike_stands"],
                                         "time" : datetimeNewFormat
                                             }
                     result_data["historical"].append(temp_historical)
@@ -142,8 +142,8 @@ def fetch_Data_from_DB_for_minutes(minutes):
                 temp_historical = {}
                 if (datetime_object_formatted>=delay_time_formatted and datetime_object_formatted<=curr_time_formatted):
                     temp_historical = {
-                                        "available_bikes" : details["available_bikes"], 
-                                        "available_bike_stands" : details["available_bike_stands"],
+                                        "available_bike_stands" : details["available_bike_stands"], 
+                                        "bike_stands" : details["bike_stands"],
                                         "time" : details["time"]
                                             }
                     result_data["historical"].append(temp_historical)
@@ -163,6 +163,6 @@ def fetch_Data_from_DB_for_minutes(minutes):
 #         print(j["time"])
 
 # fetch_Data_from_DB_for_minutes(10)
-# fetch_Data_from_DB_for_day(5)
+# fetch_Data_from_DB_for_day(1)
 # save_historic_data_in_DB(5)
     
