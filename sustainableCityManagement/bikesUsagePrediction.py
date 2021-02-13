@@ -110,13 +110,18 @@ def predictBikesUsageTest(arrayOfUsagePerDay, predictDays=3):
         X.append(train_part)
         y.append(test_part)
 
+    results = []
     for i in range(predictDays):
         reg = LinearRegression().fit(X, y)
+
         to_predict = arrayOfUsagePerDay[len(arrayOfUsagePerDay)-previous_days_to_consider:len(arrayOfUsagePerDay)]
-        to_predict.append()
         y_pred = reg.predict([to_predict])
-        print(y_pred)
-        X.append() # ?
-        y.append(y_pred) # ?
+
+        arrayOfUsagePerDay.append(y_pred[0]) #adding prediction to the list of values (needed to create the to_predict)
+        X.append(to_predict) #adding train data point (needed for training)
+        y.append(y_pred) #adding test data point (needed for training)
+        results.append(y_pred) #adding prediction to results
     
-    return y_pred
+    return results
+
+print(predictBikesUsageTest([1,2,3,4, 5, 6, 7, 8, 9, 10.1], 4))
