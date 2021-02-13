@@ -3,6 +3,7 @@ import math, sys
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge
+from sklearn.linear_model import LinearRegression
 
 # Original one
 def predictBikesUsage(arrayOfUsagePerDay):
@@ -96,6 +97,19 @@ def predictBikesUsage(arrayOfUsagePerDay):
     
     return y_pred # return predictions
 
-# Test one
-# def predictBikesUsage(arrayOfUsagePerDay):
-    # ...
+def predictBikesUsageTest(arrayOfUsagePerDay):
+    previous_days_to_consider = 3
+
+    X = []
+    y = []
+    for i in range(len(arrayOfUsagePerDay)-previous_days_to_consider):
+        train_part = arrayOfUsagePerDay[i:i+previous_days_to_consider]
+        test_part = arrayOfUsagePerDay[i+previous_days_to_consider]
+        
+        X.append(train_part)
+        y.append(test_part)
+
+    reg = LinearRegression().fit(X, y)
+    to_predict = arrayOfUsagePerDay[len(arrayOfUsagePerDay)-previous_days_to_consider:len(arrayOfUsagePerDay)]
+    print(reg.predict([to_predict]))
+    return reg.predict([to_predict])
