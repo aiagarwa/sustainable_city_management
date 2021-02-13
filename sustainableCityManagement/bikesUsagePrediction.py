@@ -6,7 +6,7 @@ from sklearn.linear_model import Ridge
 from sklearn.linear_model import LinearRegression
 
 # Original one
-def predictBikesUsage(arrayOfUsagePerDay):
+def predictBikesUsage(arrayOfUsagePerDay, predictDays=3):
     arrayOfUsagePerDay = np.array(arrayOfUsagePerDay)
 
     dt = 24*60*60 # data sampling interval in seconds
@@ -97,7 +97,8 @@ def predictBikesUsage(arrayOfUsagePerDay):
     
     return y_pred # return predictions
 
-def predictBikesUsageTest(arrayOfUsagePerDay):
+
+def predictBikesUsageTest(arrayOfUsagePerDay, predictDays=3):
     previous_days_to_consider = 3
 
     X = []
@@ -109,7 +110,13 @@ def predictBikesUsageTest(arrayOfUsagePerDay):
         X.append(train_part)
         y.append(test_part)
 
-    reg = LinearRegression().fit(X, y)
-    to_predict = arrayOfUsagePerDay[len(arrayOfUsagePerDay)-previous_days_to_consider:len(arrayOfUsagePerDay)]
-    print(reg.predict([to_predict]))
-    return reg.predict([to_predict])
+    for i in range(predictDays):
+        reg = LinearRegression().fit(X, y)
+        to_predict = arrayOfUsagePerDay[len(arrayOfUsagePerDay)-previous_days_to_consider:len(arrayOfUsagePerDay)]
+        to_predict.append()
+        y_pred = reg.predict([to_predict])
+        print(y_pred)
+        X.append() # ?
+        y.append(y_pred) # ?
+    
+    return y_pred
