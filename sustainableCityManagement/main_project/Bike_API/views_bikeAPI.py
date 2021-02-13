@@ -11,6 +11,7 @@ from datetime import timedelta,datetime,time,date
 from rest_framework.decorators import api_view
 from django.shortcuts import render
 from . import fetch_bikeAPI
+from . import graphValues_Bike
 
 
 @api_view(['GET'])
@@ -82,9 +83,9 @@ def suggestBikeRelocate_graph(request):
     inputType = request.query_params.get("location_based","")
     days_data = int(request.query_params.get("days_historic",""))
     if inputType == "yes":
-        result = fetch_bikeAPI.graphVals(days_historical = days_data)
+        result = graphValues_Bike.graphValue_Call(days_historical = days_data)
     elif inputType == "no":
-        result = fetch_bikeAPI.graphVals(locationsBased = False, days_historical = days_data)
+        result = graphValues_Bike.graphValue_Call(locationsBased = False, days_historical = days_data)
     else:
         return JsonResponse({
                 "API_ID" : ID,

@@ -36,3 +36,7 @@ def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_histo
                                     }
 
     return(result_response)
+
+
+def graphVals():
+    return None
