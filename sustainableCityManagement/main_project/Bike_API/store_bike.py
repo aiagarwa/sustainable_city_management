@@ -22,6 +22,24 @@ class BikeStands(Document):
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsage'}
 
+# Define Document for location
+class BikesStandsLocation(Document):
+    name = StringField(max_length=200, required=True)
+    latitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
+    longitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
+    meta = {'collection': 'BikeStandsLocation'}
+
+def save_Bike_Stands_Location():
+    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/stations"
+    payload={} 
+    headers = {}
+    response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
+    loc_result = json.loads(response.text)
+    for item in loc_result:
+        standLocations = BikesStandsLocation(name = item["st_NAME"], latitude = item["st_LATITUDE"], longitude = item["st_LONGITUDE"])
+        standLocations.save()
+
+
 # This method gets the data from API for a single day and store in DB.
 def bikedata_day(days_historical):
     now_time = datetime.now(pytz.utc)
@@ -32,7 +50,6 @@ def bikedata_day(days_historical):
     payload={} 
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
-    result_response = {} # Storing end result.
     tmp_result = json.loads(response.text)
     for item in tmp_result:
         biketemp = BikeStands._get_collection().count_documents({ 'name': item["name"] }) # Get the number of documents with a particular location name
@@ -62,7 +79,6 @@ def bikedata_minutes():
     payload={} 
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
-    result_response = {} # Storing end result.
     tmp_result = json.loads(response.text)
     # print(response)
     for item in tmp_result:
@@ -86,6 +102,13 @@ def bikedata_minutes():
 def save_historic_data_in_DB(days_historical):
     for i in range(1,days_historical+1):
         bikedata_day(i)
+
+# Fetch Data for Locations
+def fetch_Bike_Stands_Location():
+    q_set = BikesStandsLocation.objects() # Fetch Data from DB
+    json_data = q_set.to_json() # Converts the Processed Bikes Data from DB into JSON format
+    locations = json.loads(json_data)
+    return locations
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for a particular day
 def fetch_Data_from_DB_for_day(dateForData):
@@ -165,4 +188,6 @@ def fetch_Data_from_DB_for_minutes(minutes):
 # fetch_Data_from_DB_for_minutes(10)
 # fetch_Data_from_DB_for_day(1)
 # save_historic_data_in_DB(5)
-    
+
+# save_Bike_Stands_Location()
+# print(fetch_Bike_Stands_Location())
