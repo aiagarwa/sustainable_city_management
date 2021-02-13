@@ -98,7 +98,7 @@ def predictBikesUsage(arrayOfUsagePerDay, predictDays=3):
     return y_pred # return predictions
 
 
-def predictBikesUsageTest(arrayOfUsagePerDay, predictDays=3):
+def predictBikesUsageTest(arrayOfUsagePerDay, predictDays=1):
     previous_days_to_consider = 3
 
     X = []
@@ -124,4 +124,4 @@ def predictBikesUsageTest(arrayOfUsagePerDay, predictDays=3):
     
     return results
 
-print(predictBikesUsageTest([1,2,3,4, 5, 6, 7, 8, 9, 10.1], 4))
+# print(predictBikesUsageTest([1,2,3,4, 5, 6, 7, 8, 9, 10], 1))
