@@ -11,14 +11,13 @@ import pytz
 # Connect to Database
 connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainableCityManagement')
 
-
 # Define Document Structure to store processed bike data in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
 class BikeDataForCharts(Document):
     date = StringField(unique=True)
     result = StringField()
     meta = {'collection': 'BikeChartData'}
 
-def graphVals(locationsBased = True, days_historical = 2):
+def graphValue_Call(locationsBased = True, days_historical = 5):
     dataDict = bikeAPI(historical=True)
     tmpDict = copy.deepcopy(dataDict)
     now_time = datetime.now()
@@ -47,7 +46,7 @@ def graphVals(locationsBased = True, days_historical = 2):
                     tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
         for loc in dataDict:
             day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
+            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] #MODEL
             tmpDict[loc]["IN_USE"][day_ahead] = dataDict[loc]["IN_USE"]
             tmpDict[loc]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[loc]["IN_USE"].items()))
         return tmpDict
@@ -88,7 +87,8 @@ def graphVals(locationsBased = True, days_historical = 2):
         return tmpDict
 
 # This method gets the processed and predicted data and store in DB.
-def save_Data_In_DB(chartData):
+def save_Data_In_DB(locationsBased = True, days_historical = 2):
+    chartData = graphValue_Call(locationsBased, days_historical)
     now_time = datetime.now(pytz.utc)
     now_time_format = now_time.strftime("%Y-%m-%d")
     bikeDataForCharts = BikeDataForCharts(date = now_time_format, result = chartData)
@@ -102,7 +102,7 @@ def fetch_Data_From_DB(date):
     dicts = json.loads(json_data)
     return dicts
 
-# tmp = graphVals(True,2)
+# tmp = graphValue_Call(True,2)
 # result = json.dumps(tmp)
 # save_Data_In_DB(result)
 
