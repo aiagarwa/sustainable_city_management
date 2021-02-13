@@ -9,9 +9,9 @@ connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainable
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 class BikeAvailability(EmbeddedDocument):
+    bike_stands = IntField()
     available_bike_stands = IntField()
-    available_bikes = IntField()
-    time = StringField(max_length=200)
+    time = StringField(max_length=200) #, unique=True)
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
 class BikeStands(Document):
@@ -44,13 +44,13 @@ def bikedata_day(days_historical):
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
-                bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
             print("Empty")
 
-# This method gets the data from API for a single day and store in DB.
+# This method gets the data from API every 5 minutes and store in DB.
 def bikedata_minutes():
     now_time = datetime.now(pytz.utc)
     curr_time = now_time.strftime("%Y%m%d%H%M") 
@@ -76,7 +76,7 @@ def bikedata_minutes():
         if bikestands is not None:
             for stand_details in item["historic"]:
                 # print(stand_details["time"])
-                bikesAvailability = BikeAvailability(available_bike_stands = stand_details["available_bike_stands"], available_bikes = stand_details["available_bikes"], time = stand_details["time"])
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
@@ -85,10 +85,10 @@ def bikedata_minutes():
 # This method stores the data for n number of days in MongoDB
 def save_historic_data_in_DB(days_historical):
     for i in range(1,days_historical+1):
-        bikedata(i)
+        bikedata_day(i)
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for a particular day
-def final_result(dateForData):
+def fetch_Data_from_DB_for_day(dateForData):
     q_set = BikeStands.objects() # Fetch Data from DB
     json_data = q_set.to_json() # Converts the Bikes Data from DB into JSON format
     dicts = json.loads(json_data)
@@ -106,8 +106,8 @@ def final_result(dateForData):
                 if (datetime_object.year == dateForData.year and  datetime_object.month == dateForData.month and datetime_object.day == dateForData.day):
                     datetimeNewFormat = datetime_object.strftime("%d%m%Y%H%M")
                     temp_historical = {
-                                        "available_bikes" : details["available_bikes"], 
-                                        "available_bike_stands" : details["available_bike_stands"],
+                                        "available_bike_stands" : details["available_bike_stands"], 
+                                        "bike_stands" : details["bike_stands"],
                                         "time" : datetimeNewFormat
                                             }
                     result_data["historical"].append(temp_historical)
@@ -115,13 +115,54 @@ def final_result(dateForData):
 
     return list_result_data
 
+# This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
+def fetch_Data_from_DB_for_minutes(minutes):
+    q_set = BikeStands.objects() # Fetch Data from DB
+    json_data = q_set.to_json() # Converts the Bikes Data from DB into JSON format
+    dicts = json.loads(json_data)
+    now_time = datetime.now(pytz.utc)
+    curr_time = now_time.strftime("%Y%m%d%H%M")
+    curr_time_formatted = datetime.strptime(curr_time,"%Y%m%d%H%M")
+    # print(curr_time_formatted)
+    delay_time = (now_time - timedelta(minutes=minutes)).strftime("%Y%m%d%H%M")
+    delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
+    # print (delay_time_formatted)
+    result_data = {}
+    list_result_data = []
+    for item in dicts:
+            result_data = {"historical":[]}
+            result_data["name"] = item["name"]
+            result_data["address"] = item["address"]
+            result_data["latitude"] = item["latitude"]
+            result_data["longitude"] = item["longitude"]
+            for details in item["historical"]:
+                datetime_object = datetime.strptime(details["time"], "%Y-%m-%dT%H:%M:%SZ")
+                datetimeNewFormat = datetime_object.strftime("%Y%m%d%H%M")
+                datetime_object_formatted = datetime.strptime(datetimeNewFormat,"%Y%m%d%H%M")
+                temp_historical = {}
+                if (datetime_object_formatted>=delay_time_formatted and datetime_object_formatted<=curr_time_formatted):
+                    temp_historical = {
+                                        "available_bike_stands" : details["available_bike_stands"], 
+                                        "bike_stands" : details["bike_stands"],
+                                        "time" : details["time"]
+                                            }
+                    result_data["historical"].append(temp_historical)
+            list_result_data.append(result_data)
+    # print(list_result_data)
+    return list_result_data
+
+
 # Main
 # save_historic_data_in_DB(2)
 # temp = final_result(datetime.strptime("20210210","%Y%m%d"))
 # print(temp[1])
 
-bikedata_minutes()
-for  item in BikeStands.objects(name="CITY QUAY"):
-    for j in item.historical:
-        print(j["time"])
+# bikedata_minutes()
+# for  item in BikeStands.objects(name="CITY QUAY"):
+#     for j in item.historical:
+#         print(j["time"])
+
+# fetch_Data_from_DB_for_minutes(10)
+# fetch_Data_from_DB_for_day(1)
+# save_historic_data_in_DB(5)
     
