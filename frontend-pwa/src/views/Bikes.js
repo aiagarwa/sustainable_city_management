@@ -48,8 +48,6 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const position = [51.505, -0.09]
-
 class Bikes extends React.Component {
   componentDidMount() {
     axios
