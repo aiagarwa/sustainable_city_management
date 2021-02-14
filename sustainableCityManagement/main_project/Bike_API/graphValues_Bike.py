@@ -48,11 +48,10 @@ def graphValue_Call1(days_historical = 5):
         resultDict[location]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict[location]["IN_USE"].items())))
     return resultDict
 
-def graphValue_Call2(days_historical = 5):
 
+def graphValue_Call2(days_historical = 5):
     if days_historical == 1 or days_historical == 0:
             return ({"ERROR" : "Assign days_historic parameter >= 2."})
-
     tmpDict = bikeAPI(historical=True)
     resultDict = {}
     now_time = datetime.now()
@@ -69,11 +68,10 @@ def graphValue_Call2(days_historical = 5):
         resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] == resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"]//2
         resultDict["ALL_LOCATIONS"]["IN_USE"][day] = in_use_total
         in_use_arr.append(in_use_total)
-    print(">>>>>>>>>>>>>>>>>",in_use_arr)
     predictedVal = predictBikesUsageTest(in_use_arr, previous_days_to_consider = days_historical - 1)
     resultDict["ALL_LOCATIONS"]["IN_USE"][day_ahead] = predictedVal
     resultDict["ALL_LOCATIONS"]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict["ALL_LOCATIONS"]["IN_USE"].items())))
-    print(resultDict)
+    return resultDict
 
 
 # def save_Data_In_DB(locationsBased = True, days_historical = 2):

@@ -111,32 +111,47 @@ def fetch_Bike_Stands_Location():
     return locations
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for a particular day
-def fetch_Data_from_DB_for_day(dateForData):
-    q_set = BikeStands.objects() # Fetch Data from DB
-    json_data = q_set.to_json() # Converts the Bikes Data from DB into JSON format
-    dicts = json.loads(json_data)
-    result_data = {}
-    list_result_data = []
-    for item in dicts:
-            result_data = {"historical":[]}
-            result_data["name"] = item["name"]
-            result_data["address"] = item["address"]
-            result_data["latitude"] = item["latitude"]
-            result_data["longitude"] = item["longitude"]
-            for details in item["historical"]:
-                datetime_object = datetime.strptime(details["time"], "%Y-%m-%dT%H:%M:%SZ")
-                temp_historical = {}
-                if (datetime_object.year == dateForData.year and  datetime_object.month == dateForData.month and datetime_object.day == dateForData.day):
-                    datetimeNewFormat = datetime_object.strftime("%d%m%Y%H%M")
-                    temp_historical = {
-                                        "available_bike_stands" : details["available_bike_stands"], 
-                                        "bike_stands" : details["bike_stands"],
-                                        "time" : datetimeNewFormat
-                                            }
-                    result_data["historical"].append(temp_historical)
-            list_result_data.append(result_data)
+# def fetch_Data_from_DB_for_day(dateForData):
+#     q_set = BikeStands.objects() # Fetch Data from DB
+#     json_data = q_set.to_json() # Converts the Bikes Data from DB into JSON format
+#     dicts = json.loads(json_data)
+#     result_data = {}
+#     list_result_data = []
+#     for item in dicts:
+#             result_data = {"historical":[]}
+#             result_data["name"] = item["name"]
+#             result_data["address"] = item["address"]
+#             result_data["latitude"] = item["latitude"]
+#             result_data["longitude"] = item["longitude"]
+#             for details in item["historical"]:
+#                 datetime_object = datetime.strptime(details["time"], "%Y-%m-%dT%H:%M:%SZ")
+#                 temp_historical = {}
+#                 if (datetime_object.year == dateForData.year and  datetime_object.month == dateForData.month and datetime_object.day == dateForData.day):
+#                     datetimeNewFormat = datetime_object.strftime("%d%m%Y%H%M")
+#                     temp_historical = {
+#                                         "available_bike_stands" : details["available_bike_stands"], 
+#                                         "bike_stands" : details["bike_stands"],
+#                                         "time" : datetimeNewFormat
+#                                             }
+#                     result_data["historical"].append(temp_historical)
+#             list_result_data.append(result_data)
 
-    return list_result_data
+#     return list_result_data
+
+
+def fetch_Data_from_DB_for_day(dateForData):
+    start_date_str = dateForData.strftime("%Y-%m-%dT")
+    pipeline = [
+    { "$unwind": "$historical" },
+    { "$match": {"historical.time": {"$regex": "^"+start_date_str} } },
+    { "$project": {"name":"$name","bike_stands":"$historical.bike_stands","available_bike_stands":"$historical.available_bike_stands","time":"$historical.time", "_id":0} },
+    ]
+    q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
+    return list(q_set)
+
+
+
+
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
 def fetch_Data_from_DB_for_minutes(minutes):
@@ -187,7 +202,7 @@ def fetch_Data_from_DB_for_minutes(minutes):
 
 # fetch_Data_from_DB_for_minutes(10)
 # fetch_Data_from_DB_for_day(1)
-# save_historic_data_in_DB(5)
+save_historic_data_in_DB(5)
 
-# save_Bike_Stands_Location()
+save_Bike_Stands_Location()
 # print(fetch_Bike_Stands_Location())

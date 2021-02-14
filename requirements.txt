@@ -17,3 +17,6 @@ mongoengine==0.22.1
 pymongo==3.11.3
 django-crontab==0.7.1
 django-cors-headers==3.7.0
+numpy==1.20.1
+matplotlib
+sklearn
