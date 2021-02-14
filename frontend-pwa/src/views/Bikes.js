@@ -53,7 +53,7 @@ const position = [51.505, -0.09]
 class Bikes extends React.Component {
   componentDidMount() {
     axios
-      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+      .get("/bikestands_details/?type=locations")
       .then((res) => {
         console.log(res.data);
         const { markers } = this.state;
@@ -73,31 +73,29 @@ class Bikes extends React.Component {
       });
 
     axios
-      .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
+      .get("/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
-
-        // const resArray = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE).map((key) => [Number(key), res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE[key]]);
-        // console.log(resArray);
-        // resArray.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0))
-        // console.log(resArray);
-        // let x = [], y = [];
-        // for (const e of resArray) {
-        //   x.push(e[0]);
-        //   y.push(e[1]);
-        // }
-        // console.log(x);
-        // console.log(y);
 
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
 
         this.setState({
           options: {
-            chart: {
-              id: "basic-bar",
-            },
             xaxis: {
               categories: x
+            },
+            annotations: {
+              xaxis: [
+                {
+                  x: x[x.length-1],
+                  borderColor: '#00E396',
+                  label: {
+                    borderColor: '#00E396',
+                    orientation: 'horizontal',
+                    text: 'Prediction'
+                  }
+                }
+              ]
             }
           },
           series: [{
