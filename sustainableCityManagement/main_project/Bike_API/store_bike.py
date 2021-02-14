@@ -100,7 +100,7 @@ def bikedata_minutes():
 
 # This method stores the data for n number of days in MongoDB
 def save_historic_data_in_DB(days_historical):
-    for i in range(1,days_historical+1):
+    for i in range(days_historical):
         bikedata_day(i)
 
 # Fetch Data for Locations

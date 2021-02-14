@@ -1,3 +1,4 @@
+
 import requests
 import json
 import collections
@@ -7,6 +8,9 @@ from datetime import datetime, timedelta
 from .fetch_bikeAPI import bikeAPI
 from mongoengine import *
 import pytz
+from ..ML_models.bikesUsagePrediction import predictBikesUsageTest
+# from bikesUsagePrediction import predictBikesUsageTest
+from .store_bike import fetch_Bike_Stands_Location
 
 # Connect to Database
 connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainableCityManagement')
@@ -17,93 +21,75 @@ class BikeDataForCharts(Document):
     result = StringField()
     meta = {'collection': 'BikeChartData'}
 
-def graphValue_Call(locationsBased = True, days_historical = 5):
-    dataDict = bikeAPI(historical=True)
-    tmpDict = copy.deepcopy(dataDict)
+
+def graphValue_Call1(days_historical = 5):
+
+    if days_historical == 1 or days_historical == 0:
+            return ({"ERROR" : "Assign days_historic parameter >= 2."})
+
+    tmpDict = bikeAPI(historical=True)
+    resultDict = {}
     now_time = datetime.now()
-    curr_day = (now_time - timedelta(days=0)).strftime("%Y-%m-%d")
-    for item in tmpDict:
-        tmpDict[item]["TOTAL_STANDS"] = {curr_day : tmpDict[item]["TOTAL_STANDS"]}
-        tmpDict[item]["IN_USE"] = {curr_day : tmpDict[item]["IN_USE"]}
-    if locationsBased == True:
-        if days_historical == 0:
-            return(dataDict)
-        Locations = list(dataDict.keys())
-        if days_historical == 1:
-            tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
-            for loc in tmpCall:
-                tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
-                dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        else:
-            for i in range(1,days_historical):
-                tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
-                for loc in tmpCall:
-                    tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
-                    dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                    tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        for loc in dataDict:
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] #MODEL
-            tmpDict[loc]["IN_USE"][day_ahead] = dataDict[loc]["IN_USE"]
-            tmpDict[loc]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[loc]["IN_USE"].items()))
-        return tmpDict
+    day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
+    all_locations = fetch_Bike_Stands_Location()
+    for location in tmpDict:
+        resultDict[location] = {"TOTAL_STANDS" : 0, "IN_USE" : {}}
+    for i in range(days_historical):
+        InputDict = bikeAPI(historical=True, days_historical = i)
+        for location in InputDict:
+            resultDict[location]["TOTAL_STANDS"] = InputDict[location]["TOTAL_STANDS"]
+            resultDict[location]["IN_USE"][InputDict[location]["DAY"]] = InputDict[location]["IN_USE"]
+    for location in resultDict:
+        in_use_arr = []
+        for day in resultDict[location]["IN_USE"]:
+            in_use_arr.append(resultDict[location]["IN_USE"][day])
+        predictedVal = predictBikesUsageTest(in_use_arr, previous_days_to_consider = days_historical - 1)
+        resultDict[location]["IN_USE"][day_ahead] = predictedVal
+        resultDict[location]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict[location]["IN_USE"].items())))
+    return resultDict
 
-    if locationsBased == False:
-        keyVal = "ALL_LOCATIONS"
-        tmpDict = {keyVal : {"TOTAL_STANDS" : 0, "IN_USE" : {}}}
-        if days_historical == 0:
-            return(tmpDict)
-        Locations = list(dataDict.keys())
-        if days_historical == 1:
-            tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
-            for loc in tmpCall:
-                tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
-                dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        else:
-            for i in range(days_historical):
-                in_use_total = 0
-                tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
-                for loc in tmpCall:
-                    tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
-                    dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                    in_use_total = in_use_total + tmpCall[loc]["IN_USE"]
-                    tmpDict[keyVal]["IN_USE"][day] = in_use_total
+def graphValue_Call2(days_historical = 5):
+
+    if days_historical == 1 or days_historical == 0:
+            return ({"ERROR" : "Assign days_historic parameter >= 2."})
+
+    tmpDict = bikeAPI(historical=True)
+    resultDict = {}
+    now_time = datetime.now()
+    day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
+    resultDict["ALL_LOCATIONS"] = {"TOTAL_STANDS" : 0, "IN_USE" : {}}
+    in_use_arr = []
+    for i in range(days_historical):
+        InputDict = bikeAPI(historical=True, days_historical = i)
         in_use_total = 0
-        day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-        for item in dataDict:
-            in_use_total = in_use_total + dataDict[item]["IN_USE"]
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
-        tmpDict[keyVal]["IN_USE"][day_ahead] = in_use_total//days_historical
-        tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"]//days_historical
-        tmpDict[keyVal]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[keyVal]["IN_USE"].items()))
+        day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
+        for location in InputDict:
+            resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] = resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] + InputDict[location]["TOTAL_STANDS"]
+            in_use_total = in_use_total + InputDict[location]["IN_USE"]
+        resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] == resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"]//2
+        resultDict["ALL_LOCATIONS"]["IN_USE"][day] = in_use_total
+        in_use_arr.append(in_use_total)
+    print(">>>>>>>>>>>>>>>>>",in_use_arr)
+    predictedVal = predictBikesUsageTest(in_use_arr, previous_days_to_consider = days_historical - 1)
+    resultDict["ALL_LOCATIONS"]["IN_USE"][day_ahead] = predictedVal
+    resultDict["ALL_LOCATIONS"]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict["ALL_LOCATIONS"]["IN_USE"].items())))
+    print(resultDict)
 
-        return tmpDict
 
-# This method gets the processed and predicted data and store in DB.
-def save_Data_In_DB(locationsBased = True, days_historical = 2):
-    chartData = graphValue_Call(locationsBased, days_historical)
-    now_time = datetime.now(pytz.utc)
-    now_time_format = now_time.strftime("%Y-%m-%d")
-    bikeDataForCharts = BikeDataForCharts(date = now_time_format, result = chartData)
-    bikeDataForCharts.save()
+# def save_Data_In_DB(locationsBased = True, days_historical = 2):
+#     chartData = graphValue_Call(locationsBased, days_historical)
+#     now_time = datetime.now(pytz.utc)
+#     now_time_format = now_time.strftime("%Y-%m-%d")
+#     bikeDataForCharts = BikeDataForCharts(date = now_time_format, result = chartData)
+#     bikeDataForCharts.save()
 
-# This method fetch the processed and predicted data from DB per day and return as dictionary.
-def fetch_Data_From_DB(date):
-    q_set = BikeDataForCharts.objects() # Fetch Data from DB
-    q_set_filter = q_set.filter(date=date).only('result')
-    json_data = q_set_filter.to_json() # Converts the Processed Bikes Data from DB into JSON format
-    dicts = json.loads(json_data)
-    return dicts
+# # This method fetch the processed and predicted data from DB per day and return as dictionary.
+# def fetch_Data_From_DB(date):
+#     q_set = BikeDataForCharts.objects() # Fetch Data from DB
+#     q_set_filter = q_set.filter(date=date).only('result')
+#     json_data = q_set_filter.to_json() # Converts the Processed Bikes Data from DB into JSON format
+#     dicts = json.loads(json_data)
+#     return dicts
 
-# tmp = graphValue_Call(True,2)
-# result = json.dumps(tmp)
-# save_Data_In_DB(result)
 
-# fetch_Data_From_DB("2021-02-13")
+# graphValue_Call2(days_historical = 2)

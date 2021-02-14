@@ -9,7 +9,6 @@ from .store_bike import fetch_Data_from_DB_for_day, fetch_Data_from_DB_for_minut
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_historical = 0):    
     now_time = datetime.now()
-    curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
     tmp_result = []
     result_response = {}
     if locations == True:
@@ -22,26 +21,26 @@ def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_histo
         return(result_response)
 
     if historical == True :
-        delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
+        delay_time =  (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M")
         delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
         tmp_result = fetch_Data_from_DB_for_day(delay_time_formatted)
+        # print(tmp_result)
     else:
         tmp_result = fetch_Data_from_DB_for_minutes(minutes_delay)
-    result_response = {} # Storing end result.
-    for item in tmp_result:
-        for stand_details in item["historical"]:
-            in_use_bikes = stand_details["available_bike_stands"]
-            bike_stands = stand_details["bike_stands"]
-            timestamp = stand_details["time"]
-        else:    
-            result_response[item["name"]] = {
-                                    "TOTAL_STANDS" : bike_stands,
-                                    "IN_USE" : in_use_bikes,
-                                    "TIME" : timestamp
-                                    }
 
+    for item in tmp_result:
+        in_use_bikes_arr = []
+        for stand_details in item["historical"]:
+            in_use_bikes_arr.append(stand_details["available_bike_stands"])
+            bike_stands = stand_details["bike_stands"]
+            timestamp = delay_time
+            in_use_bikes = sum(in_use_bikes_arr)//len(in_use_bikes_arr)
+        result_response[item["name"]] = {
+                                "TOTAL_STANDS" : bike_stands,
+                                "IN_USE" : in_use_bikes,
+                                "DAY" : (now_time - timedelta(days=days_historical)).strftime("%Y-%m-%d")
+                                }
+    # print(result_response)
     return(result_response)
 
-
-def graphVals():
-    return None
+# bikeAPI(historical = True)
