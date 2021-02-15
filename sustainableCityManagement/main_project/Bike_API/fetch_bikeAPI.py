@@ -6,8 +6,9 @@ from datetime import datetime, timedelta
 from .store_bikedata_to_database import fetch_data_from_db_for_day
 from .store_bikedata_to_database import fetch_data_from_db_for_minutes
 from .store_bikedata_to_database import fetch_bike_stands_location
+
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
-def bikeapi(historical = False, locations = False, minutes_delay = 5, days_historical = 0):    
+def bikeapi(historical = False, locations = False, minutes_delay = 5, days_historical = 0):
     now_time = datetime.now()
     tmp_result = []
     result_response = {}
@@ -19,6 +20,8 @@ def bikeapi(historical = False, locations = False, minutes_delay = 5, days_histo
                             "LONGITUDE" : loc["longitude"]
                             }
         return(result_response)
+
+# Flag for checking whether the call is for historical data.
     if historical == True :
         delay_time =  (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M")
         delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
@@ -33,7 +36,8 @@ def bikeapi(historical = False, locations = False, minutes_delay = 5, days_histo
     for locations in tmp_result:
         if locations["name"] not in locations_arr :
             locations_arr.append(locations["name"])
-    
+
+# Going through all the locations in the fetched data from DB and storing the average of daily usage for the location.
     for location in locations_arr :
         in_use_bikes_arr = []
         for item in tmp_result:
@@ -43,6 +47,9 @@ def bikeapi(historical = False, locations = False, minutes_delay = 5, days_histo
                 timestamp = delay_time
                 in_use_bikes = sum(in_use_bikes_arr)//len(in_use_bikes_arr)
         
+# TOTAL_STANDS represents total number of stands at the location.
+# IN_USE represents total number of bike in usage.
+# DAY represents the date for which data is fetched.
         result_response[location] = {
                                     "TOTAL_STANDS" : bike_stands,
                                     "IN_USE" : in_use_bikes,
