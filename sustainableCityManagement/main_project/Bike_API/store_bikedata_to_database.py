@@ -150,4 +150,4 @@ def fetch_data_from_db_for_minutes(minutes):
     return list_result_data
 
 # save_historic_data_in_db(5)
-# save_Bike_Stands_Location()
+# save_bike_stands_location()
