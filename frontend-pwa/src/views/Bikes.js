@@ -50,7 +50,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 class Bikes extends React.Component {
   componentDidMount() {
     axios
-      .get("/bikestands_details/?type=locations")
+      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
       .then((res) => {
         console.log(res.data);
         const { markers } = this.state;
@@ -70,13 +70,13 @@ class Bikes extends React.Component {
       });
 
     axios
-      .get("/bikestands_graph/?location_based=no&days_historic=5")
+      .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
 
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
 
-        this.setState({
+        const graphState = {
           options: {
             xaxis: {
               categories: x
@@ -99,7 +99,17 @@ class Bikes extends React.Component {
             name: "Bikes in use",
             data: y
           }]
-        })
+        };
+
+        this.setState(graphState);
+        localStorage.setItem('bikestands_graph', JSON.stringify(graphState));
+      })
+      .catch(err => {
+        console.log(err);
+        alert('Offline');
+        const graphState = JSON.parse(localStorage.getItem('bikestands_graph'));
+        if (graphState)
+          this.setState(graphState);
       });
   }
 
