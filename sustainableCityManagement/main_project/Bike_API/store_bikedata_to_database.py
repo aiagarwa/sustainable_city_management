@@ -11,7 +11,8 @@ connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainable
 class BikeAvailability(EmbeddedDocument):
     bike_stands = IntField()
     available_bike_stands = IntField()
-    time = StringField(max_length=200) #, unique=True)
+    time = DateTimeField()
+    # time = StringField(max_length=200) #, unique=True)
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
 class BikeStands(Document):
@@ -60,7 +61,8 @@ def bikedata_day(days_historical):
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
-                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
+                datetimeConvert = datetime.strptime(stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = datetimeConvert)
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
@@ -88,7 +90,8 @@ def bikedata_minutes():
         if bikestands is not None:
             for stand_details in item["historic"]:
                 # print(stand_details["time"])
-                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = stand_details["time"])
+                datetimeConvert = datetime.strptime(stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
+                bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = datetimeConvert)
                 bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
         else:
@@ -106,48 +109,56 @@ def fetch_bike_stands_location():
     locations = json.loads(json_data)
     return locations
 
+#Fetch bikedata from db for a particular date
 def fetch_data_from_db_for_day(dateForData):
-    start_date_str = dateForData.strftime("%Y-%m-%dT")
+    start_date_str = dateForData.strftime("%Y-%m-%dT00:00:00Z")
+    end_date_str = dateForData.strftime("%Y-%m-%dT23:59:59Z")
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%dT%H:%M:%SZ")
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%dT%H:%M:%SZ")
     pipeline = [
-    { "$unwind": "$historical" },
-    { "$match": {"historical.time": {"$regex": "^"+start_date_str} } },
-    { "$project": {"name":"$name","bike_stands":"$historical.bike_stands","available_bike_stands":"$historical.available_bike_stands","time":"$historical.time", "_id":0} },
+    { "$project": {
+        "historical": {"$filter": {
+            "input": "$historical",
+            "as": "historical",
+            "cond": {"$and":[ 
+                { "$lte": ["$$historical.time",end_date]},
+                { "$gte": ["$$historical.time", start_date]}
+            ]}
+        }
+        },
+        "name":"$name",
+        "_id":0} 
+        },
     ]
     q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
+    print(list(q_set))
     return list(q_set)
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
 def fetch_data_from_db_for_minutes(minutes):
-    q_set = BikeStands.objects() # Fetch Data from DB
-    json_data = q_set.to_json() # Converts the Bikes Data from DB into JSON format
-    dicts = json.loads(json_data)
     now_time = datetime.now(pytz.utc)
-    curr_time = now_time.strftime("%Y%m%d%H%M")
-    curr_time_formatted = datetime.strptime(curr_time,"%Y%m%d%H%M")
-    delay_time = (now_time - timedelta(minutes=minutes)).strftime("%Y%m%d%H%M")
-    delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
-    result_data = {}
-    list_result_data = []
-    for item in dicts:
-            result_data = {"historical":[]}
-            result_data["name"] = item["name"]
-            result_data["address"] = item["address"]
-            result_data["latitude"] = item["latitude"]
-            result_data["longitude"] = item["longitude"]
-            for details in item["historical"]:
-                datetime_object = datetime.strptime(details["time"], "%Y-%m-%dT%H:%M:%SZ")
-                datetimeNewFormat = datetime_object.strftime("%Y%m%d%H%M")
-                datetime_object_formatted = datetime.strptime(datetimeNewFormat,"%Y%m%d%H%M")
-                temp_historical = {}
-                if (datetime_object_formatted>=delay_time_formatted and datetime_object_formatted<=curr_time_formatted):
-                    temp_historical = {
-                                        "available_bike_stands" : details["available_bike_stands"], 
-                                        "bike_stands" : details["bike_stands"],
-                                        "time" : details["time"]
-                                            }
-                    result_data["historical"].append(temp_historical)
-            list_result_data.append(result_data)
-    return list_result_data
+    curr_time = now_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+    curr_time_formatted = datetime.strptime(curr_time, "%Y-%m-%dT%H:%M:%SZ")
+    delay_time = (now_time - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    delay_time_formatted = datetime.strptime(delay_time, "%Y-%m-%dT%H:%M:%SZ")
+    pipeline = [
+    { "$project": {
+        "historical": {"$filter": {
+            "input": "$historical",
+            "as": "historical",
+            "cond": {"$and":[ 
+                { "$lte": ["$$historical.time",curr_time_formatted]},
+                { "$gte": ["$$historical.time", delay_time_formatted]}
+            ]}
+        }
+        },
+        "name":"$name",
+        "_id":0} 
+        },
+    ]
+    q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
+    # print(list(q_set))
+    return list(q_set)
 
-# save_historic_data_in_db(5)
-# save_Bike_Stands_Location()
+fetch_data_from_db_for_day(datetime.strptime("20210214","%Y%m%d"))
+# fetch_data_from_db_for_minutes(60)
