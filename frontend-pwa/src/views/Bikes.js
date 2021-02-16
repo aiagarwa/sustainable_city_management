@@ -76,7 +76,10 @@ class Bikes extends React.Component {
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
 
-        const graphState = {
+        localStorage.setItem('bikestands_graph_x', JSON.stringify(x));
+        localStorage.setItem('bikestands_graph_y', JSON.stringify(y));
+
+        this.setState({
           options: {
             xaxis: {
               categories: x
@@ -84,7 +87,7 @@ class Bikes extends React.Component {
             annotations: {
               xaxis: [
                 {
-                  x: x[x.length-1],
+                  x: x[x.length - 1],
                   borderColor: '#00E396',
                   label: {
                     borderColor: '#00E396',
@@ -99,17 +102,40 @@ class Bikes extends React.Component {
             name: "Bikes in use",
             data: y
           }]
-        };
-
-        this.setState(graphState);
-        localStorage.setItem('bikestands_graph', JSON.stringify(graphState));
+        });
       })
       .catch(err => {
         console.log(err);
         alert('Offline');
-        const graphState = JSON.parse(localStorage.getItem('bikestands_graph'));
-        if (graphState)
-          this.setState(graphState);
+        const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
+        const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
+        
+        if (x && y) {
+          this.setState({
+            options: {
+              xaxis: {
+                categories: x
+              },
+              annotations: {
+                xaxis: [
+                  {
+                    x: x[x.length - 1],
+                    borderColor: '#00E396',
+                    label: {
+                      borderColor: '#00E396',
+                      orientation: 'horizontal',
+                      text: 'Prediction'
+                    }
+                  }
+                ]
+              }
+            },
+            series: [{
+              name: "Bikes in use",
+              data: y
+            }]
+          })
+        }
       });
   }
 
