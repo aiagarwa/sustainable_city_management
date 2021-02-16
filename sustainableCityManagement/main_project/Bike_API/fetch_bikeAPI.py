@@ -1,115 +1,58 @@
-import requests
 import json
 import collections
 from collections import Counter
 import copy
 from datetime import datetime, timedelta
+from .store_bikedata_to_database import fetch_data_from_db_for_day
+from .store_bikedata_to_database import fetch_data_from_db_for_minutes
+from .store_bikedata_to_database import fetch_bike_stands_location
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
-def bikeAPI(historical = False, locations = False, minutes_delay = 5, days_historical = 0):    
+def bikeapi(historical = False, locations = False, minutes_delay = 5, days_historical = 0):
     now_time = datetime.now()
-    curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
-    url = ""
+    tmp_result = []
+    result_response = {}
+    if locations == True:
+        location_data = fetch_bike_stands_location()
+        for loc in location_data:
+            result_response[loc["name"]] = {
+                            "LATITUDE" : loc["latitude"], 
+                            "LONGITUDE" : loc["longitude"]
+                            }
+        return(result_response)
+
+# Flag for checking whether the call is for historical data.
     if historical == True :
-        delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
-        url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
-    else:
-        delay_time =  (now_time - timedelta(minutes=minutes_delay)).strftime("%Y%m%d%H%M")
-        url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time) # Setting the Last Reading data URL to be called upon.
+        delay_time =  (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M")
+        delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
+        tmp_result = fetch_data_from_db_for_day(delay_time_formatted)
 
-    payload={} 
-    headers = {}
-    response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
-    result_response = {} # Storing end result.
-    tmp_result = json.loads(response.text)
-    for item in tmp_result:
-        for stand_details in item["historic"]:
-            available_bike_stands = stand_details["available_bike_stands"]
-            bike_stands = stand_details["bike_stands"]
-            timestamp = stand_details["time"]
-        if locations == True:
-            result_response[item["name"]] = {
-                                    "LATITUDE" : item["latitude"], 
-                                    "LONGITUDE" : item["longitude"]
-                                        }
-        else:    
-            result_response[item["name"]] = {
+# To be fixed.
+    # else:
+    #     tmp_result = fetch_Data_from_DB_for_minutes(minutes_delay) 
+
+    counter = 0
+    locations_arr = []
+    for locations in tmp_result:
+        if locations["name"] not in locations_arr :
+            locations_arr.append(locations["name"])
+
+# Going through all the locations in the fetched data from DB and storing the average of daily usage for the location.
+    for location in locations_arr :
+        in_use_bikes_arr = []
+        for item in tmp_result:
+            if location == item["name"]:
+                in_use_bikes_arr.append(item["available_bike_stands"])
+                bike_stands = item["bike_stands"]
+                timestamp = delay_time
+                in_use_bikes = sum(in_use_bikes_arr)//len(in_use_bikes_arr)
+        
+# TOTAL_STANDS represents total number of stands at the location.
+# IN_USE represents total number of bike in usage.
+# DAY represents the date for which data is fetched.
+        result_response[location] = {
                                     "TOTAL_STANDS" : bike_stands,
-                                    "IN_USE" : available_bike_stands,
-                                    "TIME" : timestamp
+                                    "IN_USE" : in_use_bikes,
+                                    "DAY" : (now_time - timedelta(days=days_historical)).strftime("%Y-%m-%d")
                                     }
-
     return(result_response)
-
-def graphVals(locationsBased = True, days_historical = 2):
-    dataDict = bikeAPI(historical=True)
-    tmpDict = copy.deepcopy(dataDict)
-    now_time = datetime.now()
-    curr_day = (now_time - timedelta(days=0)).strftime("%Y-%m-%d")
-    for item in tmpDict:
-        tmpDict[item]["TOTAL_STANDS"] = {curr_day : tmpDict[item]["TOTAL_STANDS"]}
-        tmpDict[item]["IN_USE"] = {curr_day : tmpDict[item]["IN_USE"]}
-    if locationsBased == True:
-        if days_historical == 0:
-            return(dataDict)
-        Locations = list(dataDict.keys())
-        if days_historical == 1:
-            tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
-            for loc in tmpCall:
-                tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
-                dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        else:
-            for i in range(1,days_historical):
-                tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
-                for loc in tmpCall:
-                    tmpDict[loc]["TOTAL_STANDS"] = tmpCall[loc]["TOTAL_STANDS"]
-                    dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                    tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        for loc in dataDict:
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
-            tmpDict[loc]["IN_USE"][day_ahead] = dataDict[loc]["IN_USE"]
-            tmpDict[loc]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[loc]["IN_USE"].items()))
-        return tmpDict
-
-    if locationsBased == False:
-        keyVal = "ALL_LOCATIONS"
-        tmpDict = {keyVal : {"TOTAL_STANDS" : 0, "IN_USE" : {}}}
-        if days_historical == 0:
-            return(tmpDict)
-        Locations = list(dataDict.keys())
-        if days_historical == 1:
-            tmpCall = bikeAPI(historical=True, days_historical = 0)
-            day = (now_time - timedelta(days=1)).strftime("%Y-%m-%d")
-            for loc in tmpCall:
-                # dataDict[loc]["TOTAL_STANDS"] = dataDict[loc]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
-                tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
-                dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                tmpDict[loc]["IN_USE"][day] = tmpCall[loc]["IN_USE"]
-        else:
-            for i in range(days_historical):
-                in_use_total = 0
-                tmpCall = bikeAPI(historical=True, days_historical = i)
-                day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
-                for loc in tmpCall:
-                    tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"] + tmpCall[loc]["TOTAL_STANDS"]
-                    dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"] + tmpCall[loc]["IN_USE"]
-                    in_use_total = in_use_total + tmpCall[loc]["IN_USE"]
-                    tmpDict[keyVal]["IN_USE"][day] = in_use_total
-        in_use_total = 0
-        day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-        for item in dataDict:
-            in_use_total = in_use_total + dataDict[item]["IN_USE"]
-            day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-            dataDict[loc]["IN_USE"] = dataDict[loc]["IN_USE"]//days_historical
-        tmpDict[keyVal]["IN_USE"][day_ahead] = in_use_total//days_historical
-        tmpDict[keyVal]["TOTAL_STANDS"] = tmpDict[keyVal]["TOTAL_STANDS"]//days_historical
-        tmpDict[keyVal]["IN_USE"] = collections.OrderedDict(sorted(tmpDict[keyVal]["IN_USE"].items()))
-
-        return tmpDict
-
-
-# bikeAPI(historical = True, days_historical = 2)

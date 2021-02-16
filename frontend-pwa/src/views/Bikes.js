@@ -19,13 +19,8 @@
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-} from "react-google-maps";
 import Chart from "react-apexcharts";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 // reactstrap components
 import {
   Card,
@@ -35,152 +30,22 @@ import {
   CardBody,
   Row,
   Col,
+  FormGroup,
+  Label,
+  Input,
 } from "reactstrap";
+import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
 
-const MapWrapper = withScriptjs(
-  withGoogleMap((props) => (
-    <GoogleMap
-      defaultZoom={13}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
-      defaultOptions={{
-        scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-        styles: [
-          {
-            featureType: "water",
-            stylers: [
-              {
-                saturation: 43,
-              },
-              {
-                lightness: -11,
-              },
-              {
-                hue: "#0088ff",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.fill",
-            stylers: [
-              {
-                hue: "#ff0000",
-              },
-              {
-                saturation: -100,
-              },
-              {
-                lightness: 99,
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [
-              {
-                color: "#808080",
-              },
-              {
-                lightness: 54,
-              },
-            ],
-          },
-          {
-            featureType: "landscape.man_made",
-            elementType: "geometry.fill",
-            stylers: [
-              {
-                color: "#ece2d9",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry.fill",
-            stylers: [
-              {
-                color: "#ccdca1",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#767676",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.stroke",
-            stylers: [
-              {
-                color: "#ffffff",
-              },
-            ],
-          },
-          {
-            featureType: "poi",
-            stylers: [
-              {
-                visibility: "off",
-              },
-            ],
-          },
-          {
-            featureType: "landscape.natural",
-            elementType: "geometry.fill",
-            stylers: [
-              {
-                visibility: "on",
-              },
-              {
-                color: "#b8cb93",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            stylers: [
-              {
-                visibility: "on",
-              },
-            ],
-          },
-          {
-            featureType: "poi.sports_complex",
-            stylers: [
-              {
-                visibility: "on",
-              },
-            ],
-          },
-          {
-            featureType: "poi.medical",
-            stylers: [
-              {
-                visibility: "on",
-              },
-            ],
-          },
-          {
-            featureType: "poi.business",
-            stylers: [
-              {
-                visibility: "simplified",
-              },
-            ],
-          },
-        ],
-      }}
-    >
-      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
-    </GoogleMap>
-  ))
-);
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 class Bikes extends React.Component {
   componentDidMount() {
@@ -188,26 +53,77 @@ class Bikes extends React.Component {
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
       .then((res) => {
         console.log(res.data);
+        const { markers } = this.state;
+
+        const bikeStations = res.data.DATA.RESULT;
+
+        for (const station of Object.keys(bikeStations)) {
+          markers.push({
+            position: [bikeStations[station].LATITUDE, bikeStations[station].LONGITUDE],
+            content: station
+          });
+        }
+
+        markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
+
+        this.setState({ markers });
+      });
+
+    axios
+      .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
+      .then((res) => {
+
+        const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
+        const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
+
+        const graphState = {
+          options: {
+            xaxis: {
+              categories: x
+            },
+            annotations: {
+              xaxis: [
+                {
+                  x: x[x.length-1],
+                  borderColor: '#00E396',
+                  label: {
+                    borderColor: '#00E396',
+                    orientation: 'horizontal',
+                    text: 'Prediction'
+                  }
+                }
+              ]
+            }
+          },
+          series: [{
+            name: "Bikes in use",
+            data: y
+          }]
+        };
+
+        this.setState(graphState);
+        localStorage.setItem('bikestands_graph', JSON.stringify(graphState));
+      })
+      .catch(err => {
+        console.log(err);
+        alert('Offline');
+        const graphState = JSON.parse(localStorage.getItem('bikestands_graph'));
+        if (graphState)
+          this.setState(graphState);
       });
   }
+
   constructor(props) {
     super(props);
 
     this.state = {
+      markers: [],
       options: {
         chart: {
           id: "basic-bar",
         },
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
-        },
       },
-      series: [
-        {
-          name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91],
-        },
-      ],
+      series: [],
     };
   }
 
@@ -218,19 +134,24 @@ class Bikes extends React.Component {
           <Row>
             <Col md="12">
               <Card>
-                <CardHeader>Google Maps</CardHeader>
+                <CardHeader>Open Street Maps</CardHeader>
                 <CardBody>
                   <div
-                    id="map"
-                    className="map"
-                    style={{ position: "relative", overflow: "hidden" }}
+                    className="leaflet-container"
                   >
-                    <MapWrapper
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpQRvpHCpKSy6rZH34sH_mRblw7dXuT3k"
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={<div style={{ height: `100%` }} />}
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
+                    <MapContainer style={{ width: '100%', height: '600px' }} center={[53.34, -6.28]} zoom={12} scrollWheelZoom={false}>
+                      <TileLayer
+                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      {this.state.markers.map(({ position, content }, idx) =>
+                        <Marker key={`marker-${idx}`} position={position}>
+                          <Popup>
+                            <span>{content}</span>
+                          </Popup>
+                        </Marker>
+                      )}
+                    </MapContainer>
                   </div>
                 </CardBody>
               </Card>
@@ -246,6 +167,18 @@ class Bikes extends React.Component {
                   </p>
                 </CardHeader>
                 <CardBody>
+
+                  <FormGroup row>
+                    <Col sm={12} md={4}>
+                      <Label>Bike station selection</Label>
+                      <Input type="select" name="select">
+                        <option>All</option>
+                        {this.state.markers.map(({ position, content }, index) =>
+                          <option key={index}>{content}</option>)}
+                      </Input>
+                    </Col>
+                  </FormGroup>
+
                   <div className="mixed-chart">
                     <Chart
                       options={this.state.options}

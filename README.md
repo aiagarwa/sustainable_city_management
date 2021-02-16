@@ -20,10 +20,10 @@ python manage.py cronjob show
 
 For Bike Location density :
 
-Use  http://127.0.0.1:8000/main/bikestands_details/?type=live for latest data.
-
-Use  http://127.0.0.1:8000/main/bikestands_details/?type=historical&days_historic=1 for 1 day historical data.
+Use  http://127.0.0.1:8000/main/bikestands_details/?type=historical&days_historic=5 for 5 day historical data.
 
 Use  http://127.0.0.1:8000/main/bikestands_details/?type=locations for locations data.
 
-use http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=10 for getting the graph values. (Location based to be discussed)
+Use http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5 for getting the graph values (overall).
+
+use http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5 for getting the graph values (location based).
