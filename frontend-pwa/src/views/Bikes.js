@@ -48,6 +48,35 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 class Bikes extends React.Component {
+
+  setBikesGraph(x, y) {
+    console.log(x, y);
+    this.setState({
+      options: {
+        xaxis: {
+          categories: x
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+              borderColor: '#00E396',
+              label: {
+                borderColor: '#00E396',
+                orientation: 'horizontal',
+                text: 'Prediction'
+              }
+            }
+          ]
+        }
+      },
+      series: [{
+        name: "Bikes in use",
+        data: y
+      }]
+    });
+  }
+
   componentDidMount() {
     axios
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
@@ -72,69 +101,24 @@ class Bikes extends React.Component {
     axios
       .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
-
+        console.log(res.data);
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
+        console.log(x, y);
 
         localStorage.setItem('bikestands_graph_x', JSON.stringify(x));
         localStorage.setItem('bikestands_graph_y', JSON.stringify(y));
-
-        this.setState({
-          options: {
-            xaxis: {
-              categories: x
-            },
-            annotations: {
-              xaxis: [
-                {
-                  x: x[x.length - 1],
-                  borderColor: '#00E396',
-                  label: {
-                    borderColor: '#00E396',
-                    orientation: 'horizontal',
-                    text: 'Prediction'
-                  }
-                }
-              ]
-            }
-          },
-          series: [{
-            name: "Bikes in use",
-            data: y
-          }]
-        });
+        console.log(x, y);
+        this.setBikesGraph(x, y);
       })
       .catch(err => {
         console.log(err);
         alert('Offline');
         const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
         const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
-        
+        console.log(x, y);
         if (x && y) {
-          this.setState({
-            options: {
-              xaxis: {
-                categories: x
-              },
-              annotations: {
-                xaxis: [
-                  {
-                    x: x[x.length - 1],
-                    borderColor: '#00E396',
-                    label: {
-                      borderColor: '#00E396',
-                      orientation: 'horizontal',
-                      text: 'Prediction'
-                    }
-                  }
-                ]
-              }
-            },
-            series: [{
-              name: "Bikes in use",
-              data: y
-            }]
-          })
+          this.setBikesGraph(x, y);
         }
       });
   }
