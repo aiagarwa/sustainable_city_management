@@ -131,8 +131,8 @@ def fetch_data_from_db_for_day(dateForData):
         },
     ]
     q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
-    print(list(q_set))
-    return list(q_set)
+    list_q_set = list(q_set)
+    return list_q_set
 
 # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
 def fetch_data_from_db_for_minutes(minutes):
@@ -157,8 +157,7 @@ def fetch_data_from_db_for_minutes(minutes):
         },
     ]
     q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
-    # print(list(q_set))
     return list(q_set)
 
-fetch_data_from_db_for_day(datetime.strptime("20210214","%Y%m%d"))
-# fetch_data_from_db_for_minutes(60)
+# save_historic_data_in_db(1)
+# save_bike_stands_location()

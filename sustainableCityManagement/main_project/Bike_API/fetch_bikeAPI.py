@@ -8,7 +8,7 @@ from .store_bikedata_to_database import fetch_data_from_db_for_minutes
 from .store_bikedata_to_database import fetch_bike_stands_location
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
-def bikeapi(historical = False, locations = False, minutes_delay = 5, days_historical = 0):
+def bikeapi(historical = False, locations = False, minutes_delay = 30, days_historical = 0):
     now_time = datetime.now()
     tmp_result = []
     result_response = {}
@@ -27,32 +27,42 @@ def bikeapi(historical = False, locations = False, minutes_delay = 5, days_histo
         delay_time_formatted = datetime.strptime(delay_time,"%Y%m%d%H%M")
         tmp_result = fetch_data_from_db_for_day(delay_time_formatted)
 
-# To be fixed.
-    # else:
-    #     tmp_result = fetch_Data_from_DB_for_minutes(minutes_delay) 
-
-    counter = 0
-    locations_arr = []
-    for locations in tmp_result:
-        if locations["name"] not in locations_arr :
-            locations_arr.append(locations["name"])
-
-# Going through all the locations in the fetched data from DB and storing the average of daily usage for the location.
-    for location in locations_arr :
-        in_use_bikes_arr = []
+# Going through all the items in the fetched data from DB and storing the average of daily usage (Location based).
         for item in tmp_result:
-            if location == item["name"]:
-                in_use_bikes_arr.append(item["available_bike_stands"])
-                bike_stands = item["bike_stands"]
-                timestamp = delay_time
+            in_use_bikes_arr = []
+            for stand_details in item["historical"]:
+                in_use_bikes_arr.append(stand_details["available_bike_stands"])
+                bike_stands = stand_details["bike_stands"]
                 in_use_bikes = sum(in_use_bikes_arr)//len(in_use_bikes_arr)
-        
+
 # TOTAL_STANDS represents total number of stands at the location.
 # IN_USE represents total number of bike in usage.
 # DAY represents the date for which data is fetched.
-        result_response[location] = {
+            result_response[item["name"]] = {
                                     "TOTAL_STANDS" : bike_stands,
                                     "IN_USE" : in_use_bikes,
                                     "DAY" : (now_time - timedelta(days=days_historical)).strftime("%Y-%m-%d")
                                     }
+
+# If historical is not true, live data is provided.
+    else:
+        tmp_result = fetch_data_from_db_for_minutes(minutes_delay) 
+
+# Going through all the items in the fetched data from DB and storing the average of daily usage (Overall).
+        for item in tmp_result:
+            in_use_bikes_arr = []
+            for stand_details in item["historical"]:
+                in_use_bikes_arr.append(stand_details["available_bike_stands"])
+                bike_stands = stand_details["bike_stands"]
+                in_use_bikes = sum(in_use_bikes_arr)//len(in_use_bikes_arr)
+
+# TOTAL_STANDS represents total number of stands at the location.
+# IN_USE represents total number of bike in usage.
+# DAY represents the date for which data is fetched.
+            result_response[item["name"]] = {
+                                    "TOTAL_STANDS" : bike_stands,
+                                    "IN_USE" : in_use_bikes,
+                                    "TIME" : now_time.strftime("%Y-%m-%d %H:%M")
+                                    }
+
     return(result_response)
