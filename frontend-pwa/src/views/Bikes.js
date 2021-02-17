@@ -104,11 +104,9 @@ class Bikes extends React.Component {
         console.log(res.data);
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
         const y = Object.values(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
-        console.log(x, y);
 
         localStorage.setItem('bikestands_graph_x', JSON.stringify(x));
         localStorage.setItem('bikestands_graph_y', JSON.stringify(y));
-        console.log(x, y);
         this.setBikesGraph(x, y);
       })
       .catch(err => {
@@ -116,10 +114,25 @@ class Bikes extends React.Component {
         alert('Offline');
         const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
         const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
-        console.log(x, y);
+
         if (x && y) {
           this.setBikesGraph(x, y);
         }
+      });
+  }
+
+  onChangeBikeStation = (e) => {
+    const station = e.target.value;
+    axios
+      .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5")
+      .then((res) => {
+        this.setState({ bikeStationSelection: station });
+        const x = Object.keys(res.data.DATA.RESULT[station].IN_USE);
+        const y = Object.values(res.data.DATA.RESULT[station].IN_USE);
+        this.setBikesGraph(x, y);
+      })
+      .catch(err => {
+        console.log(err);
       });
   }
 
@@ -134,6 +147,7 @@ class Bikes extends React.Component {
         },
       },
       series: [],
+      bikeStationSelection: 'ALL'
     };
   }
 
@@ -181,8 +195,8 @@ class Bikes extends React.Component {
                   <FormGroup row>
                     <Col sm={12} md={4}>
                       <Label>Bike station selection</Label>
-                      <Input type="select" name="select">
-                        <option>All</option>
+                      <Input type="select" name="select" onChange={this.onChangeBikeStation} value={this.state.bikeStationSelection}>
+                        <option>ALL</option>
                         {this.state.markers.map(({ position, content }, index) =>
                           <option key={index}>{content}</option>)}
                       </Input>
