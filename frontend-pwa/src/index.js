@@ -16,15 +16,18 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 import AdminLayout from "layouts/Admin.js";
 
 const hist = createBrowserHistory();
+const OnlineContext = React.createContext('online');
 
 ReactDOM.render(
   <React.StrictMode>
-      <Router history={hist}>
-        <Switch>
+    <Router history={hist}>
+      <Switch>
+        <OnlineContext.Provider value="online">
           <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
           <Redirect to="/admin/dashboard" />
-        </Switch>
-      </Router>
+        </OnlineContext.Provider>
+      </Switch>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -96,6 +96,9 @@ class Bikes extends React.Component {
         markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
 
         this.setState({ markers });
+      })
+      .catch(err => {
+        console.log(err);
       });
 
     axios

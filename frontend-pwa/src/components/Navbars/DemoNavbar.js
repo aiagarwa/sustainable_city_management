@@ -35,7 +35,7 @@ import {
   InputGroupAddon,
   Input,
 } from "reactstrap";
-
+import { Offline, Online } from "react-detect-offline";
 import routes from "routes.js";
 
 class Header extends React.Component {
@@ -139,7 +139,15 @@ class Header extends React.Component {
                 <span className="navbar-toggler-bar bar3" />
               </button>
             </div>
-            <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
+            <NavbarBrand href="/">
+              {this.getBrand()}
+              <Online>
+                <i class="fas fa-wifi" style={{color: "green"}}></i>
+              </Online>
+              <Offline>
+                <i class="fas fa-wifi" style={{color: "red"}}></i>
+              </Offline>
+            </NavbarBrand>
           </div>
           <NavbarToggler onClick={this.toggle}>
             <span className="navbar-toggler-bar navbar-kebab" />
