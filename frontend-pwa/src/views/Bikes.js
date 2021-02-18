@@ -78,20 +78,33 @@ class Bikes extends React.Component {
     });
   }
 
+  async getLiveValues() {
+    try {
+      const res = await axios.get("http://127.0.0.1:8000/main/bikestands_details/?type=live")
+      const bikeStationsLive = res.data.DATA.RESULT;
+      return bikeStationsLive;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   componentDidMount() {
     this.setState({graphLoading: true});
     axios
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.data);
         const { markers } = this.state;
 
         const bikeStations = res.data.DATA.RESULT;
+        const bikeLiveData = await this.getLiveValues();
 
         for (const station of Object.keys(bikeStations)) {
           markers.push({
             position: [bikeStations[station].LATITUDE, bikeStations[station].LONGITUDE],
-            content: station
+            content: station,
+            total_stands: bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data",
+            in_use: bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data"
           });
         }
 
@@ -176,10 +189,12 @@ class Bikes extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(({ position, content }, idx) =>
+                      {this.state.markers.map(({ position, content, total_stands, in_use}, idx) =>
                         <Marker key={`marker-${idx}`} position={position}>
                           <Popup>
-                            <span>{content}</span>
+                            <p><b>{content}</b></p>
+                            <p>{"Total Stands: " + total_stands}</p>
+                            <p>{"Bikes in use: " + in_use}</p>
                           </Popup>
                         </Marker>
                       )}
