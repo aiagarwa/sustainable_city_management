@@ -166,12 +166,12 @@ class Bikes extends React.Component {
           <Row>
             <Col md="12">
               <Card>
-                <CardHeader>Open Street Maps</CardHeader>
+                <CardHeader>Bikes Availability</CardHeader>
                 <CardBody>
                   <div
                     className="leaflet-container"
                   >
-                    <MapContainer style={{ width: '100%', height: '600px' }} center={[53.34, -6.28]} zoom={12} scrollWheelZoom={false}>
+                    <MapContainer style={{ width: '100%', height: '600px' }} center={[53.345, -6.26]} zoom={13} scrollWheelZoom={false}>
                       <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -141,6 +141,7 @@ class Header extends React.Component {
             </div>
             <NavbarBrand href="/">
               {this.getBrand()}
+              &nbsp;
               <Online>
                 <i class="fas fa-wifi" style={{color: "green"}}></i>
               </Online>
