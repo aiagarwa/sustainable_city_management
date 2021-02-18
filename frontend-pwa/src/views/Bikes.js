@@ -73,11 +73,13 @@ class Bikes extends React.Component {
       series: [{
         name: "Bikes in use",
         data: y
-      }]
+      }],
+      graphLoading: false
     });
   }
 
   componentDidMount() {
+    this.setState({graphLoading: true});
     axios
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
       .then((res) => {
@@ -125,6 +127,7 @@ class Bikes extends React.Component {
   }
 
   onChangeBikeStation = (e) => {
+    this.setState({graphLoading: true});
     const station = e.target.value;
     axios
       .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5")
@@ -136,6 +139,7 @@ class Bikes extends React.Component {
       })
       .catch(err => {
         console.log(err);
+        this.setState({graphLoading: false});
       });
   }
 
@@ -150,7 +154,8 @@ class Bikes extends React.Component {
         },
       },
       series: [],
-      bikeStationSelection: 'ALL'
+      bikeStationSelection: 'ALL',
+      graphLoading: true
     };
   }
 
@@ -188,7 +193,9 @@ class Bikes extends React.Component {
             <Col md="12">
               <Card className="card-chart">
                 <CardHeader>
-                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                  <CardTitle tag="h5">
+                    Bikes Usage <i style={{display: this.state.graphLoading ? "inline-block" : "none"}} className="fas fa-sync-alt fa-spin fa-1x fa-fw"></i>
+                  </CardTitle>
                   <p className="card-category">
                     Evolution of bikes usage over time
                   </p>
