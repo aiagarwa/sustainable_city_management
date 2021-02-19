@@ -109,11 +109,14 @@ class Bikes extends React.Component {
         }
 
         markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
-
+        localStorage.setItem('bikestands_stations', JSON.stringify(markers));
+        
         this.setState({ markers });
       })
       .catch(err => {
         console.log(err);
+        const markers = JSON.parse(localStorage.getItem('bikestands_stations'));
+        this.setState({ markers });
       });
 
     axios
