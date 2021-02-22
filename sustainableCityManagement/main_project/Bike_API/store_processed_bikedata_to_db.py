@@ -162,17 +162,27 @@ def store_predict_data_in_db(days_historical):
 
 def fetch_processed_data(days_historical):
     now_time = datetime.now(pytz.utc)
-    for i in range(days_historical):
-        data_day = (now_time - timedelta(days=i)).strftime("%Y-%m-%dT00:00:00Z")
-        data_day_formatted = datetime.strptime(data_day, "%Y-%m-%dT%H:%M:%SZ")
-        pipeline = [
-        {
-            "$unwind":"$data"
-        } ,  
-        { "$match" : { "data.day" : data_day_formatted} } 
-        ]
-        q_set = BikeProcessedData.objects().aggregate(*pipeline)
-        list_q_set = list(q_set)
+    curr_time = now_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+    curr_time_formatted = datetime.strptime(curr_time, "%Y-%m-%dT%H:%M:%SZ")
+    data_day = (now_time - timedelta(days=days_historical)).strftime("%Y-%m-%dT00:00:00Z")
+    data_day_formatted = datetime.strptime(data_day, "%Y-%m-%dT%H:%M:%SZ")
+    pipeline = [
+    { "$project": {
+        "data": {"$filter": {
+            "input": "$data",
+            "as": "data",
+            "cond": {"$and":[ 
+                { "$lte": ["$$data.day",curr_time_formatted]},
+                { "$gte": ["$$data.day", data_day_formatted]}
+            ]}
+        }
+        },
+        "name":"$name",
+        "_id":0} 
+        },
+    ]
+    q_set = BikeProcessedData.objects().aggregate(*pipeline)
+    list_q_set = list(q_set)
     print(list_q_set)
     return list_q_set
 
@@ -196,7 +206,7 @@ def fetch_predicted_data(predict_date):
 
 
 
-# # fetch_processed_data(5)
-now_time = datetime.now(pytz.utc)
-predict_date = (now_time - timedelta(days=-1)).strftime("%Y-%m-%dT00:00:00Z")
-fetch_predicted_data(predict_date)
+# fetch_processed_data(4)
+# now_time = datetime.now(pytz.utc)
+# predict_date = (now_time - timedelta(days=-1)).strftime("%Y-%m-%dT00:00:00Z")
+# fetch_predicted_data(predict_date)
