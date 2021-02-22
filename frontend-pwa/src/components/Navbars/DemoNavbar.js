@@ -139,8 +139,9 @@ class Header extends React.Component {
                 <span className="navbar-toggler-bar bar3" />
               </button>
             </div>
-            <NavbarBrand href="/">
+            <NavbarBrand href="">
               {this.getBrand()}
+              &nbsp;
               <Online>
                 <i class="fas fa-wifi" style={{color: "green"}}></i>
               </Online>
