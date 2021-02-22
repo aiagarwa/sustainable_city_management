@@ -66,3 +66,5 @@ def bikeapi(historical = False, locations = False, minutes_delay = 30, days_hist
                                     }
 
     return(result_response)
+
+# print(fetch_data_from_db_for_minutes(60))

@@ -16,10 +16,7 @@ class BikeAvailability(EmbeddedDocument):
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity 
 class BikeStands(Document):
-    address = StringField(max_length=200, required=True)
     historical = ListField(EmbeddedDocumentField(BikeAvailability))
-    latitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    longitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsage'}
 
@@ -54,10 +51,10 @@ def bikedata_day(days_historical):
     for item in tmp_result:
         biketemp = BikeStands._get_collection().count_documents({ 'name': item["name"] }) # Get the number of documents with a particular location name
         if biketemp < 1 :
-            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+            bikestands = BikeStands(name = item["name"])
             bikestands.save()  # Saves Location details in MongoDB as a Document if it does not exist
         else:
-            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+            bikestands = BikeStands(name = item["name"])
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
@@ -82,10 +79,10 @@ def bikedata_minutes():
     for item in tmp_result:
         biketemp = BikeStands._get_collection().count_documents({ 'name': item["name"] }) # Get the number of documents with a particular location name
         if biketemp < 1 :
-            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+            bikestands = BikeStands(name = item["name"])
             bikestands.save()  # Saves Location details in MongoDB as a Document if it does not exist
         else:
-            bikestands = BikeStands(name = item["name"], address = item["address"], latitude = item["latitude"], longitude = item["longitude"])
+            bikestands = BikeStands(name = item["name"])
         bikestands = bikestands._qs.filter(name = item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
@@ -159,5 +156,5 @@ def fetch_data_from_db_for_minutes(minutes):
     q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
     return list(q_set)
 
-save_historic_data_in_db(5)
+# save_historic_data_in_db(5)
 # save_bike_stands_location()
