@@ -156,9 +156,9 @@ def fetch_data_from_db_for_minutes(minutes):
     q_set = BikeStands.objects().aggregate(*pipeline)# Fetch Data from DB
     return list(q_set)
 
-In = input("SAVE DATA IN DB ? :")
-if In == "yes":
-    save_historic_data_in_db(5)
-    save_bike_stands_location()
-else:
-    pass
+# In = input("SAVE DATA IN DB ? :")
+# if In == "yes":
+#     save_historic_data_in_db(5)
+#     save_bike_stands_location()
+# else:
+#     pass

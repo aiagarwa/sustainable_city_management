@@ -183,7 +183,7 @@ def fetch_processed_data(days_historical):
     ]
     q_set = BikeProcessedData.objects().aggregate(*pipeline)
     list_q_set = list(q_set)
-    print(list_q_set)
+    # print(list_q_set)
     return list_q_set
 
 def fetch_predicted_data(predict_date):
@@ -196,17 +196,9 @@ def fetch_predicted_data(predict_date):
     ]
     q_set = BikePredictedData.objects().aggregate(*pipeline)
     list_q_set = list(q_set)
-    print(list_q_set)
+    # print(list_q_set)
     return list_q_set
 
 # store_bikedata(5)
 # store_bikedata_all_locations(5)
 # store_predict_data_in_db(5)
-
-
-
-
-# fetch_processed_data(4)
-# now_time = datetime.now(pytz.utc)
-# predict_date = (now_time - timedelta(days=-1)).strftime("%Y-%m-%dT00:00:00Z")
-# fetch_predicted_data(predict_date)
