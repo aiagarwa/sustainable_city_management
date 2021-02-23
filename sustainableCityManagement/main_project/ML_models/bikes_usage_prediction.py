@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import LinearRegression
 
-def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_consider = 4):
+def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_consider = 1):
     X = []
     y = []
     for i in range(len(arrayOfUsagePerDay)-previous_days_to_consider):
@@ -15,6 +15,7 @@ def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_cons
         y.append(test_part)
     results = []
     for i in range(predictDays):
+
         reg = LinearRegression().fit(X, y)
 
         to_predict = arrayOfUsagePerDay[len(arrayOfUsagePerDay)-previous_days_to_consider:len(arrayOfUsagePerDay)]
@@ -25,4 +26,4 @@ def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_cons
         y.append(y_pred) #adding test data point (needed for training)
         results.append(y_pred) #adding prediction to results
     
-    return int(results[0])
+    return math.ceil(results[0])
