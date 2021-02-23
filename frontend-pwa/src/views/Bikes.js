@@ -102,10 +102,10 @@ class Bikes extends React.Component {
         for (const station of Object.keys(bikeStations)) {
           const totalStands = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data";
           const bikesInUse = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data";
-          const ratioInUse = bikesInUse / totalStands;
-
+          
           let markerColor = 'grey';
-          if (!isNaN(ratioInUse)) {
+          if (typeof totalStands === 'number' && typeof bikesInUse === 'number') {
+            const ratioInUse = Math.ceil(bikesInUse / totalStands * 4) / 4;
             markerColor = `rgb(${ratioInUse * 255}, ${(1-ratioInUse) * 200 + 50}, ${(1-ratioInUse) * 80})`;
           }
 
@@ -147,8 +147,8 @@ class Bikes extends React.Component {
         this.setBikesGraph(x, y);
       })
       .catch(err => {
-        console.log(err);
         alert('Offline');
+        console.log(err);
         const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
         const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
 
