@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from .fetch_bikeapi import bikeapi
 from .store_bikedata_to_database import fetch_bike_stands_location
 from .store_processed_bikedata_to_db import *
+
 # Below function is used for calling the graph values for bike usage on the basis of location.
 def graphvalue_call_locationbased(days_historical = 5):
     if days_historical == 1 or days_historical == 0:
