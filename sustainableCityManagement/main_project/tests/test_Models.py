@@ -44,7 +44,7 @@ def test_getting_todos(mock_get):
     assert_is_not_none(response)
 
 
-def test_integration_contract():
+def test_location_contract():
     # Call the service to hit the actual API.
     actual = get_location()
     actual_keys = actual.json().pop().keys()
@@ -63,6 +63,39 @@ def test_integration_contract():
             }]
 
         mocked = get_location()
+        mocked_keys = mocked.json().pop().keys()
+
+    # An object from the actual API and an object from the mocked API should have
+    # the same data structure.
+    assert_list_equal(list(actual_keys), list(mocked_keys))
+
+
+def test_bikedata_contract():
+    # Call the service to hit the actual API.
+    actual = get_bikedata_day(0)
+    actual_keys = actual.json().pop().keys()
+
+    # Call the service to hit the mocked API.
+    with patch('main_project.tests.services.requests.get') as mock_get:
+        mock_get.return_value.ok = True
+        mock_get.return_value.json.return_value = [
+            {
+                "address": "Heuston Bridge (South)",
+                "banking": "False",
+                "historic": [
+                    {
+                        "available_bike_stands": 0,
+                        "available_bikes": 25,
+                        "bike_stands": 25,
+                        "status": "open",
+                        "time": "2019-03-08T20:00:05Z"
+                    }],
+                "id": 100,
+                "latitude": 53.347107,
+                "longitude": -6.292041,
+                "name": "HEUSTON BRIDGE (SOUTH)"}]
+
+        mocked = get_bikedata_day(0)
         mocked_keys = mocked.json().pop().keys()
 
     # An object from the actual API and an object from the mocked API should have
