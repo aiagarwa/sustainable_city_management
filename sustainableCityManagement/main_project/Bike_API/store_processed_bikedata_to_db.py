@@ -156,7 +156,7 @@ def store_predict_data_in_db(days_historical):
             bikedata = BikePredictedData(name = item["name"])
         q_set = BikePredictedData.objects(name=item["name"]).aggregate(*pipeline)
         if len(list(q_set)) < 1 :
-            bikesAvailability = BikeAvailabilityPredictedData(day = day_ahead, total_stands = item["total"], in_use = predict_bikes_usage(item["in_use"], previous_days_to_consider = days_historical - 1))
+            bikesAvailability = BikeAvailabilityPredictedData(day = day_ahead, total_stands = item["total"], in_use = predict_bikes_usage(item["in_use"]))
             bikedata.data.append(bikesAvailability)
             bikedata.save()
 
