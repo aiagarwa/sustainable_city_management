@@ -2,12 +2,16 @@ from .store_bikedata_to_database import fetch_data_from_db_for_day
 from .store_bikedata_to_database import fetch_data_from_db_for_minutes
 from .store_bikedata_to_database import fetch_bike_stands_location
 from ..ML_models.bikes_usage_prediction import predict_bikes_usage
+from ..Config.config_handler import read_config
 from mongoengine import *
 from datetime import datetime, timedelta
 import pytz
 
 # Connect to Database
-connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainableCityManagement')
+config_vals = read_config("Bike_API")
+host_db = "mongodb://127.0.0.1:%d/%s"%(config_vals["db_port"],config_vals["db_name"])
+connect(config_vals["db_name"], host=host_db)
+
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 class BikeAvailabilityProcessedData(EmbeddedDocument):
@@ -199,6 +203,6 @@ def fetch_predicted_data(predict_date):
     # print(list_q_set)
     return list_q_set
 
-# store_bikedata(5)
-# store_bikedata_all_locations(5)
-# store_predict_data_in_db(5)
+store_bikedata(5)
+store_bikedata_all_locations(5)
+store_predict_data_in_db(5)

@@ -1,0 +1,11 @@
+Bike_API:
+  stations_api_url : https://dublinbikes.staging.derilinx.com/api/v1/resources/stations
+  location_api_url : https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/
+  db_name : sustainableCityManagementTest
+  db_port : 27017
+  default_days_historic : 5
+  default_live_delay_minutes : 5
+
+Bus_API:
+  api_url : https://dummy.XD
+  db_name : sustainableCityManagement

@@ -3,9 +3,13 @@ import requests
 import json
 from datetime import datetime, timedelta
 import pytz
+from ..Config.config_handler import read_config
+
 
 # Connect to Database
-connect('sustainableCityManagement', host='mongodb://127.0.0.1:27017/sustainableCityManagement')
+config_vals = read_config("Bike_API")
+host_db = "mongodb://127.0.0.1:%d/%s"%(config_vals["db_port"],config_vals["db_name"])
+connect(config_vals["db_name"], host=host_db)
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 class BikeAvailability(EmbeddedDocument):
@@ -28,7 +32,7 @@ class BikesStandsLocation(Document):
     meta = {'collection': 'BikeStandsLocation'}
 
 def save_bike_stands_location():
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/stations"
+    url = config_vals["stations_api_url"]
     payload={} 
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
@@ -43,7 +47,7 @@ def bikedata_day(days_historical):
     now_time = datetime.now(pytz.utc)
     curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
     delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time)
+    url = config_vals["location_api_url"] + "?dfrom="+str(delay_time)+"&dto="+str(curr_time)
     payload={} 
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
@@ -66,12 +70,12 @@ def bikedata_day(days_historical):
             print("Empty")
 
 # This method gets the data from API every 5 minutes and store in DB.
-def bikedata_minutes():
+def bikedata_minutes(minutes_delay = 5):
     now_time = datetime.now(pytz.utc)
     curr_time = now_time.strftime("%Y%m%d%H%M") 
     url = ""
-    delay_time =  (now_time - timedelta(minutes=5)).strftime("%Y%m%d%H%M")
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom="+str(delay_time)+"&dto="+str(curr_time)
+    delay_time =  (now_time - timedelta(minutes=minutes_delay)).strftime("%Y%m%d%H%M")
+    url = config_vals["location_api_url"] + "?dfrom="+str(delay_time)+"&dto="+str(curr_time)
     payload={} 
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload) # Fetching response from the URL.
@@ -158,7 +162,7 @@ def fetch_data_from_db_for_minutes(minutes):
 
 # In = input("SAVE DATA IN DB ? :")
 # if In == "yes":
-#     save_historic_data_in_db(5)
-#     save_bike_stands_location()
+save_historic_data_in_db(5)
+save_bike_stands_location()
 # else:
 #     pass
