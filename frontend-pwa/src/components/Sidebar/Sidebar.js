@@ -51,7 +51,61 @@ class Sidebar extends React.Component {
     }
   }
   render() {
-    const { isAuthenticated } = this.props.auth0;
+    const { isLoading, isAuthenticated, loginWithRedirect, logout } = this.props.auth0;
+
+    let logInOutButton;
+    if (isAuthenticated) {
+      logInOutButton = (<li>
+        <a
+          onClick={() => logout()}
+          className="nav-link"
+          activeClassName="active"
+        >
+          <i className="fas fa-user-slash" />
+          <p>Logout</p>
+        </a>
+      </li>)
+    } else {
+      logInOutButton = (<li>
+        <a
+          onClick={() => loginWithRedirect()}
+          className="nav-link"
+          activeClassName="active"
+        >
+          <i className="fas fa-user-tie" />
+          <p>Login</p>
+        </a>
+      </li>)
+    }
+
+    let nav = <Nav><li><a className="nav-link">Loading...</a></li></Nav>;
+    if (!isLoading) {
+      nav = (<Nav>
+        {logInOutButton}
+        {this.props.routes.map((prop, key) => {
+          if (prop.requiresAuth && !isAuthenticated) return;
+  
+          return (
+            <li
+              className={
+                this.activeRoute(prop.path) +
+                (prop.pro ? " active-pro" : "")
+              }
+              key={key}
+            >
+              <NavLink
+                to={prop.layout + prop.path}
+                className="nav-link"
+                activeClassName="active"
+              >
+                <i className={prop.icon} />
+                <p>{prop.name}</p>
+              </NavLink>
+            </li>
+          );
+        })}
+      </Nav>);
+    }
 
     return (
       <div
@@ -76,30 +130,7 @@ class Sidebar extends React.Component {
           </a>
         </div>
         <div className="sidebar-wrapper" ref={this.sidebar}>
-          <Nav>
-            {this.props.routes.map((prop, key) => {
-              if (prop.requiresAuth && !isAuthenticated) return;
-
-              return (
-                <li
-                  className={
-                    this.activeRoute(prop.path) +
-                    (prop.pro ? " active-pro" : "")
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.layout + prop.path}
-                    className="nav-link"
-                    activeClassName="active"
-                  >
-                    <i className={prop.icon} />
-                    <p>{prop.name}</p>
-                  </NavLink>
-                </li>
-              );
-            })}
-          </Nav>
+          {nav}
         </div>
       </div>
     );

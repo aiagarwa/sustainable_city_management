@@ -17,6 +17,7 @@
 
 */
 import React from "react";
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 
 // reactstrap components
 import { Card, CardHeader, CardBody, CardTitle, Row, Col } from "reactstrap";
@@ -553,4 +554,7 @@ class Icons extends React.Component {
   }
 }
 
+// export default withAuthenticationRequired(Icons, {
+//   // onRedirecting: () => <div>Redirecting you to the login page...</div>,
+// });
 export default Icons;

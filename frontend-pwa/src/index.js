@@ -24,7 +24,7 @@ ReactDOM.render(
       domain={process.env.REACT_APP_AUTH0_DOMAIN}
       clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
       // redirectUri={window.location.origin + "/admin/login"}
-      redirectUri="http://localhost:3000/admin/login"
+      redirectUri="http://localhost:3000/admin/dashboard"
     >
       <Router history={hist}>
         <Switch>

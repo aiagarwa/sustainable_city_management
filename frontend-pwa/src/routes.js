@@ -29,20 +29,20 @@ import Login from "views/Login.js"
 // import UpgradeToPro from "views/Upgrade.js";
 
 var routes = [
-  {
-    path: "/login",
-    name: "Login",
-    icon: "fas fa-university",
-    component: Login,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/login",
+  //   name: "Login",
+  //   icon: "fas fa-university",
+  //   component: Login,
+  //   layout: "/admin",
+  // },
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: "fas fa-university",
     component: Dashboard,
     layout: "/admin",
-    requiresAuth: true,
+    requiresAuth: false,
   },
   // {
   //   path: "/bikes",
@@ -65,6 +65,7 @@ var routes = [
     icon: "fas fa-bus-alt",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/traffic",
@@ -72,6 +73,7 @@ var routes = [
     icon: "fas fa-traffic-light",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/bins",
@@ -79,6 +81,7 @@ var routes = [
     icon: "fas fa-dumpster",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/parkings",
