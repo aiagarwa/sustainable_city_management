@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { withAuth0 } from "@auth0/auth0-react";
 
-const LoginButton = () => {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+class LoginButton extends Component {
+  render() {
+    const { loginWithRedirect, isAuthenticated } = this.props.auth0;
 
-  return (
-    !isAuthenticated && (
-      <button onClick={() => loginWithRedirect()}>Log In</button>
+    return (
+      !isAuthenticated && (
+        <button onClick={() => loginWithRedirect()}>Log In</button>
+      )
     )
+  }
+}
 
-    
-  );
-};
-
-export default LoginButton;
+export default withAuth0(LoginButton);

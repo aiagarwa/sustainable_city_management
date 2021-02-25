@@ -42,6 +42,7 @@ var routes = [
     icon: "fas fa-university",
     component: Dashboard,
     layout: "/admin",
+    requiresAuth: true,
   },
   // {
   //   path: "/bikes",
@@ -56,6 +57,7 @@ var routes = [
     icon: "fas fa-bicycle",
     component: Bikes,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/buses",

@@ -23,6 +23,7 @@ import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 
 import logo from "logo.svg";
+import { withAuth0 } from '@auth0/auth0-react';
 
 var ps;
 
@@ -50,6 +51,8 @@ class Sidebar extends React.Component {
     }
   }
   render() {
+    const { isAuthenticated } = this.props.auth0;
+
     return (
       <div
         className="sidebar"
@@ -75,6 +78,8 @@ class Sidebar extends React.Component {
         <div className="sidebar-wrapper" ref={this.sidebar}>
           <Nav>
             {this.props.routes.map((prop, key) => {
+              if (prop.requiresAuth && !isAuthenticated) return;
+
               return (
                 <li
                   className={
@@ -101,4 +106,4 @@ class Sidebar extends React.Component {
   }
 }
 
-export default Sidebar;
+export default withAuth0(Sidebar);
