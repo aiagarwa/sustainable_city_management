@@ -3,10 +3,30 @@ import requests
 import json
 from datetime import datetime, timedelta
 import pytz
+import logging
+
+# Creating custom logger to store logging information.
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)$:%(name)$:%(message)$')
+file_handler = logging.FileHandler('.logs.store_bikedata_to_database.log')
+file_handler.setLevel(logging.ERROR)
+file_handler.setFormatter(formatter)
+
+# To create handler that prints logging info on console.
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addhandler(stream_handler)
 
 # Connect to Database
-connect('sustainableCityManagement',
+try:
+    connect('sustainableCityManagement',
         host='mongodb://127.0.0.1:27017/sustainableCityManagement')
+except DbConnectionFailure:
+    logger.error('Database is not reachable')
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 
@@ -43,16 +63,20 @@ def save_bike_stands_location():
     response = requests.request("GET", url, headers=headers, data=payload)
     loc_result = json.loads(response.text)
     for item in loc_result:
-<<<<<<< HEAD
+
+
+<< << << < HEAD
         standLocations = BikesStandsLocation(
             name=item["st_NAME"], latitude=item["st_LATITUDE"], longitude=item["st_LONGITUDE"])
         standLocations.save()
-=======
-        loctemp = BikesStandsLocation._get_collection().count_documents({ 'name': item["st_NAME"] }) # Get the number of documents with a particular location name
-        if loctemp < 1 :
-            standLocations = BikesStandsLocation(name = item["st_NAME"], latitude = item["st_LATITUDE"], longitude = item["st_LONGITUDE"])
+== == == =
+        loctemp = BikesStandsLocation._get_collection().count_documents(
+            {'name': item["st_NAME"]})  # Get the number of documents with a particular location name
+        if loctemp < 1:
+            standLocations = BikesStandsLocation(
+                name=item["st_NAME"], latitude=item["st_LATITUDE"], longitude=item["st_LONGITUDE"])
             standLocations.save()
->>>>>>> 8fc41da9b7500b07be41fccc1ff904e86a9690d4
+>>>>>> > 8fc41da9b7500b07be41fccc1ff904e86a9690d4
 
 
 # This method gets the data from API for a single day and store in DB.
@@ -117,8 +141,10 @@ def bikedata_minutes():
         bikestands = bikestands._qs.filter(name=item["name"]).first()
         if bikestands is not None:
             for stand_details in item["historic"]:
+
+
                 # print(stand_details["time"])
-<<<<<<< HEAD
+<< << << < HEAD
                 datetimeConvert = datetime.strptime(
                     stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
                 bikesAvailability = BikeAvailability(
