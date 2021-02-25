@@ -3,6 +3,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 import pytz
+<<<<<<< HEAD
 import logging
 
 # Creating custom logger to store logging information.
@@ -27,6 +28,15 @@ try:
         host='mongodb://127.0.0.1:27017/sustainableCityManagement')
 except DbConnectionFailure:
     logger.error('Database is not reachable')
+=======
+from ..Config.config_handler import read_config
+
+
+# Connect to Database
+config_vals = read_config("Bike_API")
+host_db = "mongodb://127.0.0.1:%d/%s"%(config_vals["db_port"],config_vals["db_name"])
+connect(config_vals["db_name"], host=host_db)
+>>>>>>> 58bc81bfa115fdadd739973f927cd28c7b2b9086
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 
@@ -56,13 +66,14 @@ class BikesStandsLocation(Document):
 
 
 def save_bike_stands_location():
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/stations"
-    payload = {}
+    url = config_vals["stations_api_url"]
+    payload={} 
     headers = {}
     # Fetching response from the URL.
     response = requests.request("GET", url, headers=headers, data=payload)
     loc_result = json.loads(response.text)
     for item in loc_result:
+<<<<<<< HEAD
 
 
 << << << < HEAD
@@ -77,18 +88,21 @@ def save_bike_stands_location():
                 name=item["st_NAME"], latitude=item["st_LATITUDE"], longitude=item["st_LONGITUDE"])
             standLocations.save()
 >>>>>> > 8fc41da9b7500b07be41fccc1ff904e86a9690d4
+=======
+        loctemp = BikesStandsLocation._get_collection().count_documents({ 'name': item["st_NAME"] }) # Get the number of documents with a particular location name
+        if loctemp < 1 :
+            standLocations = BikesStandsLocation(name = item["st_NAME"], latitude = item["st_LATITUDE"], longitude = item["st_LONGITUDE"])
+            standLocations.save()
+>>>>>>> 58bc81bfa115fdadd739973f927cd28c7b2b9086
 
 
 # This method gets the data from API for a single day and store in DB.
 def bikedata_day(days_historical):
     now_time = datetime.now(pytz.utc)
-    curr_time = (now_time - timedelta(days=days_historical)
-                 ).strftime("%Y%m%d%H%M")
-    delay_time = (now_time - timedelta(days=days_historical + 1)
-                  ).strftime("%Y%m%d%H%M")
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom=" + \
-        str(delay_time)+"&dto="+str(curr_time)
-    payload = {}
+    curr_time = (now_time - timedelta(days=days_historical)).strftime("%Y%m%d%H%M") 
+    delay_time =  (now_time - timedelta(days=days_historical + 1)).strftime("%Y%m%d%H%M")
+    url = config_vals["location_api_url"] + "?dfrom="+str(delay_time)+"&dto="+str(curr_time)
+    payload={} 
     headers = {}
     # Fetching response from the URL.
     response = requests.request("GET", url, headers=headers, data=payload)
@@ -115,16 +129,13 @@ def bikedata_day(days_historical):
             print("Empty")
 
 # This method gets the data from API every 5 minutes and store in DB.
-
-
-def bikedata_minutes():
+def bikedata_minutes(minutes_delay = 5):
     now_time = datetime.now(pytz.utc)
     curr_time = now_time.strftime("%Y%m%d%H%M")
     url = ""
-    delay_time = (now_time - timedelta(minutes=5)).strftime("%Y%m%d%H%M")
-    url = "https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/?dfrom=" + \
-        str(delay_time)+"&dto="+str(curr_time)
-    payload = {}
+    delay_time =  (now_time - timedelta(minutes=minutes_delay)).strftime("%Y%m%d%H%M")
+    url = config_vals["location_api_url"] + "?dfrom="+str(delay_time)+"&dto="+str(curr_time)
+    payload={} 
     headers = {}
     # Fetching response from the URL.
     response = requests.request("GET", url, headers=headers, data=payload)
@@ -144,6 +155,7 @@ def bikedata_minutes():
 
 
                 # print(stand_details["time"])
+<<<<<<< HEAD
 << << << < HEAD
                 datetimeConvert = datetime.strptime(
                     stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
@@ -152,6 +164,8 @@ def bikedata_minutes():
                 bikestands.historical.append(bikesAvailability)
             bikestands.save()  # Saves Bike Availability Data
 =======
+=======
+>>>>>>> 58bc81bfa115fdadd739973f927cd28c7b2b9086
                 datetimeConvert = datetime.strptime(stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
                 pipeline = [
                         {
@@ -165,7 +179,6 @@ def bikedata_minutes():
                     bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = datetimeConvert)
                     bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
->>>>>>> 8fc41da9b7500b07be41fccc1ff904e86a9690d4
         else:
             print("Empty")
 
@@ -241,10 +254,9 @@ def fetch_data_from_db_for_minutes(minutes):
     q_set = BikeStands.objects().aggregate(*pipeline)  # Fetch Data from DB
     return list(q_set)
 
-In = input("SAVE DATA IN DB ? :")
+In = input("SAVE RAW DATA IN DB ? :")
 if In == "yes":
     save_historic_data_in_db(5)
     save_bike_stands_location()
 else:
     pass
-

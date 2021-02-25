@@ -21,6 +21,7 @@ import Dashboard from "views/Dashboard.js";
 // import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 import Bikes from "views/Bikes.js";
+import Login from "views/Login.js"
 // import Typography from "views/Typography.js";
 // import TableList from "views/Tables.js";
 // import Maps from "views/Map.js";
@@ -28,12 +29,20 @@ import Bikes from "views/Bikes.js";
 // import UpgradeToPro from "views/Upgrade.js";
 
 var routes = [
+  // {
+  //   path: "/login",
+  //   name: "Login",
+  //   icon: "fas fa-university",
+  //   component: Login,
+  //   layout: "/admin",
+  // },
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: "fas fa-university",
     component: Dashboard,
     layout: "/admin",
+    requiresAuth: false,
   },
   // {
   //   path: "/bikes",
@@ -48,6 +57,7 @@ var routes = [
     icon: "fas fa-bicycle",
     component: Bikes,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/buses",
@@ -55,6 +65,7 @@ var routes = [
     icon: "fas fa-bus-alt",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/traffic",
@@ -62,6 +73,7 @@ var routes = [
     icon: "fas fa-traffic-light",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/bins",
@@ -69,6 +81,7 @@ var routes = [
     icon: "fas fa-dumpster",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/parkings",

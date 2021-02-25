@@ -5,9 +5,12 @@ from datetime import datetime, timedelta
 from .fetch_bikeapi import bikeapi
 from .store_bikedata_to_database import fetch_bike_stands_location
 from .store_processed_bikedata_to_db import *
+from ..Config.config_handler import read_config
+
+config_vals = read_config("Bike_API")
 
 # Below function is used for calling the graph values for bike usage on the basis of location.
-def graphvalue_call_locationbased(days_historical = 5):
+def graphvalue_call_locationbased(days_historical = config_vals["default_days_historic"]):
     if days_historical == 1 or days_historical == 0:
             return ({"ERROR" : "Assign days_historic parameter >= 2."})
 
@@ -34,7 +37,7 @@ def graphvalue_call_locationbased(days_historical = 5):
     return resultDictionary
 
 # Below function is used for calling the graph values for overall bike usage over a given timespan and predict value a day ahead.
-def graphvalue_call_overall(days_historical = 5):
+def graphvalue_call_overall(days_historical = config_vals["default_days_historic"]):
     if days_historical == 1 or days_historical == 0:
             return ({"ERROR" : "Assign days_historic parameter >= 2."})
 

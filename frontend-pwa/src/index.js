@@ -14,17 +14,27 @@ import "assets/demo/demo.css";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import AdminLayout from "layouts/Admin.js";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 const hist = createBrowserHistory();
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router history={hist}>
-      <Switch>
-        <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-        <Redirect to="/admin/dashboard" />
-      </Switch>
-    </Router>
+    <Auth0Provider
+      domain={process.env.REACT_APP_AUTH0_DOMAIN}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+      // redirectUri={window.location.origin + "/admin/login"}
+      redirectUri="http://localhost:3000/admin/dashboard"
+    >
+      <Router history={hist}>
+        <Switch>
+          <Route exact path="/">
+            <Redirect to="/admin/dashboard" />
+          </Route>
+          <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+        </Switch>
+      </Router>
+    </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
