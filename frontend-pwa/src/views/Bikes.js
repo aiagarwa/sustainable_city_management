@@ -131,8 +131,10 @@ class Bikes extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        const markers = JSON.parse(localStorage.getItem('bikestands_stations'));
-        this.setState({ markers });
+        if (localStorage.getItem("username") != null) {
+          const markers = JSON.parse(localStorage.getItem('bikestands_stations'));
+          this.setState({ markers });
+        }
       });
 
     axios
