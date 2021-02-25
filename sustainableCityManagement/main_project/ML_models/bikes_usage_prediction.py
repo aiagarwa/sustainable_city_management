@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import LinearRegression
+from ..Config.config_handler import read_config
 
-def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_consider = 1):
+config_vals = read_config("Bike_API")
+def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_consider = config_vals["days_to_consider_for_prediction"]):
     X = []
     y = []
     for i in range(len(arrayOfUsagePerDay)-previous_days_to_consider):
