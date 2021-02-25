@@ -28,6 +28,9 @@ ReactDOM.render(
     >
       <Router history={hist}>
         <Switch>
+          <Route exact path="/">
+            <Redirect to="/admin/dashboard" />
+          </Route>
           <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
         </Switch>
       </Router>
