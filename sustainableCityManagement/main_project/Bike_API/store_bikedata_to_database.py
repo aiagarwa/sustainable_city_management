@@ -43,16 +43,10 @@ def save_bike_stands_location():
     response = requests.request("GET", url, headers=headers, data=payload)
     loc_result = json.loads(response.text)
     for item in loc_result:
-<<<<<<< HEAD
-        standLocations = BikesStandsLocation(
-            name=item["st_NAME"], latitude=item["st_LATITUDE"], longitude=item["st_LONGITUDE"])
-        standLocations.save()
-=======
         loctemp = BikesStandsLocation._get_collection().count_documents({ 'name': item["st_NAME"] }) # Get the number of documents with a particular location name
         if loctemp < 1 :
             standLocations = BikesStandsLocation(name = item["st_NAME"], latitude = item["st_LATITUDE"], longitude = item["st_LONGITUDE"])
             standLocations.save()
->>>>>>> 8fc41da9b7500b07be41fccc1ff904e86a9690d4
 
 
 # This method gets the data from API for a single day and store in DB.
@@ -118,14 +112,6 @@ def bikedata_minutes():
         if bikestands is not None:
             for stand_details in item["historic"]:
                 # print(stand_details["time"])
-<<<<<<< HEAD
-                datetimeConvert = datetime.strptime(
-                    stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
-                bikesAvailability = BikeAvailability(
-                    bike_stands=stand_details["bike_stands"], available_bike_stands=stand_details["available_bike_stands"], time=datetimeConvert)
-                bikestands.historical.append(bikesAvailability)
-            bikestands.save()  # Saves Bike Availability Data
-=======
                 datetimeConvert = datetime.strptime(stand_details["time"], "%Y-%m-%dT%H:%M:%SZ")
                 pipeline = [
                         {
@@ -139,7 +125,6 @@ def bikedata_minutes():
                     bikesAvailability = BikeAvailability(bike_stands = stand_details["bike_stands"], available_bike_stands = stand_details["available_bike_stands"], time = datetimeConvert)
                     bikestands.historical.append(bikesAvailability)
             bikestands.save() # Saves Bike Availability Data
->>>>>>> 8fc41da9b7500b07be41fccc1ff904e86a9690d4
         else:
             print("Empty")
 
