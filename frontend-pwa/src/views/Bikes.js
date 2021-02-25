@@ -37,15 +37,15 @@ import {
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow
+const iconDefault = L.divIcon({
+  className: "custom-pin",
+  iconAnchor: [0, 24],
+  labelAnchor: [-6, 0],
+  popupAnchor: [0, -36],
+  html: `<i class="fa fa-map-marker-alt fa-3x" style="color:blue;"></i>`
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
+L.Marker.prototype.options.icon = iconDefault;
 
 class Bikes extends React.Component {
 
@@ -100,11 +100,27 @@ class Bikes extends React.Component {
         const bikeLiveData = await this.getLiveValues();
 
         for (const station of Object.keys(bikeStations)) {
+          const totalStands = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data";
+          const bikesInUse = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data";
+          
+          let markerColor = 'grey';
+          if (typeof totalStands === 'number' && typeof bikesInUse === 'number') {
+            const ratioInUse = Math.ceil(bikesInUse / totalStands * 4) / 4;
+            markerColor = `rgb(${ratioInUse * 255}, ${(1-ratioInUse) * 200 + 50}, ${(1-ratioInUse) * 80})`;
+          }
+
           markers.push({
             position: [bikeStations[station].LATITUDE, bikeStations[station].LONGITUDE],
             content: station,
-            total_stands: bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data",
-            in_use: bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data"
+            totalStands: totalStands,
+            inUse: bikesInUse,
+            icon: L.divIcon({
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:${markerColor};"></i>`
+            })
           });
         }
 
@@ -115,8 +131,10 @@ class Bikes extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        const markers = JSON.parse(localStorage.getItem('bikestands_stations'));
-        this.setState({ markers });
+        if (localStorage.getItem("bikestands_stations") != null) {
+          const markers = JSON.parse(localStorage.getItem('bikestands_stations'));
+          this.setState({ markers });
+        }
       });
 
     axios
@@ -131,8 +149,8 @@ class Bikes extends React.Component {
         this.setBikesGraph(x, y);
       })
       .catch(err => {
-        console.log(err);
         alert('Offline');
+        console.log(err);
         const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
         const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
 
@@ -192,12 +210,12 @@ class Bikes extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(({ position, content, total_stands, in_use}, idx) =>
-                        <Marker key={`marker-${idx}`} position={position}>
+                      {this.state.markers.map(({ position, content, totalStands, inUse, icon}, idx) =>
+                        <Marker key={`marker-${idx}`} position={position} icon={icon}>
                           <Popup>
                             <p><b>{content}</b></p>
-                            <p>{"Total Stands: " + total_stands}</p>
-                            <p>{"Bikes in use: " + in_use}</p>
+                            <p>{"Total Stands: " + totalStands}</p>
+                            <p>{"Bikes in use: " + inUse}</p>
                           </Popup>
                         </Marker>
                       )}

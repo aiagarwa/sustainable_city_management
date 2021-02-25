@@ -1,0 +1,15 @@
+.JSONPretty {
+    margin-left: 50px;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
+}
+
+.profile>h2 {
+    margin-top: 50px;
+}
+
+.profile {
+    color: black;
+    overflow-y: scroll;
+}
