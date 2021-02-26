@@ -4,7 +4,7 @@ Bike_API:
   db_name : sustainableCityManagementTest
   db_port : 27017
   default_days_historic : 5
-  default_live_delay_minutes : 30
+  default_live_delay_minutes : 180
   # days_to_consider_for_prediction must be < default_days_historic
   days_to_consider_for_prediction : 1
 
