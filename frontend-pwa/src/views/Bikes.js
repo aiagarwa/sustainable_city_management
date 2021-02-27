@@ -33,6 +33,7 @@ import {
   FormGroup,
   Label,
   Input,
+  Table,
 } from "reactstrap";
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
@@ -89,7 +90,7 @@ class Bikes extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({graphLoading: true});
+    this.setState({ graphLoading: true });
     axios
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
       .then(async (res) => {
@@ -102,11 +103,11 @@ class Bikes extends React.Component {
         for (const station of Object.keys(bikeStations)) {
           const totalStands = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data";
           const bikesInUse = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data";
-          
+
           let markerColor = 'grey';
           if (typeof totalStands === 'number' && typeof bikesInUse === 'number') {
             const ratioInUse = Math.ceil(bikesInUse / totalStands * 4) / 4;
-            markerColor = `rgb(${ratioInUse * 255}, ${(1-ratioInUse) * 200 + 50}, ${(1-ratioInUse) * 80})`;
+            markerColor = `rgb(${ratioInUse * 255}, ${(1 - ratioInUse) * 200 + 50}, ${(1 - ratioInUse) * 80})`;
           }
 
           markers.push({
@@ -114,19 +115,19 @@ class Bikes extends React.Component {
             content: station,
             totalStands: totalStands,
             inUse: bikesInUse,
-            icon: L.divIcon({
+            icon: {
               className: "custom-pin",
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
               html: `<i class="fa fa-map-marker-alt fa-3x" style="color:${markerColor};"></i>`
-            })
+            }
           });
         }
 
         markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
         localStorage.setItem('bikestands_stations', JSON.stringify(markers));
-        
+
         this.setState({ markers });
       })
       .catch(err => {
@@ -149,7 +150,6 @@ class Bikes extends React.Component {
         this.setBikesGraph(x, y);
       })
       .catch(err => {
-        alert('Offline');
         console.log(err);
         const x = JSON.parse(localStorage.getItem('bikestands_graph_x'));
         const y = JSON.parse(localStorage.getItem('bikestands_graph_y'));
@@ -161,7 +161,7 @@ class Bikes extends React.Component {
   }
 
   onChangeBikeStation = (e) => {
-    this.setState({graphLoading: true});
+    this.setState({ graphLoading: true });
     const station = e.target.value;
     axios
       .get("http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5")
@@ -173,7 +173,7 @@ class Bikes extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        this.setState({graphLoading: false});
+        this.setState({ graphLoading: false });
       });
   }
 
@@ -198,9 +198,13 @@ class Bikes extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col md="12">
+            <Col md="9">
               <Card>
-                <CardHeader>Bikes Availability</CardHeader>
+                <CardHeader>
+                  <CardTitle tag="h5">
+                    Bikes Availability
+                  </CardTitle>
+                </CardHeader>
                 <CardBody>
                   <div
                     className="leaflet-container"
@@ -210,8 +214,8 @@ class Bikes extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(({ position, content, totalStands, inUse, icon}, idx) =>
-                        <Marker key={`marker-${idx}`} position={position} icon={icon}>
+                      {this.state.markers.map(({ position, content, totalStands, inUse, icon }, idx) =>
+                        <Marker key={`marker-${idx}`} position={position} icon={L.divIcon(icon)}>
                           <Popup>
                             <p><b>{content}</b></p>
                             <p>{"Total Stands: " + totalStands}</p>
@@ -224,13 +228,46 @@ class Bikes extends React.Component {
                 </CardBody>
               </Card>
             </Col>
+            <Col md="3">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">
+                    Recommendations
+                  </CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <Table>
+                    {/* <thead>
+                      <tr>
+                        <th>Test</th>
+                        <th>Test</th>
+                      </tr>
+                    </thead> */}
+                    <tbody>
+                      <tr>
+                        <td><span class="dot" style={{ backgroundColor: "red" }}></span></td>
+                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
+                      </tr>
+                      <tr>
+                        <td><span class="dot" style={{ backgroundColor: "orange" }}></span></td>
+                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
+                      </tr>
+                      <tr>
+                        <td><span class="dot" style={{ backgroundColor: "green" }}></span></td>
+                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
           </Row>
           <Row>
             <Col md="12">
               <Card className="card-chart">
                 <CardHeader>
                   <CardTitle tag="h5">
-                    Bikes Usage <i style={{display: this.state.graphLoading ? "inline-block" : "none"}} className="fas fa-sync-alt fa-spin fa-1x fa-fw"></i>
+                    Bikes Usage <i style={{ display: this.state.graphLoading ? "inline-block" : "none" }} className="fas fa-sync-alt fa-spin fa-1x fa-fw"></i>
                   </CardTitle>
                   <p className="card-category">
                     Evolution of bikes usage over time
