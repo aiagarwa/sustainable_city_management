@@ -198,7 +198,7 @@ def fetch_data_from_db_for_minutes():
         {"$sort":{"historical.time":1}},
         {"$group":{"_id":"$_id","name":{"$first":"$name"},"historical":{"$push":"$historical"}}},
         {"$project": {
-            "historical": {"$slice":["$historical.time",-1]
+            "historical": {"$slice":["$historical",-1]
             },
             "name":"$name",
             "_id":0}
