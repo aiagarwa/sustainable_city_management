@@ -1,17 +1,27 @@
-import json
-import collections
-from collections import Counter
-import copy
-from datetime import datetime, timedelta
-from .store_bikedata_to_database import fetch_data_from_db_for_day
-from .store_bikedata_to_database import fetch_data_from_db_for_minutes
+import sys
 from .store_bikedata_to_database import fetch_bike_stands_location
+from .store_bikedata_to_database import fetch_data_from_db_for_minutes
+from .store_bikedata_to_database import fetch_data_from_db_for_day
+from ..Logs.service_logs import bike_log
 from ..Config.config_handler import read_config
+from datetime import datetime, timedelta
+import copy
+from collections import Counter
+import collections
+import json
 
+# Calling logging function for bike _API
+logger = bike_log()
+
+# Calling Config values for processing api.
 config_vals = read_config("Bike_API")
+if config_vals is None:
+    logger.error('No data retrieved from config files.')
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
-def bikeapi(locations = False, minutes_delay = config_vals["default_live_delay_minutes"]):
+
+
+def bikeapi(locations=False, minutes_delay=config_vals["default_live_delay_minutes"]):
     now_time = datetime.now()
     tmp_result = []
     result_response = {}
@@ -19,12 +29,14 @@ def bikeapi(locations = False, minutes_delay = config_vals["default_live_delay_m
         location_data = fetch_bike_stands_location()
         for loc in location_data:
             result_response[loc["name"]] = {
-                            "LATITUDE" : loc["latitude"], 
-                            "LONGITUDE" : loc["longitude"]
-                            }
+                "LATITUDE": loc["latitude"],
+                "LONGITUDE": loc["longitude"]
+            }
+        if result_response is None:
+            logger.error('No location data was retrieved.')
         return(result_response)
 
-    tmp_result = fetch_data_from_db_for_minutes(minutes_delay) 
+    tmp_result = fetch_data_from_db_for_minutes(minutes_delay)
 
 # Going through all the items in the fetched data from DB and storing the average of daily usage (Overall).
     for item in tmp_result:
@@ -38,9 +50,10 @@ def bikeapi(locations = False, minutes_delay = config_vals["default_live_delay_m
 # IN_USE represents total number of bike in usage.
 # DAY represents the date for which data is fetched.
         result_response[item["name"]] = {
-                                "TOTAL_STANDS" : bike_stands,
-                                "IN_USE" : in_use_bikes,
-                                "TIME" : now_time.strftime("%Y-%m-%d %H:%M")
-                                }
-
+            "TOTAL_STANDS": bike_stands,
+            "IN_USE": in_use_bikes,
+            "TIME": now_time.strftime("%Y-%m-%d %H:%M")
+        }
+    if result_response is None:
+        logger.error('No bike usage data was retrieved from DB.')
     return(result_response)

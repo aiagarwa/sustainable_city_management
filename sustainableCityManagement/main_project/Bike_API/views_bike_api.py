@@ -93,9 +93,9 @@ def graph_bike_data(request):
     result = {}
     # try :
     inputType = request.query_params.get("location_based", "")
-    x = request.query_params.get("days_historic", "")
-    if len(x) != 0:
-        days_data = int(x)
+    days_historical = request.query_params.get("days_historic", "")
+    if len(days_historical) != 0:
+        days_data = int(days_historical)
 
     # If location_based is yes, then graph values for all the locations is delivered.
     if inputType == "yes":

@@ -5,11 +5,11 @@ from unittest.mock import Mock, patch
 from nose.tools import assert_is_not_none, assert_list_equal, assert_true
 
 # Local imports...
-from main_project.tests.services import get_location, get_bikedata_day, get_bikedata_minutes
+from main_project.Tests.services import get_location, get_bikedata_day, get_bikedata_minutes
 
 
-@patch('main_project.tests.services.requests.get')
-def test_get_day_request_response(mock_get):
+@patch('main_project.Tests.services.requests.get')
+def test_location_request(mock_get):
     # Configure the mock to return a response with an OK status code.
     mock_get.return_value.ok = True
 
@@ -20,8 +20,8 @@ def test_get_day_request_response(mock_get):
     assert_is_not_none(response)
 
 
-@patch('main_project.tests.services.requests.get')
-def test_get_minutes_request_response(mock_get):
+@patch('main_project.Tests.services.requests.get')
+def test_get_bikedata_day_request(mock_get):
     # Configure the mock to return a response with an OK status code.
     mock_get.return_value.ok = True
 
@@ -32,8 +32,8 @@ def test_get_minutes_request_response(mock_get):
     assert_is_not_none(response)
 
 
-@patch('main_project.tests.services.requests.get')
-def test_getting_todos(mock_get):
+@patch('main_project.Tests.services.requests.get')
+def test_get_bikedata_minutes_request(mock_get):
     # Configure the mock to return a response with an OK status code.
     mock_get.return_value.ok = True
 
@@ -50,7 +50,7 @@ def test_location_contract():
     actual_keys = actual.json().pop().keys()
 
     # Call the service to hit the mocked API.
-    with patch('main_project.tests.services.requests.get') as mock_get:
+    with patch('main_project.Tests.services.requests.get') as mock_get:
         mock_get.return_value.ok = True
         mock_get.return_value.json.return_value = [
             {
@@ -76,7 +76,7 @@ def test_bikedata_contract():
     actual_keys = actual.json().pop().keys()
 
     # Call the service to hit the mocked API.
-    with patch('main_project.tests.services.requests.get') as mock_get:
+    with patch('main_project.Tests.services.requests.get') as mock_get:
         mock_get.return_value.ok = True
         mock_get.return_value.json.return_value = [
             {
