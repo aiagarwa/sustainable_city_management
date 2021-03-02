@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import pytz
 from ..Config.config_handler import read_config
 
-
 # Connect to Database
 config_vals = read_config("Bike_API")
 host_db = "mongodb://127.0.0.1:%d/%s"%(config_vals["db_port"],config_vals["db_name"])
@@ -172,29 +171,41 @@ def fetch_data_from_db_for_day(dateForData):
 # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
 
 
-def fetch_data_from_db_for_minutes(minutes):
-    now_time = datetime.now(pytz.utc)
-    curr_time = now_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-    curr_time_formatted = datetime.strptime(curr_time, "%Y-%m-%dT%H:%M:%SZ")
-    delay_time = (now_time - timedelta(minutes=minutes)
-                  ).strftime("%Y-%m-%dT%H:%M:%SZ")
-    delay_time_formatted = datetime.strptime(delay_time, "%Y-%m-%dT%H:%M:%SZ")
+def fetch_data_from_db_for_minutes():
+    # now_time = datetime.now(pytz.utc)
+    # curr_time = now_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+    # curr_time_formatted = datetime.strptime(curr_time, "%Y-%m-%dT%H:%M:%SZ")
+    # delay_time = (now_time - timedelta(minutes=minutes)
+    #               ).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # delay_time_formatted = datetime.strptime(delay_time, "%Y-%m-%dT%H:%M:%SZ")
+    # pipeline = [
+    #     {"$project": {
+    #         "historical": {"$filter": {
+    #             "input": "$historical",
+    #             "as": "historical",
+    #             "cond": {"$and": [
+    #                 {"$lte": ["$$historical.time", curr_time_formatted]},
+    #                 {"$gte": ["$$historical.time", delay_time_formatted]}
+    #             ]}
+    #         }
+    #         },
+    #         "name":"$name",
+    #         "_id":0}
+    #      },
+    # ]
     pipeline = [
+        {"$unwind":"$historical"},
+        {"$sort":{"historical.time":1}},
+        {"$group":{"_id":"$_id","name":{"$first":"$name"},"historical":{"$push":"$historical"}}},
         {"$project": {
-            "historical": {"$filter": {
-                "input": "$historical",
-                "as": "historical",
-                "cond": {"$and": [
-                    {"$lte": ["$$historical.time", curr_time_formatted]},
-                    {"$gte": ["$$historical.time", delay_time_formatted]}
-                ]}
-            }
+            "historical": {"$slice":["$historical.time",-1]
             },
             "name":"$name",
             "_id":0}
          },
     ]
-    q_set = BikeStands.objects().aggregate(*pipeline)  # Fetch Data from DB
+    q_set = BikeStands.objects().aggregate(*pipeline,allowDiskUse=True)  # Fetch Data from DB
+    # print(list(q_set))
     return list(q_set)
 
 In = input("SAVE RAW DATA IN DB ? :")
