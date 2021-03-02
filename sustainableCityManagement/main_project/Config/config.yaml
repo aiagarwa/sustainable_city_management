@@ -11,3 +11,4 @@ Bike_API:
 Bus_API:
   api_url: https://dummy.XD
   db_name: sustainableCityManagement
+  bus_stop_file: resources/stops.txt
