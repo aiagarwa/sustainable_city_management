@@ -95,7 +95,7 @@ class Bikes extends React.Component {
       .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
       .then(async (res) => {
         console.log(res.data);
-        const { markers } = this.state;
+        let { markers, recommendations } = this.state;
 
         const bikeStations = res.data.DATA.RESULT;
         const bikeLiveData = await this.getLiveValues();
@@ -103,13 +103,16 @@ class Bikes extends React.Component {
         for (const station of Object.keys(bikeStations)) {
           const totalStands = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].TOTAL_STANDS : "No Data";
           const bikesInUse = bikeLiveData.hasOwnProperty(station) ? bikeLiveData[station].IN_USE : "No Data";
+          const ratioInUse = bikesInUse / totalStands;
 
+          // Markers color
           let markerColor = 'grey';
           if (typeof totalStands === 'number' && typeof bikesInUse === 'number') {
-            const ratioInUse = Math.ceil(bikesInUse / totalStands * 4) / 4;
-            markerColor = `rgb(${ratioInUse * 255}, ${(1 - ratioInUse) * 200 + 50}, ${(1 - ratioInUse) * 80})`;
+            const rgbRatio = Math.ceil(bikesInUse / totalStands * 4) / 4;
+            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50}, ${(1 - rgbRatio) * 80})`;
           }
 
+          // Add markers
           markers.push({
             position: [bikeStations[station].LATITUDE, bikeStations[station].LONGITUDE],
             content: station,
@@ -123,12 +126,27 @@ class Bikes extends React.Component {
               html: `<i class="fa fa-map-marker-alt fa-3x" style="color:${markerColor};"></i>`
             }
           });
+
+          // Add recommendations
+          if (ratioInUse >= 0.9) {
+            recommendations.push({
+              color: ratioInUse >= 0.95 ? "red" : "orange",
+              text: `${Math.trunc(ratioInUse*100)}% of bikes are used at ${station}`
+            });
+          }
         }
 
+
+        // Sort markers (i.e. list of stations, alphabetically) & store them
         markers.sort((a, b) => (a.content > b.content) ? 1 : ((b.content > a.content) ? -1 : 0))
         localStorage.setItem('bikestands_stations', JSON.stringify(markers));
 
+        // Sort recommendations by importance
+        recommendations.sort((a, b) => (a.color == "red") ? -1 : ((b.color == "orange") ? 0 : 1))
+        recommendations = recommendations.slice(0, 8);
+
         this.setState({ markers });
+        this.setState({ recommendations });
       })
       .catch(err => {
         console.log(err);
@@ -182,6 +200,7 @@ class Bikes extends React.Component {
 
     this.state = {
       markers: [],
+      recommendations: [],
       options: {
         chart: {
           id: "basic-bar",
@@ -234,28 +253,26 @@ class Bikes extends React.Component {
                   <CardTitle tag="h5">
                     Recommendations
                   </CardTitle>
+                  <div style={{opacity: 0.6}}>
+                    <p class="mb-0">
+                      <span class="dot mr-2" style={{ backgroundColor: "red" }}></span>
+                      Consider adding new stands
+                    </p>
+                    <p>
+                      <span class="dot mr-2" style={{ backgroundColor: "orange" }}></span>
+                      High bikes usage
+                    </p>
+                    </div>
                 </CardHeader>
                 <CardBody>
                   <Table>
-                    {/* <thead>
-                      <tr>
-                        <th>Test</th>
-                        <th>Test</th>
-                      </tr>
-                    </thead> */}
                     <tbody>
-                      <tr>
-                        <td><span class="dot" style={{ backgroundColor: "red" }}></span></td>
-                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
-                      </tr>
-                      <tr>
-                        <td><span class="dot" style={{ backgroundColor: "orange" }}></span></td>
-                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
-                      </tr>
-                      <tr>
-                        <td><span class="dot" style={{ backgroundColor: "green" }}></span></td>
-                        <td>[STATION] is used at more than 90%, you should consider adding new stands</td>
-                      </tr>
+                      {this.state.recommendations.map(({ color, text }, key) =>
+                        <tr key={key}>
+                          <td><span class="dot" style={{ backgroundColor: color }}></span></td>
+                          <td>{ text }</td>
+                        </tr>
+                      )}
                     </tbody>
                   </Table>
                 </CardBody>
