@@ -1,13 +1,13 @@
 Bike_API:
-  stations_api_url : https://dublinbikes.staging.derilinx.com/api/v1/resources/stations
-  location_api_url : https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/
-  db_name : sustainableCityManagementTest
-  db_port : 27017
-  default_days_historic : 5
-  default_live_delay_minutes : 180
+  stations_api_url: https://dublinbikes.staging.derilinx.com/api/v1/resources/stations
+  location_api_url: https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/
+  db_name: sustainableCityManagementTest
+  db_port: 27017
+  default_days_historic: 5
+  default_live_delay_minutes: 180
   # days_to_consider_for_prediction must be < default_days_historic
-  days_to_consider_for_prediction : 1
+  days_to_consider_for_prediction: 1
 
 Bus_API:
-  api_url : https://dummy.XD
-  db_name : sustainableCityManagement
+  api_url: https://dummy.XD
+  db_name: sustainableCityManagement
