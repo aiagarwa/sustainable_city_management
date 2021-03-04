@@ -21,7 +21,7 @@ if config_vals is None:
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 
 
-def bikeapi(locations=False, minutes_delay=config_vals["default_live_delay_minutes"]):
+def bikeapi(locations=False):
     now_time = datetime.now()
     tmp_result = []
     result_response = {}
@@ -36,7 +36,7 @@ def bikeapi(locations=False, minutes_delay=config_vals["default_live_delay_minut
             logger.error('No location data was retrieved.')
         return(result_response)
 
-    tmp_result = fetch_data_from_db_for_minutes(minutes_delay)
+    tmp_result = fetch_data_from_db_for_minutes()
 
 # Going through all the items in the fetched data from DB and storing the average of daily usage (Overall).
     for item in tmp_result:

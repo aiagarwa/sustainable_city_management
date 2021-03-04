@@ -247,15 +247,16 @@ def fetch_data_from_db_for_minutes():
     ]
     q_set = BikeStands.objects().aggregate(
         *pipeline, allowDiskUse=True)  # Fetch Data from DB
-    if list_q_set is None:
-    logger.error('Bikedata for minutes not retrieved from DB')
+    q_set = list(q_set)
+    if len(q_set) == 0:
+        logger.error('Bikedata for minutes not retrieved from DB')
     # print(list(q_set))
-    return list(q_set)
+    return (q_set)
 
 
 In = input("SAVE RAW DATA IN DB ? :")
 if In == "yes":
-    save_historic_data_in_db(0)
+    save_historic_data_in_db(5)
     save_bike_stands_location()
 else:
     logger.error('Storing raw data in DB failed because of key(yes) error')
