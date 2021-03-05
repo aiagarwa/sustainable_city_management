@@ -35,7 +35,6 @@ class BikeProcessedData(Document):
     data = ListField(EmbeddedDocumentField(BikeAvailabilityProcessedData))
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsageProcessed'}
-    logger.info('BikeProcessedData document created successfully.')
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 
@@ -52,7 +51,6 @@ class BikePredictedData(Document):
     data = ListField(EmbeddedDocumentField(BikeAvailabilityPredictedData))
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsagePredict'}
-    logger.info('BikePredictedData document created successfully.')
 
 # This method gets the raw data from DB, process and store in different collection in DB.
 
@@ -173,7 +171,7 @@ def create_location_list():
         train_data_dict = {
             "name": item["name"], "in_use": in_use_list, "total": item["data"]["total_stands"]}
         train_data.append(train_data_dict)
-    if train_data is None:
+    if not train_data:
         logger.error(
             'Train data for location list is empty.Check for the availability of processed DB[Bikes] data ')
     return(train_data)
@@ -201,7 +199,7 @@ def get_in_use_arr(days_historical):
             for loc in list_location_details:
                 in_use_list.append(loc["data"]["in_use"])
         item["in_use"] = in_use_list
-    if train_data is None:
+    if not train_data:
         logger.error(
             'Train data for bike in use is empty.Check for the availability of processed DB[Bikes] data ')
     return train_data
@@ -263,7 +261,7 @@ def fetch_processed_data(days_historical):
     ]
     q_set = BikeProcessedData.objects().aggregate(*pipeline)
     list_q_set = list(q_set)
-    if list_q_set is None:
+    if not list_q_set:
         logger.error(
             'No processed data for historical was retrieved. Check for the availability of processed DB[Bikes] data ')
     return list_q_set
@@ -280,7 +278,7 @@ def fetch_predicted_data(predict_date):
     ]
     q_set = BikePredictedData.objects().aggregate(*pipeline)
     list_q_set = list(q_set)
-    if list_q_set is None:
+    if not list_q_set:
         logger.error(
             'No processed data for predicted was retrieved. Check for the availability of processed DB[Bikes] data ')
     return list_q_set
@@ -292,4 +290,5 @@ if In == "yes":
     store_bikedata_all_locations(5)
     store_predict_data_in_db(5)
 else:
+    logger.info('No data got stored into DB')
     pass

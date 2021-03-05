@@ -204,7 +204,7 @@ def fetch_data_from_db_for_day(dateForData):
     ]
     q_set = BikeStands.objects().aggregate(*pipeline)  # Fetch Data from DB
     list_q_set = list(q_set)
-    if list_q_set is None:
+    if not list_q_set:
         logger.error('Bikedata for day not retrieved from DB')
     return list_q_set
 
@@ -259,5 +259,5 @@ if In == "yes":
     save_historic_data_in_db(5)
     save_bike_stands_location()
 else:
-    logger.error('Storing raw data in DB failed because of key(yes) error')
+    logger.info('Storing raw data in DB failed because of key(yes) error')
     pass

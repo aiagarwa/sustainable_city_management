@@ -12,8 +12,11 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from . import fetch_bikeapi
 from . import graphvalues_bike
-
+from ..Logs.service_logs import bike_log
 # API to fetch bike data -> Historical, live and locations are fetched through this API.
+
+# Calling logging function for bike _API
+logger = bike_log()
 
 
 @api_view(['GET'])
@@ -38,6 +41,7 @@ def show_bike_data(request):
                     },
                     "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
             )
+            logger.info('Live data sent to frontend successfully.')
 
         # Fetch historical data.
         elif inputType == "historical":
@@ -53,7 +57,7 @@ def show_bike_data(request):
                     },
                     "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
             )
-
+            logger.info('Historical data sent to frotend successfully.')
         # Fetch locations data.
         elif inputType == "locations":
             result = fetch_bikeapi.bikeapi(locations=True)
@@ -66,7 +70,7 @@ def show_bike_data(request):
                     },
                     "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
             )
-
+            logger.info('Location data sent to frotend successfully.')
         # If query param doesn't match any condition above.
         else:
             return JsonResponse({
@@ -74,8 +78,10 @@ def show_bike_data(request):
                 "ERROR": "Give valid query parameters.",
                 "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
             )
-
+            logger.error('Invalid query paramters.')
     except (KeyError, TypeError):
+        logger.exception(
+            'BIKE_INFO API not working, check fetch_bikeapi, and check the query parameters.')
         return JsonResponse({
                             "API_ID": ID,
                             "ERROR": "BIKE_INFO API not working, check fetch_bikeapi, and check the query parameters.",
@@ -91,43 +97,50 @@ def graph_bike_data(request):
     call_uuid = uuid.uuid4()
     ID = "BIKE_INFO_GRAPH"
     result = {}
-    # try :
-    inputType = request.query_params.get("location_based", "")
-    days_historical = request.query_params.get("days_historic", "")
-    if len(days_historical) != 0:
-        days_data = int(days_historical)
+    try:
+        inputType = request.query_params.get("location_based", "")
+        days_historical = request.query_params.get("days_historic", "")
+        if len(days_historical) != 0:
+            days_data = int(days_historical)
 
-    # If location_based is yes, then graph values for all the locations is delivered.
-    if inputType == "yes":
-        result = graphvalues_bike.graphvalue_call_locationbased(
-            days_historical=days_data)
+        # If location_based is yes, then graph values for all the locations is delivered.
+        if inputType == "yes":
+            result = graphvalues_bike.graphvalue_call_locationbased(
+                days_historical=days_data)
+            logger.info(
+                'Graph values for location sent to frotend successfully.')
 
-    # If location_based is no, then graph values are delivered in cumulative format from all the locations.
-    elif inputType == "no":
-        result = graphvalues_bike.graphvalue_call_overall(
-            days_historical=days_data)
+        # If location_based is no, then graph values are delivered in cumulative format from all the locations.
+        elif inputType == "no":
+            result = graphvalues_bike.graphvalue_call_overall(
+                days_historical=days_data)
+            logger.info(
+                'Graph values for non-location sent to frontend successfully.')
 
-    else:
-        return JsonResponse({
-            "API_ID": ID,
-            "ERROR": "Give valid query parameters.",
-            "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
+        else:
+            logger.info('Give valid query parameters.')
+            return JsonResponse({
+                "API_ID": ID,
+                "ERROR": "Give valid query parameters.",
+                "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
+            )
+
+        # If query param doesn't match any condition above.
+        return JsonResponse(
+            {
+                "API_ID": ID,
+                "CALL_UUID": call_uuid,
+                "DATA": {
+                    "RESULT": result
+                },
+                "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
-    # If query param doesn't match any condition above.
-    return JsonResponse(
-        {
+    except (KeyError, TypeError):
+        logger.exception(
+            'BIKE_INFO API not working, check fetch_bikeapi, and check the query parameters.')
+        return JsonResponse({
             "API_ID": ID,
-            "CALL_UUID": call_uuid,
-            "DATA": {
-                "RESULT": result
-            },
-            "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
-    )
-
-    # except (KeyError, TypeError):
-    #     return JsonResponse({
-    #                         "API_ID" : ID,
-    #                         "ERROR" : "BIKE_INFO_GRAPH API not working, check fetch_bikeAPI, and check the query parameters.",
-    #                         "TIME_TO_RUN" : "{} seconds".format(float(round(processTiming.time() - startTime,2)))}
-    #                         )
+                            "ERROR": "BIKE_INFO_GRAPH API not working, check fetch_bikeAPI, and check the query parameters.",
+                            "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
+                            )

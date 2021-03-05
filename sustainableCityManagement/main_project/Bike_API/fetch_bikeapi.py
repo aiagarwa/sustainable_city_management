@@ -32,9 +32,9 @@ def bikeapi(locations=False):
                 "LATITUDE": loc["latitude"],
                 "LONGITUDE": loc["longitude"]
             }
-        if result_response is None:
+        if not reult_response:
             logger.error('No location data was retrieved.')
-        return(result_response)
+        return result_response
 
     tmp_result = fetch_data_from_db_for_minutes()
 
@@ -54,6 +54,6 @@ def bikeapi(locations=False):
             "IN_USE": in_use_bikes,
             "TIME": now_time.strftime("%Y-%m-%d %H:%M")
         }
-    if result_response is None:
+    if not result_response:
         logger.error('No bike usage data was retrieved from DB.')
     return(result_response)
