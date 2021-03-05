@@ -1,8 +1,16 @@
 import sys
 import logging
 
+logger = None
 
 def bike_log():  # Creating custom logger to store logging information.
+    global logger
+    if logger is None:
+        create_logger()
+    return logger
+
+def create_logger():
+    global logger
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
 
@@ -18,4 +26,3 @@ def bike_log():  # Creating custom logger to store logging information.
 
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    return logger

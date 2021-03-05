@@ -284,12 +284,3 @@ def fetch_predicted_data(predict_date):
         logger.error(
             'No processed data for predicted was retrieved. Check for the availability of processed DB[Bikes] data ')
     return list_q_set
-
-
-In = input("SAVE PROCESSED AND PREDICTED DATA IN DB ? :")
-if In == "yes":
-    store_bikedata(5)
-    store_bikedata_all_locations(5)
-    store_predict_data_in_db(5)
-else:
-    pass

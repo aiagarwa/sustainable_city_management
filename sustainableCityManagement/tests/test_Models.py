@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from nose.tools import assert_is_not_none, assert_list_equal, assert_true
 
 # Local imports...
-from main_project.Tests.services import get_location, get_bikedata_day, get_bikedata_minutes
+from tests.services import get_location, get_bikedata_day, get_bikedata_minutes
 
 
 @patch('main_project.Tests.services.requests.get')
