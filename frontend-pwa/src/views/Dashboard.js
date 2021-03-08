@@ -43,9 +43,8 @@ class Dashboard extends React.Component {
     super(props);
 
     this.state = {
-      setAqiInfo: null,
+      AqiInfo: null,
       weatherInfo: null,
-      aqi: null,
       btcPrice: null,
       options: {
         chart: {
@@ -68,20 +67,13 @@ class Dashboard extends React.Component {
     axios
       .request({
         method: "GET",
-        url: "https://community-open-weather-map.p.rapidapi.com/weather",
-        params: {
-          q: "Dublin, ie",
-          units: "metric",
-        },
-        headers: {
-          "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
-          "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
-        },
+        url:
+          "http://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
         const weatherInfo = response.data.main.temp;
-        console.log(response.data);
-        // console.log(response.data.main.temp);
+        console.log("<<< WEATHER INFO >>>");
+        console.log(response.data.main);
         this.setState({ weatherInfo: weatherInfo });
         console.log(weatherInfo);
       })
@@ -89,27 +81,23 @@ class Dashboard extends React.Component {
         alert(error.message);
         // console.error(error);
       });
-      
+
     axios
       .request({
         method: "GET",
-        url: "https://air-quality.p.rapidapi.com/current/airquality",
-        params: {
-          lon: "6.2603",
-          lat: "53.3498",
-        },
-        headers: {
-          "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
-          "x-rapidapi-host": "air-quality.p.rapidapi.com",
-        },
+        url:
+          "http://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
-        console.log(response);
-        this.setState({ aqi: response.data.data[0].aqi });
+        const AqiInfo = response.data.list[0].main.aqi;
+        console.log("<<< AIR POLLUTION >>>");
+        console.log(response.data);
+        console.log(response.data.list[0].main.aqi);
+        this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
-        alert(error.message);
-        // console.error(error);
+        // alert(error.message);
+        console.error(error);
       });
   }
 
@@ -147,60 +135,6 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
-            {/*
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-money-coins text-success" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">1 BTC</p>
-                        <CardTitle tag="p">$ {this.state.btcPrice}</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-calendar" /> Last day
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-vector text-danger" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">Errors</p>
-                        <CardTitle tag="p">23</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-clock" /> In the last hour
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            */}
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -213,9 +147,7 @@ class Dashboard extends React.Component {
                     <Col md="8" xs="7">
                       <div className="numbers">
                         <p className="card-category">Air Quality Index</p>
-                        <CardTitle tag="p">
-                          {this.state.aqi}
-                        </CardTitle>
+                        <CardTitle tag="p">{this.state.AqiInfo}</CardTitle>
                         <p />
                       </div>
                     </Col>
