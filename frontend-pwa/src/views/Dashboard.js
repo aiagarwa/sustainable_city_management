@@ -36,37 +36,72 @@ import {
   dashboardEmailStatisticsChart,
   // dashboardNASDAQChart,
 } from "variables/charts.js";
-import axios from 'axios';
+import axios from "axios";
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      setAqiInfo: null,
+      setWeatherInfo: null,
       btcPrice: null,
       options: {
         chart: {
-          id: "basic-bar"
+          id: "basic-bar",
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-        }
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+        },
       },
       series: [
         {
           name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91]
-        }
-      ]
+          data: [30, 40, 45, 50, 49, 60, 70, 91],
+        },
+      ],
     };
   }
 
   componentDidMount() {
-    axios.get('https://api.coindesk.com/v1/bpi/currentprice/BTC.json')
-      .then(res => {
-        const price = Math.trunc(parseFloat(res.data.bpi.USD.rate.replace(',', '')));
-        this.setState({ btcPrice: price });
+    const options = {
+      method: "GET",
+      url: "https://community-open-weather-map.p.rapidapi.com/weather",
+      params: {
+        q: "Dublin, ie",
+        units: "metric",
+      },
+      headers: {
+        "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
+        "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
+      },
+    };
+    axios
+      .request(options)
+      .then((response) => {
+        const weatherInfo = response.data.main.temp;
+        console.log(response.data);
+        // console.log(response.data.main.temp);
+        this.setState({ setWeatherInfo: weatherInfo });
+        console.log(weatherInfo);
+      })
+      .catch((error) => {
+        alert(error.message);
+        // console.error(error);
       });
+
+    // const options = {
+    //   method: "GET",
+    //   url: "https://air-quality.p.rapidapi.com/current/airquality",
+    //   params: {
+    //     lon: "-73.00597",
+    //     lat: "40.71427",
+    //   },
+    //   headers: {
+    //     "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
+    //     "x-rapidapi-host": "air-quality.p.rapidapi.com",
+    //   },
+    // };
   }
 
   render() {
@@ -79,7 +114,6 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <Row>
                     <Col md="4" xs="5">
-
                       <div className="icon-big text-center icon-warning">
                         <i className="fas fa-thunderstorm-sun fa-2x fa-fw"> </i>
                       </div>
@@ -87,7 +121,9 @@ class Dashboard extends React.Component {
                     <Col md="8" xs="7">
                       <div className="numbers">
                         <p className="card-category">Weather</p>
-                        <CardTitle tag="p">-7 C</CardTitle>
+                        <CardTitle tag="p">
+                          {this.state.setWeatherInfo}&deg;C
+                        </CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -96,7 +132,8 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i> Update Now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i>{" "}
+                    Updated Now
                   </div>
                 </CardFooter>
               </Card>
@@ -167,7 +204,9 @@ class Dashboard extends React.Component {
                     <Col md="8" xs="7">
                       <div className="numbers">
                         <p className="card-category">Air Quality Index</p>
-                        <CardTitle tag="p">+8.9 mp/h</CardTitle>
+                        <CardTitle tag="p">
+                          {/* {this.state.setWeatherInfo}&deg;C */}
+                        </CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -176,7 +215,8 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" /> Update now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
+                    Update now
                   </div>
                 </CardFooter>
               </Card>
@@ -267,5 +307,4 @@ class Dashboard extends React.Component {
     );
   }
 }
-
 export default Dashboard;

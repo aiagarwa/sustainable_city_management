@@ -21,15 +21,7 @@ import LoginButton from "../components/Login/LoginButton";
 import LogoutButton from "../components/Login/LogoutButton";
 import Profile from "../components/Login/Profile";
 // reactstrap components
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Row,
-  Col,
-} from "reactstrap";
+import { Row } from "reactstrap";
 
 class Login extends React.Component {
   render() {
