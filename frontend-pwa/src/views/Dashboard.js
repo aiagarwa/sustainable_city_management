@@ -44,7 +44,8 @@ class Dashboard extends React.Component {
 
     this.state = {
       setAqiInfo: null,
-      setWeatherInfo: null,
+      weatherInfo: null,
+      aqi: null,
       btcPrice: null,
       options: {
         chart: {
@@ -64,44 +65,52 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    const options = {
-      method: "GET",
-      url: "https://community-open-weather-map.p.rapidapi.com/weather",
-      params: {
-        q: "Dublin, ie",
-        units: "metric",
-      },
-      headers: {
-        "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
-        "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
-      },
-    };
     axios
-      .request(options)
+      .request({
+        method: "GET",
+        url: "https://community-open-weather-map.p.rapidapi.com/weather",
+        params: {
+          q: "Dublin, ie",
+          units: "metric",
+        },
+        headers: {
+          "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
+          "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
+        },
+      })
       .then((response) => {
         const weatherInfo = response.data.main.temp;
         console.log(response.data);
         // console.log(response.data.main.temp);
-        this.setState({ setWeatherInfo: weatherInfo });
+        this.setState({ weatherInfo: weatherInfo });
         console.log(weatherInfo);
       })
       .catch((error) => {
         alert(error.message);
         // console.error(error);
       });
-
-    // const options = {
-    //   method: "GET",
-    //   url: "https://air-quality.p.rapidapi.com/current/airquality",
-    //   params: {
-    //     lon: "-73.00597",
-    //     lat: "40.71427",
-    //   },
-    //   headers: {
-    //     "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
-    //     "x-rapidapi-host": "air-quality.p.rapidapi.com",
-    //   },
-    // };
+      
+    axios
+      .request({
+        method: "GET",
+        url: "https://air-quality.p.rapidapi.com/current/airquality",
+        params: {
+          lon: "6.2603",
+          lat: "53.3498",
+        },
+        headers: {
+          "x-rapidapi-key": "bd6e8a7805msheb7cdb4536d4e75p192ce6jsnc2c5170327f8",
+          "x-rapidapi-host": "air-quality.p.rapidapi.com",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        this.setState({ aqi: response.data.data[0].aqi });
+      })
+      .catch((error) => {
+        alert(error.message);
+        // console.error(error);
+      });
   }
 
   render() {
@@ -122,7 +131,7 @@ class Dashboard extends React.Component {
                       <div className="numbers">
                         <p className="card-category">Weather</p>
                         <CardTitle tag="p">
-                          {this.state.setWeatherInfo}&deg;C
+                          {this.state.weatherInfo}&deg;C
                         </CardTitle>
                         <p />
                       </div>
@@ -205,7 +214,7 @@ class Dashboard extends React.Component {
                       <div className="numbers">
                         <p className="card-category">Air Quality Index</p>
                         <CardTitle tag="p">
-                          {/* {this.state.setWeatherInfo}&deg;C */}
+                          {this.state.aqi}
                         </CardTitle>
                         <p />
                       </div>
