@@ -37,6 +37,7 @@ import {
   // dashboardNASDAQChart,
 } from "variables/charts.js";
 import axios from "axios";
+import moment from "moment";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -45,6 +46,11 @@ class Dashboard extends React.Component {
     this.state = {
       AqiInfo: null,
       weatherInfo: null,
+      weatherInfoExtraTemp_min: null,
+      weatherInfoExtraTemp_max: null,
+      weatherTimeStamp: null,
+      windSpeedInfo: null,
+      time_zone: null,
       btcPrice: null,
       options: {
         chart: {
@@ -72,10 +78,32 @@ class Dashboard extends React.Component {
       })
       .then((response) => {
         const weatherInfo = response.data.main.temp;
-        console.log("<<< WEATHER INFO >>>");
-        console.log(response.data.main);
+        const weatherInfoExtraTemp_min = response.data.main.temp_min;
+        const weatherInfoExtraTemp_max = response.data.main.temp_max;
+        const time_zone = response.data.timezone;
+        const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
+        const windSpeedInfo = response.data.wind.speed;
+        // console.log("<<<< API INFO >>>>");
+        // console.log(response.data);
+
+        // console.log("<<< WEATHER INFO >>>");
         this.setState({ weatherInfo: weatherInfo });
-        console.log(weatherInfo);
+        // console.log(weatherInfo);
+
+        // console.log("<<< WEATHER INFO EXTRA >>>");
+        this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
+        // console.log(weatherInfoExtraTemp_min);
+        this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
+        // console.log(weatherInfoExtraTemp_max);
+
+        // console.log("<<< WEATHER TIME STAMP >>>");
+        // console.log(time_zone);
+        this.setState({ weatherTimeStamp: weatherTimeStamp });
+        // console.log(weatherTimeStamp);
+
+        // console.log("<<< WIND INFO >>>");
+        this.setState({ windSpeedInfo: windSpeedInfo });
+        // console.log(windSpeedInfo);
       })
       .catch((error) => {
         alert(error.message);
@@ -90,9 +118,9 @@ class Dashboard extends React.Component {
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
-        console.log("<<< AIR POLLUTION >>>");
-        console.log(response.data);
-        console.log(response.data.list[0].main.aqi);
+        // console.log("<<< AIR POLLUTION >>>");
+        // console.log(response.data);
+        // console.log(response.data.list[0].main.aqi);
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
@@ -121,7 +149,11 @@ class Dashboard extends React.Component {
                         <CardTitle tag="p">
                           {this.state.weatherInfo}&deg;C
                         </CardTitle>
-                        <p />
+                        <p style={{ opacity: 0.6, fontSize: "small" }}>
+                          Minimum - {this.state.weatherInfoExtraTemp_min}
+                          &deg;C Maximum - {this.state.weatherInfoExtraTemp_max}
+                          &deg;C
+                        </p>
                       </div>
                     </Col>
                   </Row>
@@ -130,7 +162,11 @@ class Dashboard extends React.Component {
                   <hr />
                   <div className="stats">
                     <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i>{" "}
-                    Updated Now
+                    Updated
+                    <p>
+                      {this.state.weatherInfo &&
+                        moment.unix(this.state.weatherTimeStamp).format("lll")}
+                    </p>
                   </div>
                 </CardFooter>
               </Card>
@@ -148,16 +184,24 @@ class Dashboard extends React.Component {
                       <div className="numbers">
                         <p className="card-category">Air Quality Index</p>
                         <CardTitle tag="p">{this.state.AqiInfo}</CardTitle>
+                        <p style={{ opacity: 0.6, fontSize: "small" }}>
+                          Wind - {this.state.windSpeedInfo}m/s
+                        </p>
                         <p />
                       </div>
                     </Col>
                   </Row>
                 </CardBody>
+                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - START>>>>>>>>>>> */}
                 <CardFooter>
                   <hr />
                   <div className="stats">
                     <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
-                    Update now
+                    Updated now
+                    <p>
+                      {this.state.weatherInfo &&
+                        moment.unix(this.state.weatherTimeStamp).format("lll")}
+                    </p>
                   </div>
                 </CardFooter>
               </Card>
@@ -240,6 +284,7 @@ class Dashboard extends React.Component {
                     <i className="fa fa-check" /> Data information certified
                   </div>
                 </CardFooter>
+                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - END >>>>>>>>>>> */}
               </Card>
             </Col>
           </Row>
