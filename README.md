@@ -9,7 +9,7 @@ source bin/activate
 cd sustainable-city-management
 pip install -r requirements.txt
 cd sustainableCityManagement
-python manage.py runserver
+python manage.py runserver --noreload
 ```
 
 Crontab setting (to regularly fetch data from third-party APIs):
