@@ -9,7 +9,6 @@ from ..Config.config_handler import read_config
 import logging
 # Calling logging function for bike _API
 logger = bike_log()
-logger.info('Server_Starts')
 
 # Connect to Database
 try:
@@ -252,12 +251,3 @@ def fetch_data_from_db_for_minutes():
         logger.error('Bikedata for minutes not retrieved from DB')
     # print(list(q_set))
     return (q_set)
-
-
-In = input("SAVE RAW DATA IN DB ? :")
-if In == "yes":
-    save_historic_data_in_db(5)
-    save_bike_stands_location()
-else:
-    logger.info('Storing raw data in DB failed because of key(yes) error')
-    pass

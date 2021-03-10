@@ -9,7 +9,7 @@ class LoginButton extends Component {
       !isAuthenticated && (
         <button onClick={() => loginWithRedirect()}>Log In</button>
       )
-    )
+    );
   }
 }
 

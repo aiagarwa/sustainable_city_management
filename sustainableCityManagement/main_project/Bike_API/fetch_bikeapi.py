@@ -32,7 +32,7 @@ def bikeapi(locations=False):
                 "LATITUDE": loc["latitude"],
                 "LONGITUDE": loc["longitude"]
             }
-        if not reult_response:
+        if not result_response:
             logger.error('No location data was retrieved.')
         return result_response
 
