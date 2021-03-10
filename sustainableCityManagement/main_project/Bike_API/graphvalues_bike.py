@@ -3,7 +3,6 @@ import collections
 from collections import Counter
 from datetime import datetime, timedelta
 from ..Logs.service_logs import bike_log
-from .fetch_bikeapi import bikeapi
 from .store_bikedata_to_database import fetch_bike_stands_location
 from .store_processed_bikedata_to_db import fetch_predicted_data, fetch_processed_data
 from ..Config.config_handler import read_config

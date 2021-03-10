@@ -11,14 +11,14 @@ import time as processTiming
 from datetime import timedelta, datetime, time, date
 from rest_framework.decorators import api_view
 from django.shortcuts import render
-from .. import fetch_bikeapi
+from ..fetch_bikeapi import FetchBikeApi
 from ..graphvalues_bike import GraphValuesBike
 
 # API to fetch bike data -> Historical, live and locations are fetched through this API.
 
 class ShowBikeApi(APIView):
     @classmethod
-    def get(self, request):
+    def get(self, request, fetch_bike_api = FetchBikeApi()):
         startTime = processTiming.time()
         call_uuid = uuid.uuid4()
         ID = "BIKE_INFO"
@@ -29,7 +29,7 @@ class ShowBikeApi(APIView):
 
             # Fetch live data.
             if inputType == "live":
-                result = fetch_bikeapi.bikeapi()
+                result = fetch_bike_api.bikeapi()
                 return JsonResponse(
                     {
                         "API_ID": ID,
@@ -43,7 +43,7 @@ class ShowBikeApi(APIView):
             # Fetch historical data.
             elif inputType == "historical":
                 days_data = request.query_params.get("days_historic", "")
-                result = fetch_bikeapi.bikeapi(
+                result = fetch_bike_api.bikeapi(
                     historical=True, days_historical=int(days_data))
                 return JsonResponse(
                     {
@@ -57,7 +57,7 @@ class ShowBikeApi(APIView):
 
             # Fetch locations data.
             elif inputType == "locations":
-                result = fetch_bikeapi.bikeapi(locations=True)
+                result = fetch_bike_api.bikeapi(locations=True)
                 return JsonResponse(
                     {
                         "API_ID": ID,
