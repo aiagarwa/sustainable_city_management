@@ -11,7 +11,6 @@ import time as processTiming
 from datetime import timedelta, datetime, time, date
 from rest_framework.decorators import api_view
 from django.shortcuts import render
-from .. import fetch_bikeapi
 from ..graphvalues_bike import GraphValuesBike
 
 # API to fetch bike data -> Historical, live and locations are fetched through this API.
