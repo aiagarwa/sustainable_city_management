@@ -127,4 +127,4 @@ DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-CRONJOBS = [("*/5 * * * *", "main_project.Bike_API.store_bike.bikedata_minutes")]
+CRONJOBS = [("*/5 * * * *", "main_project.Bike_API.store_bikedata_to_database.StoreBikeDataToDatabase.bikedata_minutes")]

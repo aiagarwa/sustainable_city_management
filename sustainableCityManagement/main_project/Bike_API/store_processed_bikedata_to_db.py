@@ -1,6 +1,4 @@
-from .store_bikedata_to_database import fetch_data_from_db_for_day
-from .store_bikedata_to_database import fetch_data_from_db_for_minutes
-from .store_bikedata_to_database import fetch_bike_stands_location
+from .store_bikedata_to_database import StoreBikeDataToDatabase
 from ..ML_models.bikes_usage_prediction import predict_bikes_usage
 from ..Config.config_handler import read_config
 from ..Logs.service_logs import bike_log
@@ -73,7 +71,8 @@ def store_bikedata(days_historical):
                 },
                 {"$match": {"data.day": data_day_formatted}}
             ]
-            tmp_result = fetch_data_from_db_for_day(delay_time_formatted)
+            store_bike_data_to_database = StoreBikeDataToDatabase()
+            tmp_result = store_bike_data_to_database.fetch_data_from_db_for_day(delay_time_formatted)
             # Going through all the items in the fetched data from DB and storing the average of daily usage (Location based).
             for item in tmp_result:
                 # Get the number of documents with a particular location name

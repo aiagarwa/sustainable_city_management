@@ -1,5 +1,4 @@
-from main_project.Bike_API.store_bikedata_to_database import save_historic_data_in_db
-from main_project.Bike_API.store_bikedata_to_database import save_bike_stands_location
+from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
 from main_project.Bike_API.store_processed_bikedata_to_db import store_bikedata
 from main_project.Bike_API.store_processed_bikedata_to_db import store_bikedata_all_locations
 from main_project.Bike_API.store_processed_bikedata_to_db import store_predict_data_in_db
@@ -10,9 +9,10 @@ logger.info('Server_Starts')
 
 def save_raw_to_database():
     In = input("SAVE RAW DATA IN DB ? :")
+    store_bikedata_to_database = StoreBikeDataToDatabase()
     if In == "yes":
-        save_historic_data_in_db(5)
-        save_bike_stands_location()
+        store_bikedata_to_database.save_historic_data_in_db(5)
+        store_bikedata_to_database.save_bike_stands_location()
     else:
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
