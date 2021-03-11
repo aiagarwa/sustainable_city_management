@@ -47,6 +47,6 @@ class StoreBusRoutesData:
         return locations
 
 
-# a = StoreBusRoutesData()
-# a.store_bus_stops()
+a = StoreBusRoutesData()
+a.store_bus_stops()
 # print(a.fetch_busstops_location()[0])
