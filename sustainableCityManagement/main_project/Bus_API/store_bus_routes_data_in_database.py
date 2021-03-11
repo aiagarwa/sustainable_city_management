@@ -19,12 +19,13 @@ class BusStops(Document):
 class StoreBusRoutesData:
     def read_bus_stops(self):
         readfile = []
-        with open("../sustainableCityManagement/main_project/Bus_API/resources/stops.csv", "r", encoding="utf8") as f:
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/stops.csv", "r") as f:
+        # with open("./resources/stops.csv", "r") as f:
             readfile = list(csv.reader(f))
         return readfile
 
     def store_bus_stops(self):
-        readfile = read_bus_stops()
+        readfile = self.read_bus_stops()
 
         for i in range(1,len(readfile)):
             busstops = BusStops(stop_id = readfile[i][0],
@@ -36,3 +37,16 @@ class StoreBusRoutesData:
             except:
                 pass
 
+    def fetch_busstops_location(self, locationName = "all"):
+        q_set = BusStops.objects()  # Fetch Data from DB
+        # Converts the Processed Bikes Data from DB into JSON format
+        json_data = q_set.to_json()
+        locations = json.loads(json_data)
+        # if locations is None:
+        #     logger.error('Location data not retrieved from DB')
+        return locations
+
+
+# a = StoreBusRoutesData()
+# a.store_bus_stops()
+# print(a.fetch_busstops_location()[0])
