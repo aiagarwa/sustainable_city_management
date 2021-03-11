@@ -47,6 +47,3 @@ class TestFetchBikeApi(TestCase):
         
         result = fetch_bike_api_class.bikeapi(locations=False, store_bike_data_to_database=store_bike_data_to_database)
         self.assertDictEqual(result, expected_result)
-
-def lol_fun():
-    return 'lol'
