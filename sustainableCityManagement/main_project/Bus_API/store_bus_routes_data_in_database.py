@@ -19,7 +19,7 @@ class BusStops(Document):
 class StoreBusRoutesData:
     def read_bus_stops(self):
         readfile = []
-        with open("../sustainableCityManagement/main_project/Bus_API/resources/stops.csv", "r") as f:
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/stops.csv", "r", encoding='utf-8') as f:
         # with open("./resources/stops.csv", "r") as f:
             readfile = list(csv.reader(f))
         return readfile
