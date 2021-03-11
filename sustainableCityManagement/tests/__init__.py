@@ -1,4 +1,3 @@
 from tests.Bike_API.views_bike_api.test_graph_bike_data import TestGraphBikeData
 from tests.Bike_API.views_bike_api.test_show_bike_data import TestShowBikeApi
 from tests.Bus_API.test_store_bus_routes_in_db import TestStoreBusRoutesData
-from tests.Bike_API.test_fetch_bikeapi import TestFetchBikeApi
