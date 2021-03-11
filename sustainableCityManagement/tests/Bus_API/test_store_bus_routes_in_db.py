@@ -3,22 +3,7 @@ from unittest.mock import MagicMock
 from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoutesData
 from main_project.Bus_API.store_bus_routes_data_in_database import BusStops
 from mongoengine import *
-from mongoengine.queryset import queryset_manager
 from decimal import Decimal
-import json
-
-class BaseDocument(Document):
-    meta = {'abstract': True}
-    
-    @queryset_manager
-    def query(self, queryset):
-        return queryset
-
-class TestBusStop(BaseDocument):
-    stop_name = StringField(max_length=200)
-    stop_id = StringField(max_length=200, unique=True)
-    stop_lat = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    stop_lon = DecimalField(precision=3, rounding='ROUND_HALF_UP')
 
 class TestStoreBusRoutesData(TestCase):
     @classmethod
