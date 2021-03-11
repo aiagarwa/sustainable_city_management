@@ -119,9 +119,8 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${
-              (1 - rgbRatio) * 200 + 50
-            }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
+              }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
@@ -290,16 +289,16 @@ class Bikes extends React.Component {
                 <CardHeader>
                   <CardTitle tag="h5">Recommendations</CardTitle>
                   <div style={{ opacity: 0.6 }}>
-                    <p class="mb-0">
+                    <p className="mb-0">
                       <span
-                        class="dot mr-2"
+                        className="dot mr-2"
                         style={{ backgroundColor: "red" }}
                       ></span>
                       Consider adding new stands
                     </p>
                     <p>
                       <span
-                        class="dot mr-2"
+                        className="dot mr-2"
                         style={{ backgroundColor: "orange" }}
                       ></span>
                       High bikes usage
@@ -314,7 +313,7 @@ class Bikes extends React.Component {
                           <tr key={key}>
                             <td>
                               <span
-                                class="dot"
+                                className="dot"
                                 style={{ backgroundColor: color }}
                               ></span>
                             </td>
