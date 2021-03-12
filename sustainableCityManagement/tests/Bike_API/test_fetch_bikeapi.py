@@ -88,3 +88,36 @@ class TestFetchBikeApi(TestCase):
         
         result = fetch_bike_api_class.bikeapi(locations=False, store_bike_data_to_database=store_bike_data_to_database)
         self.assertDictEqual(result, expected_result)
+
+    def test_bikeapi_locations_true(self):
+        fetch_bike_api_class = fetch_bikeapi.FetchBikeApi()
+
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        mocked_result = [
+                            {
+                                "name": "test_name_1",
+                                "latitude": 1,
+                                "longitude": 2
+                            },
+                            {
+                                "name": "test_name_2",
+                                "latitude": 3,
+                                "longitude": 4
+                            }
+                        ]
+        store_bike_data_to_database.fetch_bike_stands_location = MagicMock(return_value=mocked_result)
+
+        expected_result = {
+                            "test_name_1": {
+                                "LATITUDE": 1,
+                                        "LONGITUDE": 2
+                            },
+                            "test_name_2": {
+                                "LATITUDE": 3,
+                                        "LONGITUDE": 4
+                            }
+                        }
+        
+        result = fetch_bike_api_class.bikeapi(locations=True, store_bike_data_to_database=store_bike_data_to_database)
+        self.assertDictEqual(result, expected_result)

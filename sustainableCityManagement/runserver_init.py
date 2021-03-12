@@ -1,7 +1,5 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
-from main_project.Bike_API.store_processed_bikedata_to_db import store_bikedata
-from main_project.Bike_API.store_processed_bikedata_to_db import store_bikedata_all_locations
-from main_project.Bike_API.store_processed_bikedata_to_db import store_predict_data_in_db
+from main_project.Bike_API.store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
 from main_project.Logs.service_logs import bike_log
 
 logger = bike_log()
@@ -19,10 +17,11 @@ def save_raw_to_database():
 
 def save_processed_and_predicted_to_database():
     In = input("SAVE PROCESSED AND PREDICTED DATA IN DB ? :")
+    store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
     if In == "yes":
-        store_bikedata(5)
-        store_bikedata_all_locations(5)
-        store_predict_data_in_db(5)
+        store_processed_bike_data_to_db.store_bikedata(5)
+        store_processed_bike_data_to_db.store_bikedata_all_locations(5)
+        store_processed_bike_data_to_db.store_predict_data_in_db(5)
     else:
         pass
 
