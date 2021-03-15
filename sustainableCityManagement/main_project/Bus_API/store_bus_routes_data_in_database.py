@@ -1,6 +1,5 @@
 import sys
 from mongoengine import *
-import mongomock
 import requests
 import json
 import pytz
@@ -23,11 +22,11 @@ class BusRoutes(Document):
 class StoreBusRoutesData:
     def __init__(self):
         host_db = "mongodb://127.0.0.1:27017/sustainableCityManagementTest"
-        connect(db = "sustainableCityManagementTest", host=host_db)
+        connect(db = "sustainableCityManagementTest", host=host_db
 
     def read_bus_stops(self):
         readfile = []
-        with open("./resources/stops.csv", "r", encoding="utf8") as f:
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/stops.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
@@ -54,8 +53,8 @@ class StoreBusRoutesData:
 
     def read_bus_routes(self):
         readfile = []
-        # with open("../sustainableCityManagement/main_project/Bus_API/resources/routes.csv", "r", encoding="utf8") as f:
-        with open("./resources/routes.csv", "r", encoding="utf8") as f:
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/routes.csv", "r", encoding="utf8") as f:
+        # with open("./resources/routes.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
