@@ -20,9 +20,6 @@ class BusRoutes(Document):
     }
 
 class StoreBusRoutesData:
-    def __init__(self):
-        host_db = "mongodb://127.0.0.1:27017/sustainableCityManagementTest"
-        connect(db = "sustainableCityManagementTest", host=host_db
 
     def read_bus_stops(self):
         readfile = []

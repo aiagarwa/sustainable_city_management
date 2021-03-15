@@ -26,8 +26,19 @@ def save_processed_and_predicted_to_database():
     else:
         pass
 
+def check_to_drop_database():
+    In = input("DROP DATABASE? :")
+    store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
+    if In == "yes":
+        conn=connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+        conn.drop_database("sustainableCityManagementTest")
+        logger.info('Dropping database')
+    else:
+        pass
+
 
 def init():
     connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+    check_to_drop_database()
     save_raw_to_database()
     save_processed_and_predicted_to_database()
