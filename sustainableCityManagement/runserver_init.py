@@ -1,6 +1,7 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
 from main_project.Bike_API.store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
 from main_project.Logs.service_logs import bike_log
+from mongoengine import *
 
 logger = bike_log()
 logger.info('Server_Starts')
@@ -27,5 +28,6 @@ def save_processed_and_predicted_to_database():
 
 
 def init():
+    connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
     save_raw_to_database()
     save_processed_and_predicted_to_database()

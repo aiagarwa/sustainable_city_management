@@ -9,16 +9,8 @@ from ..Config.config_handler import read_config
 import logging
 # Calling logging function for bike _API
 logger = bike_log()
+config_vals = read_config("Bike_API")
 
-# Connect to Database
-try:
-    config_vals = read_config("Bike_API")
-    host_db = "mongodb://127.0.0.1:%d/%s" % (
-        config_vals["db_port"], config_vals["db_name"])
-    connect(config_vals["db_name"], host=host_db)
-except:
-    logger.exception('Unable to access Database')
-    raise
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 
