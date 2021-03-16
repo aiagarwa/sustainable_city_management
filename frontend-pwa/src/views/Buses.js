@@ -80,42 +80,25 @@ class Buses extends React.Component {
     });
   }
 
-  componentDidMount() {
-    
-  }
+  drawPathBetweenBusStops(startStop, destinationStop) {
+    // const start = [53.344, -6.233];
+    // const destination = [53.342, -6.236];
 
-  constructor(props) {
-    super(props);
+    const map = this.state.map;
 
-    this.state = {
-      markers: [],
-      options: {
-        chart: {
-          id: "basic-bar",
-        },
-      },
-      series: [],
-      busSelection: "ALL",
-      graphLoading: true,
-    };
-  }
+    // Retrieve start & destination stops coordinates
+    let start = null;
+    let destination = null;
+    for (const busStop of this.state.busStops) {
+      if (busStop.stop == startStop) {
+        start = [busStop.lat, busStop.lng];
+      } else if (busStop.stop == destinationStop) {
+        destination = [busStop.lat, busStop.lng];
+      }
 
-  onChangeBusSelection(e) {
-    alert(`Bus changed to ${e}`);
-  }
+      if (start && destination) break;
+    }
 
-  /**
-   * Triggered when the map is created; currently creates path between two points for test purposes
-   * 
-   * References:
-   * https://openrouteservice.org/
-   * https://rubenspgcavalcante.github.io/leaflet-ant-path/​​​​​​​
-   * 
-   * @param {*} map 
-   */
-  mapCreated(map) {
-    const start = [53.344, -6.233];
-    const destination = [53.342, -6.236];
     const apiKey = '5b3ce3597851110001cf62489c45fd4df8464534ba7a6bab835d5cc8';
 
     axios
@@ -150,6 +133,72 @@ class Buses extends React.Component {
       });
   }
 
+  componentDidMount() {
+    axios
+      .get('http://127.0.0.1:8000/main/busstop_locations/')
+      .then(res => {
+
+        let busStopsTmp = [];
+        let counter = 0;
+        for (const stop of Object.keys(res.data.DATA.RESULT)) {
+          if (counter++ > 100) break;
+
+          busStopsTmp.push({
+            stop: stop,
+            name: res.data.DATA.RESULT[stop].STOP_NAME,
+            lat: res.data.DATA.RESULT[stop].STOP_LAT,
+            lng: res.data.DATA.RESULT[stop].STOP_LON,
+            icon: iconDefault,
+          });
+        }
+
+        this.setState({ busStops: busStopsTmp });
+
+        this.drawPathBetweenBusStops("stop_76", "stop_85");
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      map: null,
+      markers: [],
+      busStops: [],
+      options: {
+        chart: {
+          id: "basic-bar",
+        },
+      },
+      series: [],
+      busSelection: "ALL",
+      graphLoading: true,
+    };
+
+    this.mapCreated = this.mapCreated.bind(this);
+    this.drawPathBetweenBusStops = this.drawPathBetweenBusStops.bind(this);
+  }
+
+  onChangeBusSelection(e) {
+    alert(`Bus changed to ${e}`);
+  }
+
+  /**
+   * Triggered when the map is created; currently creates path between two points for test purposes
+   * 
+   * References:
+   * https://openrouteservice.org/
+   * https://rubenspgcavalcante.github.io/leaflet-ant-path/​​​​​​​
+   * 
+   * @param {*} map 
+   */
+  mapCreated(map) {
+    this.setState({ map: map });
+  }
+
   render() {
     return (
       <>
@@ -171,22 +220,18 @@ class Buses extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(
-                        (
-                          { position, content, totalStands, inUse, icon },
-                          idx
-                        ) => (
+                      {this.state.busStops.map(
+                        ({ stop, name, lat, lng, icon }, idx) => (
                           <Marker
                             key={`marker-${idx}`}
-                            position={position}
+                            position={[lat, lng]}
                             icon={icon}
                           >
                             <Popup>
                               <p>
-                                <b>{content}</b>
+                                <b>{name}</b><br />
+                                <i>{stop}</i>
                               </p>
-                              <p>{"Total Stands: " + totalStands}</p>
-                              <p>{"Buses in use: " + inUse}</p>
                             </Popup>
                           </Marker>
                         )
