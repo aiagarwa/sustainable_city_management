@@ -2,6 +2,8 @@ from django.test import TestCase
 from unittest.mock import MagicMock
 from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoutesData
 from main_project.Bus_API.store_bus_routes_data_in_database import BusStops
+from main_project.Bus_API.store_bus_routes_data_in_database import BusRoutes
+from main_project.Bus_API.store_bus_routes_data_in_database import BusTrips
 from mongoengine import *
 import mongomock as mm
 from decimal import Decimal
@@ -39,5 +41,88 @@ class TestStoreBusRoutesData(TestCase):
         self.assertAlmostEqual(fetch_bus_stops["stop_lat"],Decimal(0.786),None,None,0.001)
         self.assertAlmostEqual(fetch_bus_stops["stop_lon"],Decimal(-0.156),None,None,0.001)
 
-        # BusStops.objects(stop_name="Dublin Bus Stop2").delete()
+    def test_fetch_busstops_location(self):
+        fetch_bus_stops_loc = StoreBusRoutesData()
+        expectedresult =  [[],["35", "Dublin Bus Stop2", 0.78656, -0.1563]]
 
+        fetch_bus_stops_loc.read_bus_stops = MagicMock(return_value=expectedresult)
+        fetch_bus_stops_loc.store_bus_stops()  
+
+        bus_stops_loc = fetch_bus_stops_loc.fetch_busstops_location()
+
+        assert bus_stops_loc[0]["stop_name"] == "Dublin Bus Stop2"
+        assert bus_stops_loc[0]["stop_id"] == "35"
+        self.assertAlmostEqual(bus_stops_loc[0]["stop_lat"],0.786,None,None,0.002)
+        self.assertAlmostEqual(bus_stops_loc[0]["stop_lon"],-0.156,None,None,0.002)
+
+    def test_read_bus_routes(self):
+        read_bus_routes = StoreBusRoutesData()
+        assert read_bus_routes.read_bus_routes()[0]==['\ufeffroute_id','agency_id','route_short_name','route_long_name','route_type']
+        assert read_bus_routes.read_bus_routes()[1][0]=="10-100-e19-1"
+
+    def test_store_bus_routes(self):
+        store_bus_stops_routes = StoreBusRoutesData()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        expectedresult =  [[],["566-45-e41",78,'BR1', "Bus Route 1"]]
+
+        store_bus_stops_routes.read_bus_routes = MagicMock(return_value=expectedresult)
+        store_bus_stops_routes.store_bus_routes()        
+
+        fetch_bus_routes = BusRoutes.objects().first()
+
+        assert fetch_bus_routes["route_name"] == "Bus Route 1"
+        assert fetch_bus_routes["route_id"] == "566-45-e41"
+
+    def test_fetch_busroutes(self):
+        fetch_bus_routes = StoreBusRoutesData()
+        expectedresult =  [[],["566-45-e41",78,'BR1', "Bus Route 1"]]
+
+        fetch_bus_routes.read_bus_routes = MagicMock(return_value=expectedresult)
+        fetch_bus_routes.store_bus_routes() 
+
+        bus_routes = fetch_bus_routes.fetch_busroutes()
+
+        assert bus_routes[0]["route_name"] == "Bus Route 1"
+        assert bus_routes[0]["route_id"] == "566-45-e41"
+
+    def test_read_bus_trips(self):
+        read_bus_trip = StoreBusRoutesData()
+        assert read_bus_trip.read_bus_trips()[0]==['\ufeffroute_id','service_id','trip_id','shape_id','trip_headsign','direction_id']
+        assert read_bus_trip.read_bus_trips()[1][2]=="1368811.1.10-100-e19-1.255.I"
+
+    def test_store_bus_trips(self):
+        store_bus_trips = StoreBusRoutesData()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        expectedresult =  [[],["17-e19-34","tyy","345.3.I","1345.3.I","Bus Station 1","1"]]
+
+        store_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
+        store_bus_trips.store_bus_trips()        
+
+        fetch_bus_trips = BusTrips.objects().first()
+
+        assert fetch_bus_trips["trip_id"] == "345.3.I"
+        assert fetch_bus_trips["route_id"] == "17-e19-34"
+
+    def test_fetch_bustrips(self):
+        fetch_bus_trips = StoreBusRoutesData()
+
+        expectedresult =  [[],["17-e19-34","tyy","345.3.I","1345.3.I","Bus Station 1","1"]]
+
+        fetch_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
+        fetch_bus_trips.store_bus_trips()   
+
+        bus_trips = fetch_bus_trips.fetch_bustrips()
+
+        assert bus_trips[0]["trip_id"] == "345.3.I"
+        assert bus_trips[0]["route_id"] == "17-e19-34"
+
+    def test_read_bus_timings(self):
+        read_bus_timings = StoreBusRoutesData()
+        assert read_bus_timings.read_bus_timings()[0]==['\ufefftrip_id','arrival_time','departure_time','stop_id','stop_sequence','stop_headsign','pickup_type','drop_off_type','shape_dist_traveled']
+        assert read_bus_timings.read_bus_timings()[1][0]=="214.6.17-120-1-cm1-1.102.I"
