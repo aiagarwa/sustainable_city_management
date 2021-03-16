@@ -137,24 +137,25 @@ class Buses extends React.Component {
     axios
       .get('http://127.0.0.1:8000/main/busstop_locations/')
       .then(res => {
-
-        let busStopsTmp = [];
+        let busStops_tmp = [];
+        let busStops_list = [];
         let counter = 0;
         for (const stop of Object.keys(res.data.DATA.RESULT)) {
-          if (counter++ > 100) break;
-
-          busStopsTmp.push({
-            stop: stop,
-            name: res.data.DATA.RESULT[stop].STOP_NAME,
-            lat: res.data.DATA.RESULT[stop].STOP_LAT,
-            lng: res.data.DATA.RESULT[stop].STOP_LON,
-            icon: iconDefault,
-          });
+          if (counter++ > 800) break;
+          if (busStops_tmp.includes(res.data.DATA.RESULT[stop].STOP_NAME) == false) {
+            busStops_tmp.push(res.data.DATA.RESULT[stop].STOP_NAME);
+            busStops_list.push({
+              stop: stop,
+              name: res.data.DATA.RESULT[stop].STOP_NAME,
+              lat: res.data.DATA.RESULT[stop].STOP_LAT,
+              lng: res.data.DATA.RESULT[stop].STOP_LON,
+              icon: iconDefault,
+              });
+           }
         }
+        this.setState({ busStops: busStops_list });
 
-        this.setState({ busStops: busStopsTmp });
-
-        this.drawPathBetweenBusStops("stop_76", "stop_85");
+        // this.drawPathBetweenBusStops("stop_76", "stop_85");
       })
       .catch(error => {
         console.error(error);
@@ -230,7 +231,7 @@ class Buses extends React.Component {
                             <Popup>
                               <p>
                                 <b>{name}</b><br />
-                                <i>{stop}</i>
+                                {/* <i>{stop}</i> */}
                               </p>
                             </Popup>
                           </Marker>
