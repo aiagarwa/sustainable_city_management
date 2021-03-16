@@ -44,14 +44,13 @@ class BikesStandsLocation(Document):
 class StoreBikeDataToDatabase:
 
 #  This method all locations of bike stands in db.
-
     def save_bike_stands_location(self):
         url = config_vals["stations_api_url"]
         payload = {}
         headers = {}
         # Fetching response from the URL.
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            response = requests.get(url, headers=headers, data=payload)
             loc_result = json.loads(response.text)
             for item in loc_result:
                 standLocations = BikesStandsLocation(
@@ -64,7 +63,6 @@ class StoreBikeDataToDatabase:
         except:
             logger.exception('Storing bike stand location into DB failed!')
             raise
-
     
     # This method fetch the data from bike api for each day 
 
@@ -80,7 +78,7 @@ class StoreBikeDataToDatabase:
         headers = {}
         # Fetching response from the URL.
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            response = requests.get(url, headers=headers, data=payload)
             tmp_result = json.loads(response.text)
             return tmp_result
         except:
