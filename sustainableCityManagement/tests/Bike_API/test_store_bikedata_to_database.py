@@ -149,3 +149,32 @@ class TestStoreBikedataToDatabase(TestCase):
 
         assert store_bike_data_to_database.bike_usage_save_locations.call_count == 3
         assert store_bike_data_to_database.bikedata_day.call_count == 3
+
+    def test_fetch_bike_stands_location(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+        BikesStandsLocation(name="name", latitude=12.2, longitude=1.1).save()
+
+        json_bike_stands_location = store_bike_data_to_database.fetch_bike_stands_location()
+
+        expected_result = [
+            {
+                "name":"name",
+                "latitude":12.2,
+                "longitude":1.1
+            }
+        ]
+
+        print(json_bike_stands_location)
+
+        assert len(json_bike_stands_location) == 1
+        assert json_bike_stands_location[0]['name'] == 'name'
+        assert json_bike_stands_location[0]['latitude'] == 12.2
+        assert json_bike_stands_location[0]['longitude'] == 1.1
+
+
+    #bikedata_minutes
+    #fetch_data_from_db_for_day
+    #fetch_data_from_db_for_minutes
