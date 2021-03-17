@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from main_project.Bike_API.fetch_bikeapi import FetchBikeApi
 import json
 
+
 class TestShowBikeApi(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -48,7 +49,8 @@ class TestShowBikeApi(TestCase):
         fetch_bike_api.bikeapi = MagicMock(return_value=expected_result)
 
         response = show_bike_data.get(request_wrapper, fetch_bike_api)
-        fetch_bike_api.bikeapi.assert_called_with(historical=True, days_historical=1)
+        fetch_bike_api.bikeapi.assert_called_with(
+            historical=True, days_historical=1)
 
         assert response.status_code == 200
         content = json.loads(response.content)

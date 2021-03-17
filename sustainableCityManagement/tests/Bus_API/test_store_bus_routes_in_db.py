@@ -4,9 +4,11 @@ from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoute
 from main_project.Bus_API.store_bus_routes_data_in_database import BusStops
 from main_project.Bus_API.store_bus_routes_data_in_database import BusRoutes
 from main_project.Bus_API.store_bus_routes_data_in_database import BusTrips
+from main_project.Bus_API.store_bus_routes_data_in_database import BusTimings
 from mongoengine import *
 import mongomock as mm
 from decimal import Decimal
+from datetime import datetime, timedelta, date
 
 
 class TestStoreBusRoutesData(TestCase):
@@ -122,24 +124,3 @@ class TestStoreBusRoutesData(TestCase):
 
         assert fetch_bus_trips["trip_id"] == "345.3.I"
         assert fetch_bus_trips["route_id"] == "17-e19-34"
-
-    def test_fetch_bustrips(self):
-        fetch_bus_trips = StoreBusRoutesData()
-
-        expectedresult = [[], ["17-e19-34", "tyy",
-                               "345.3.I", "1345.3.I", "Bus Station 1", "1"]]
-
-        fetch_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
-        fetch_bus_trips.store_bus_trips()
-
-        bus_trips = fetch_bus_trips.fetch_bustrips()
-
-        assert bus_trips[0]["trip_id"] == "345.3.I"
-        assert bus_trips[0]["route_id"] == "17-e19-34"
-
-    def test_read_bus_timings(self):
-        read_bus_timings = StoreBusRoutesData()
-        assert read_bus_timings.read_bus_timings()[0] == ['\ufefftrip_id', 'arrival_time', 'departure_time',
-                                                          'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled']
-        assert read_bus_timings.read_bus_timings(
-        )[1][0] == "214.6.17-120-1-cm1-1.102.I"

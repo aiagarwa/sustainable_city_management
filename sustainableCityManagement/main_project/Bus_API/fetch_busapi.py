@@ -18,13 +18,11 @@ import json
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 
+
 class FetchBusApi:
-    def __init__(self):
-        self.busRoutesObj = StoreBusRoutesData()
-    
-    def bus_stand_locations(self):
+    def bus_stand_locations(self, busRoutesObj=StoreBusRoutesData()):
         result_response = {}
-        all_stops = self.busRoutesObj.fetch_busstops_location()
+        all_stops = busRoutesObj.fetch_busstops_location()
         counter = 0
         for location in all_stops:
             stop_custom_id = "stop_"+str(counter)
