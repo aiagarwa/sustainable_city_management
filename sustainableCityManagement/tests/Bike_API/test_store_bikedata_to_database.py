@@ -1,5 +1,5 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
-from main_project.Bike_API.store_bikedata_to_database import BikesStandsLocation
+from main_project.Bike_API.store_bikedata_to_database import BikesStandsLocation, BikeStands, BikeAvailability
 from django.test import TestCase
 from unittest.mock import MagicMock
 from decimal import Decimal
@@ -75,21 +75,77 @@ class TestStoreBikedataToDatabase(TestCase):
         
         assert bikedata_live == json.loads(mocked_result)
 
-# mocked_result = [
-#     {'historical': [
-#             {
-#                 'bike_stands': 40,
-#                 'available_bike_stands': 31,
-#                 'time': datetime.datetime(2021, 3, 11, 16, 40, 3)
-#             }
-#         ], 'name': 'MOUNT STREET LOWER'
-#     },
-#     {'historical': [
-#             {
-#                 'bike_stands': 30, 
-#                 'available_bike_stands': 11,
-#                 'time': datetime.datetime(2021, 3, 11, 16, 40, 3)
-#             }
-#         ], 'name': 'SOUTH DOCK ROAD'
-#     }
-# ]
+    def test_bike_usage_save_locations(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        mocked_result = [
+            {
+                "name" : "test_name_1"
+            },
+            {
+                "name" : "test_name_2"
+            }
+        ]
+
+        store_bike_data_to_database.get_bikedata_day = MagicMock(return_value=mocked_result)
+        store_bike_data_to_database.bike_usage_save_locations(1)
+
+        fetch_bike_stand_1 = BikeStands.objects(name="test_name_1").first()
+        fetch_bike_stand_2 = BikeStands.objects(name="test_name_2").first()
+
+        assert fetch_bike_stand_1["name"] == "test_name_1"
+        assert fetch_bike_stand_2["name"] == "test_name_2"
+
+    def test_bikedata_day(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        mocked_result = [
+            {
+                "name" : "already_present_in_db",
+                "historic": [
+                    {
+                        "time": "2021-03-15T15:15:15Z",
+                        "bike_stands": 40,
+                        "available_bike_stands": 10
+                    }
+                ]
+            },
+            {
+                "name" : "not_present_in_db"
+            }
+        ]
+        BikeStands(name='already_present_in_db').save()
+
+        store_bike_data_to_database.get_bikedata_day = MagicMock(return_value=mocked_result)
+        
+        store_bike_data_to_database.bikedata_day(15)
+
+        fetch_bike_stand_1 = BikeStands.objects(name="not_present_in_db").first()
+        assert fetch_bike_stand_1 is None
+
+        fetch_bike_stand_2 = BikeStands.objects(name="already_present_in_db").first()
+        assert fetch_bike_stand_2 is not None
+        assert len(fetch_bike_stand_2.historical) == 1
+        assert fetch_bike_stand_2.historical[0].bike_stands == 40
+        assert fetch_bike_stand_2.historical[0].available_bike_stands == 10
+        assert str(fetch_bike_stand_2.historical[0].time) == "2021-03-15 15:15:15"
+
+    def test_save_historic_data_in_db(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        store_bike_data_to_database.bike_usage_save_locations = MagicMock()
+        store_bike_data_to_database.bikedata_day = MagicMock()
+
+        store_bike_data_to_database.save_historic_data_in_db(3)
+
+        assert store_bike_data_to_database.bike_usage_save_locations.call_count == 3
+        assert store_bike_data_to_database.bikedata_day.call_count == 3
