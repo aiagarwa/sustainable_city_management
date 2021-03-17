@@ -3,8 +3,8 @@ import collections
 from collections import Counter
 from datetime import datetime, timedelta
 from ..Logs.service_logs import bike_log
-from .store_bikedata_to_database import fetch_bike_stands_location
-from .store_processed_bikedata_to_db import fetch_predicted_data, fetch_processed_data
+from .store_bikedata_to_database import StoreBikeDataToDatabase
+from .store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
 from ..Config.config_handler import read_config
 
 # Calling logging function for bike _API
@@ -20,8 +20,9 @@ if config_vals is None:
 class GraphValuesBike:
     def graphvalue_call_locationbased(self, days_historical=config_vals["default_days_historic"]):
         if days_historical == 1 or days_historical == 0:
-            error = logger.error('Assign days_historic parameter >= 2.')
-            return error
+            error_str = 'Assign days_historic parameter >= 2.'
+            logger.error(error_str)
+            raise ValueError(error_str)
 
         now_time = datetime.now()
         day_ahead_tmp = (now_time - timedelta(days=-1)
@@ -29,8 +30,9 @@ class GraphValuesBike:
         day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
         resultDictionary = {}
         try:
-            fetched_data = fetch_processed_data(days_historical)
-            fetched_predicted = fetch_predicted_data(day_ahead_tmp)
+            store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
+            fetched_data = store_processed_bike_data_to_db.fetch_processed_data(days_historical)
+            fetched_predicted = store_processed_bike_data_to_db.fetch_predicted_data(day_ahead_tmp)
             for loc in fetched_data:
                 if loc["name"] != "ALL_LOCATIONS":
                     tmpDict = {}
@@ -55,10 +57,12 @@ class GraphValuesBike:
     # Below function is used for calling the graph values for overall bike usage over a given timespan and predict value a day ahead.
 
 
-    def graphvalue_call_overall(self, days_historical=config_vals["default_days_historic"]):
+    def graphvalue_call_overall(self, days_historical=config_vals["default_days_historic"],
+                                        store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()):
         if days_historical == 1 or days_historical == 0:
-            error = logger.error('Assign days_historic parameter >= 2.')
-            return error
+            error_str = 'Assign days_historic parameter >= 2.'
+            logger.error(error_str)
+            raise ValueError(error_str)
 
         now_time = datetime.now()
         day_ahead_tmp = (now_time - timedelta(days=-1)
@@ -66,8 +70,8 @@ class GraphValuesBike:
         day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
         resultDictionary = {}
         try:
-            fetched_data = fetch_processed_data(days_historical)
-            fetched_predicted = fetch_predicted_data(day_ahead_tmp)
+            fetched_data = store_processed_bike_data_to_db.fetch_processed_data(days_historical)
+            fetched_predicted = store_processed_bike_data_to_db.fetch_predicted_data(day_ahead_tmp)
             tmpDict = {}
             for item in fetched_data[-1]["data"]:
                 day = item["day"].strftime("%Y-%m-%d")

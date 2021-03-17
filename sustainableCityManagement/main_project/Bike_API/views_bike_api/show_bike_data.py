@@ -43,6 +43,7 @@ class ShowBikeApi(APIView):
             # Fetch historical data.
             elif inputType == "historical":
                 days_data = request.query_params.get("days_historic", "")
+
                 result = fetch_bike_api.bikeapi(
                     historical=True, days_historical=int(days_data))
                 return JsonResponse(
@@ -76,7 +77,7 @@ class ShowBikeApi(APIView):
                     "TIME_TO_RUN": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
                 )
 
-        except (KeyError, TypeError):
+        except (KeyError, TypeError, ValueError):
             return JsonResponse({
                                 "API_ID": ID,
                                 "ERROR": "BIKE_INFO API not working, check fetch_bikeapi, and check the query parameters.",
