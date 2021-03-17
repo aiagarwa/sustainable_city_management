@@ -19,6 +19,12 @@ class BusRoutes(Document):
     meta = {'collection': 'Bus_Routes'
     }
 
+class BusTrips(Document):
+    trip_id = StringField(max_length=200, unique=True)
+    route_id = StringField(max_length=200)
+    meta = {'collection': 'Bus_Trips'
+    }
+
 class StoreBusRoutesData:
 
     def read_bus_stops(self):
@@ -74,9 +80,42 @@ class StoreBusRoutesData:
             logger.error('Bus Routes data is not retrieved from DB')
         return bus_routes
 
+    def read_bus_trips(self):
+        readfile = []
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/trips.csv", "r", encoding="utf8") as f:
+        # with open("./resources/routes.csv", "r", encoding="utf8") as f:
+            readfile = list(csv.reader(f))
+        return readfile
+
+    def store_bus_trips(self):
+        readfile = self.read_bus_trips()
+        for i in range(1,len(readfile)):
+            bustrips = BusTrips(route_id = readfile[i][0],
+                                trip_id = readfile[i][2])
+            try:
+                bustrips.save()
+            except:
+                pass
+
+    def fetch_bustrips(self, locationName = "all"):
+        q_set = BusTrips.objects()  # Fetch Data from DB
+        # Converts the Processed Bus Data from DB into JSON format
+        json_data = q_set.to_json()
+        bus_trips = json.loads(json_data)
+        if bus_trips is None:
+            logger.error('Bus Trips data is not retrieved from DB')
+        return bus_trips
+
+    def read_bus_timings(self):
+        readfile = []
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/stop_times.csv", "r", encoding="utf8") as f:
+        # with open("./resources/routes.csv", "r", encoding="utf8") as f:
+            readfile = list(csv.reader(f))
+        return readfile
+
 # a = StoreBusRoutesData()
 # a.store_bus_stops()
-# print(a.fetch_busstops_location()[1])
+# print(a.fetch_busstops_location()[:2])
 
 # a.store_bus_routes()
 # print(a.fetch_busroutes()[1])
