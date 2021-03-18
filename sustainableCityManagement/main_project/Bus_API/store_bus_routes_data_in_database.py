@@ -58,8 +58,8 @@ class StoreBusRoutesData:
                                 stop_lon = readfile[i][3])
             try:
                 busstops.save()
-            except Exception as e:
-                self.logger.error(e)
+            except:
+                pass
 
     def fetch_busstops_location(self, locationName = "all"):
         q_set = BusStops.objects()  # Fetch Data from DB
@@ -88,8 +88,8 @@ class StoreBusRoutesData:
                                 route_name = readfile[i][3])
             try:
                 busroutes.save()
-            except Exception as e:
-                self.logger.error(e)
+            except:
+                pass
 
     def fetch_busroutes(self, locationName = "all"):
         q_set = BusRoutes.objects()  # Fetch Data from DB
@@ -118,8 +118,8 @@ class StoreBusRoutesData:
                                 trip_id = readfile[i][2])
             try:
                 bustrips.save()
-            except Exception as e:
-                self.logger.error(e)
+            except:
+                pass
 
     def store_bus_times(self):
         fields = ['trip_id', 'arrival_time','departure_time','stop_id','stop_sequence']
