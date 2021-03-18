@@ -147,9 +147,7 @@ class StoreBikeDataToDatabase:
 
   
     # This method gets the data from API every 5 minutes and store in DB.
-
-    @staticmethod
-    def bikedata_minutes(minutes_delay=5):
+    def bikedata_minutes(self, minutes_delay=5):
         bikeusagedata = self.get_bikedata_live(minutes_delay)
         try:
             for item in bikeusagedata:
@@ -201,7 +199,6 @@ class StoreBikeDataToDatabase:
 
 
     # Fetch bikedata from db for a particular date
-
     def fetch_data_from_db_for_day(self, dateForData):
         start_date_str = dateForData.strftime("%Y-%m-%dT00:00:00Z")
         end_date_str = dateForData.strftime("%Y-%m-%dT23:59:59Z")
@@ -229,8 +226,6 @@ class StoreBikeDataToDatabase:
         return list_q_set
 
     # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
-
-
     def fetch_data_from_db_for_minutes(self):
         pipeline = [
             {"$unwind": "$historical"},
