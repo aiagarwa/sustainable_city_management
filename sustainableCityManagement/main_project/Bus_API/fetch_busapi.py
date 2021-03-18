@@ -21,11 +21,16 @@ class FetchBusApi:
 
     def bus_trips_timings(self, busRoutesObj=StoreBusRoutesData()):
         result_response = {}
+        counter = 0
         all_trips = busRoutesObj.fetch_bustrips()
         for trips in all_trips:
-            result_response = trips
+            trip_custom_id = "trip_"+str(counter)
+            result_response[trip_custom_id] = {}
+            result_response[trip_custom_id]["TRIP_ID"] = trips["trip_id"]
+            result_response[trip_custom_id]["ROUTE_ID"] = trips["route_id"]
+            result_response[trip_custom_id]["STOP_INFO"] = trips["stops"]
+            counter += 1
         return result_response
-
 
 # a = FetchBusApi()
 # x = a.bus_trips_timings()
