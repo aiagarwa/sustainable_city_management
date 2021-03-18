@@ -8,8 +8,10 @@ from mongoengine import get_connection
 from main_project.Config.config_handler import read_config
 import json
 import mock
+from datetime import datetime
 import requests
 from freezegun import freeze_time
+from freezegun.api import FakeDatetime
 
 mocked_result = '[{"st_NAME" : "test_st_val","st_LATITUDE": 1.1,"st_LONGITUDE": 2.2}]'
 config_vals = read_config("Bike_API")
@@ -30,6 +32,13 @@ class TestStoreBikedataToDatabase(TestCase):
     @classmethod
     def setUpTestData(cls):
         pass
+
+    def tearDown(self):
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        BikesStandsLocation.objects().delete()
+        BikeStands.objects().delete()
 
     @mock.patch('requests.get', side_effect=mocked_requests_bike_stands_location)
     def test_save_bike_stands_location(self, mock_get):
@@ -174,7 +183,215 @@ class TestStoreBikedataToDatabase(TestCase):
         assert json_bike_stands_location[0]['latitude'] == 12.2
         assert json_bike_stands_location[0]['longitude'] == 1.1
 
+    def test_bikedata_minutes(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
 
-    #bikedata_minutes
-    #fetch_data_from_db_for_day
-    #fetch_data_from_db_for_minutes
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        mocked_result = [
+            {
+                "name" : "already_present_in_db_1",
+                "historic": [
+                    {
+                        "time": "2021-03-15T14:15:15Z",
+                        "bike_stands": 40,
+                        "available_bike_stands": 10
+                    }
+                ]
+            },
+            {
+                "name" : "not_present_in_db"
+            }
+        ]
+        BikeStands(name='already_present_in_db_1').save()
+
+        store_bike_data_to_database.get_bikedata_live = MagicMock(return_value=mocked_result)
+
+        store_bike_data_to_database.bikedata_minutes(15)
+
+        fetch_bike_stand_1 = BikeStands.objects(name="not_present_in_db").first()
+        assert fetch_bike_stand_1 is None
+
+        fetch_bike_stand_2 = BikeStands.objects(name="already_present_in_db_1").first()
+        assert fetch_bike_stand_2 is not None
+        assert len(fetch_bike_stand_2.historical) == 1
+        assert fetch_bike_stand_2.historical[0].bike_stands == 40
+        assert fetch_bike_stand_2.historical[0].available_bike_stands == 10
+        assert str(fetch_bike_stand_2.historical[0].time) == "2021-03-15 14:15:15"
+
+        # We try to store the same data again, the data in the database should not change as we
+        # should not be able to insert the same record twice
+        store_bike_data_to_database.bikedata_minutes(15)
+
+        fetch_bike_stand_2 = BikeStands.objects(name="already_present_in_db_1").first()
+        assert fetch_bike_stand_2 is not None
+        assert len(fetch_bike_stand_2.historical) == 1
+        assert fetch_bike_stand_2.historical[0].bike_stands == 40
+        assert fetch_bike_stand_2.historical[0].available_bike_stands == 10
+        assert str(fetch_bike_stand_2.historical[0].time) == "2021-03-15 14:15:15"
+
+        mocked_result = [
+            {
+                "name" : "already_present_in_db_1",
+                "historic": [
+                    {
+                        "time": "2021-03-15T15:15:15Z",
+                        "bike_stands": 40,
+                        "available_bike_stands": 12
+                    }
+                ]
+            },
+            {
+                "name" : "not_present_in_db"
+            }
+        ]
+        store_bike_data_to_database.get_bikedata_live = MagicMock(return_value=mocked_result)
+
+        # We try to store the different data now, so we should get 2 datapoints in historical
+        store_bike_data_to_database.bikedata_minutes(15)
+
+        fetch_bike_stand_2 = BikeStands.objects(name="already_present_in_db_1").first()
+        assert fetch_bike_stand_2 is not None
+        assert len(fetch_bike_stand_2.historical) == 2
+
+        assert fetch_bike_stand_2.historical[0].bike_stands == 40
+        assert fetch_bike_stand_2.historical[0].available_bike_stands == 10
+        assert str(fetch_bike_stand_2.historical[0].time) == "2021-03-15 14:15:15"
+
+        assert fetch_bike_stand_2.historical[1].bike_stands == 40
+        assert fetch_bike_stand_2.historical[1].available_bike_stands == 12
+        assert str(fetch_bike_stand_2.historical[1].time) == "2021-03-15 15:15:15"
+
+    def test_fetch_data_from_db_for_minutes(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        BikeStands(name='bike_stand_1').save()
+        BikeStands(name='bike_stand_2').save()
+
+        bike_stand_1 = BikeStands.objects(name='bike_stand_1').first()
+        bike_stand_2 = BikeStands.objects(name='bike_stand_2').first()
+
+        bike_stand_1.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=10,
+            time='2021-03-15 13:15:15')
+            )
+        bike_stand_1.save()
+
+        bike_stand_2.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=20,
+            time='2021-03-15 14:15:15')
+            )
+        bike_stand_2.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=30,
+            time='2021-03-15 15:15:15')
+            )
+        bike_stand_2.save()
+
+        result = store_bike_data_to_database.fetch_data_from_db_for_minutes()
+
+        expected_result = [
+            {
+                'historical': [
+                    {
+                        'bike_stands': 40,
+                        'available_bike_stands': 10,
+                        'time': FakeDatetime(2021, 3, 15, 13, 15, 15)
+                    }
+                ],
+                'name': 'bike_stand_1'
+            },
+            {
+                'historical': [
+                    {
+                        'bike_stands': 40,
+                        'available_bike_stands': 30,
+                        'time': FakeDatetime(2021, 3, 15, 15, 15, 15)
+                    }
+                ],
+                'name': 'bike_stand_2'
+            }
+        ]
+
+        assert expected_result == result
+
+    def test_fetch_data_from_db_for_day(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        BikeStands(name='bike_stand_1').save()
+        BikeStands(name='bike_stand_2').save()
+
+        bike_stand_1 = BikeStands.objects(name='bike_stand_1').first()
+        bike_stand_2 = BikeStands.objects(name='bike_stand_2').first()
+
+        bike_stand_1.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=10,
+            time='2021-03-15 13:15:15')
+            )
+        bike_stand_1.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=10,
+            time='2021-03-14 13:15:15')
+            )
+        bike_stand_1.save()
+
+        bike_stand_2.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=20,
+            time='2021-03-15 14:15:15')
+            )
+        bike_stand_2.historical.append(
+            BikeAvailability(
+            bike_stands=40,
+            available_bike_stands=30,
+            time='2021-03-15 15:15:15')
+            )
+        bike_stand_2.save()
+
+        result = store_bike_data_to_database.fetch_data_from_db_for_day(datetime.now())
+
+        expected_result = [
+            {
+                'historical': [
+                    {
+                        'bike_stands': 40,
+                        'available_bike_stands': 10,
+                        'time': FakeDatetime(2021, 3, 15, 13, 15, 15)
+                    }
+                ],
+                'name': 'bike_stand_1'
+            },
+            {
+                'historical': [
+                    {
+                        'bike_stands': 40,
+                        'available_bike_stands': 20,
+                        'time': FakeDatetime(2021, 3, 15, 14, 15, 15)
+                    },
+                    {
+                        'bike_stands': 40,
+                        'available_bike_stands': 30, 
+                        'time': FakeDatetime(2021, 3, 15, 15, 15, 15)
+                    }
+                ],
+                'name': 'bike_stand_2'
+            }
+        ]
+
+        assert expected_result == result

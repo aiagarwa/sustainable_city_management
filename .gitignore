@@ -7,4 +7,6 @@ node_modules
 .DS_Store
 
 Bike_API.log
+Bus_API.log
+Application.log
 StoreDataTest.csv
