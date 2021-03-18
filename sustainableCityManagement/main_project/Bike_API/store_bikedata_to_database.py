@@ -100,8 +100,7 @@ class StoreBikeDataToDatabase:
         headers = {}
         # Fetching response from the URL.
         try:
-            response = requests.request(
-                "GET", url, headers=headers, data=payload)
+            response = requests.get(url, headers=headers, data=payload)
             tmp_result = json.loads(response.text)
             return tmp_result
         except:
