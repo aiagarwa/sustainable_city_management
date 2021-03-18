@@ -23,7 +23,7 @@ class BusRoutes(Document):
     }
 
 class StopsInfo(EmbeddedDocument):
-    stop_id = stop_id = StringField(max_length=200)
+    stop_id = StringField(max_length=200)
     stop_arrival_time = StringField()
     stop_departure_time = StringField()
     stop_sequence = IntField()
