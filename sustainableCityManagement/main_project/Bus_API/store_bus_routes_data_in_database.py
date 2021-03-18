@@ -52,10 +52,9 @@ class BusTimings(Document):
 
 
 class StoreBusRoutesData:
-    import pandas as pd
-
     def __init__(self):
         self.logger = bus_log()
+        self.pd = pd
 
     def read_bus_stops(self):
         readfile = []
@@ -138,16 +137,13 @@ class StoreBusRoutesData:
                 pass
 
     def store_bus_times(self):
-        fields = ['trip_id', 'arrival_time',
-                  'departure_time', 'stop_id', 'stop_sequence']
-        readfile = pd.read_csv("../sustainableCityManagement/main_project/Bus_API/resources/stop_times_test.csv", encoding="utf8",
-                               dtype={'trip_id': "string", 'arrival_time': "string",
-                                      'departure_time': "string", 'stop_id': "string", 'stop_sequence': 'int8'},
-                               usecols=fields,
-                               chunksize=10000
-                               )
-        self.logger.info(
-            "Storing Arrival and Departure Timings for Bus Trips in DB")
+        fields = ['trip_id', 'arrival_time','departure_time','stop_id','stop_sequence']
+        readfile = self.pd.read_csv("../sustainableCityManagement/main_project/Bus_API/resources/stop_times.csv",encoding="utf8",
+                        dtype={'trip_id':"string",'arrival_time':"string",'departure_time':"string",'stop_id':"string",'stop_sequence':'int8'},
+                        usecols=fields,
+                        chunksize=10000
+                        )
+        self.logger.info("Storing Arrival and Departure Timings for Bus Trips in DB")
         for item in readfile:
             for i in item.index:
                 trips = BusTrips.objects(trip_id=item["trip_id"][i]).first()
