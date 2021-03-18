@@ -7,6 +7,7 @@ from main_project.Bus_API.store_bus_routes_data_in_database import BusTrips
 from mongoengine import *
 import mongomock as mm
 from decimal import Decimal
+import pandas as pd
 
 
 class TestStoreBusRoutesData(TestCase):
@@ -109,6 +110,30 @@ class TestStoreBusRoutesData(TestCase):
         assert fetch_bus_trips["trip_id"] == "345.3.I"
         assert fetch_bus_trips["route_id"] == "17-e19-34"
 
+    def test_store_bus_times(self):
+        store_bus_trips = StoreBusRoutesData()
+
+        conn = get_connection()
+        self.assertTrue(isinstance(conn, mm.MongoClient))
+
+        expectedresult =  [[],["17-e19-34","tyy","345.3.I","1345.3.I","Bus Station 1","1"]]
+
+        store_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
+        store_bus_trips.store_bus_trips() 
+
+        expectedresult_timings_df = pd.DataFrame({'trip_id': ["345.3.I","345.3.I"],'arrival_time': ["06:20:00","06:25:00"],'departure_time':["06:20:00","06:25:00"],'stop_id': ["7866R56","7866RT7"],'stop_sequence': [1,2]})
+        expectedresult_timings_df.to_csv("StoreDataTest.csv")
+        store_bus_trips.pd.read_csv = MagicMock(return_value=pd.read_csv("StoreDataTest.csv",chunksize=2))
+        store_bus_trips.store_bus_times()       
+
+        fetch_bus_trips = BusTrips.objects().first()
+
+        assert fetch_bus_trips["trip_id"] == "345.3.I"
+        assert fetch_bus_trips.stops[0]["stop_id"] == "7866R56"
+        assert fetch_bus_trips.stops[0]["stop_arrival_time"] == "06:20:00"
+        assert fetch_bus_trips.stops[0]["stop_departure_time"] == "06:20:00"
+        assert fetch_bus_trips.stops[0]["stop_sequence"] == 1
+
     def test_fetch_bustrips(self):
         fetch_bus_trips = StoreBusRoutesData()
 
@@ -116,13 +141,14 @@ class TestStoreBusRoutesData(TestCase):
 
         fetch_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
         fetch_bus_trips.store_bus_trips()   
-
+        
+        fetch_bus_trips.pd.read_csv = MagicMock(return_value=pd.read_csv("StoreDataTest.csv",chunksize=2))
+        fetch_bus_trips.store_bus_times()
+        
         bus_trips = fetch_bus_trips.fetch_bustrips()
 
         assert bus_trips[0]["trip_id"] == "345.3.I"
-        assert bus_trips[0]["route_id"] == "17-e19-34"
-
-    def test_read_bus_timings(self):
-        read_bus_timings = StoreBusRoutesData()
-        assert read_bus_timings.read_bus_timings()[0]==['\ufefftrip_id','arrival_time','departure_time','stop_id','stop_sequence','stop_headsign','pickup_type','drop_off_type','shape_dist_traveled']
-        assert read_bus_timings.read_bus_timings()[1][0]=="214.6.17-120-1-cm1-1.102.I"
+        assert bus_trips[0]["stops"][0]["stop_id"] == "7866R56"
+        assert bus_trips[0]["stops"][0]["stop_arrival_time"] == "06:20:00"
+        assert bus_trips[0]["stops"][0]["stop_departure_time"] == "06:20:00"
+        assert bus_trips[0]["stops"][0]["stop_sequence"] == 1

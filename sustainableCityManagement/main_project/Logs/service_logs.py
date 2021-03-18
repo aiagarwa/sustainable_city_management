@@ -9,6 +9,18 @@ def bike_log():  # Creating custom logger to store logging information.
         create_logger('Bike_API')
     return logger
 
+def bus_log():  # Creating custom logger to store logging information.
+    global logger
+    if logger is None:
+        create_logger('Bus_API')
+    return logger
+
+def app_log():  # Creating custom logger to store logging information.
+    global logger
+    if logger is None:
+        create_logger('Application')
+    return logger
+
 def create_logger(file_name):
     global logger
     logger = logging.getLogger(__name__)
