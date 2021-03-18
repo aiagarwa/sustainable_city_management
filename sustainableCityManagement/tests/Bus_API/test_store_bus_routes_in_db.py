@@ -10,9 +10,6 @@ from main_project.Bus_API.store_bus_routes_data_in_database import BusTimings
 from mongoengine import *
 import mongomock as mm
 from decimal import Decimal
-<< << << < HEAD
-== == == =
->>>>>> > edea4e1b32dba8126e686fec97e4376eb24405f6
 
 
 class TestStoreBusRoutesData(TestCase):
@@ -108,7 +105,7 @@ class TestStoreBusRoutesData(TestCase):
     def test_read_bus_trips(self):
         read_bus_trip = StoreBusRoutesData()
         assert read_bus_trip.read_bus_trips()[0] == [
-            '\ufeffroute_id', 'service_id', 'trip_id', 'shape_id', 'trip_headsign', 'direction_id']
+            'route_id', 'service_id', 'trip_id', 'shape_id', 'trip_headsign', 'direction_id']
         assert read_bus_trip.read_bus_trips(
         )[1][2] == "1368811.1.10-100-e19-1.255.I"
 
