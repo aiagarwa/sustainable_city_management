@@ -60,35 +60,29 @@ class TestFetchBusApi(TestCase):
         mocked_result = [
             {
                 "trip_id": "315_IJ",
-                "stop_id": "stop_0",
-                "arrival_time": "06:20:30",
-                "departure_time": "06:20:30",
-                "stop_sequence": 0
+                "route_id": "stop_0",
+                "stops": []
             },
             {
                 "trip_id": "315_IJ",
-                "stop_id": "stop_1",
-                "arrival_time": "06:22:30",
-                "departure_time": "06:22:30",
-                "stop_sequence": 1
+                "route_id": "stop_1",
+                "stops": []
             }
         ]
         store_bus_data_to_database.fetch_bustrips = MagicMock(
             return_value=mocked_result)
 
         expected_result = {
-            "trip_id": "315_IJ",
-            "stops": {
-                "STOP_ID": "stop_0",
-                "STOP_ARR_TIME": "06:20:30",
-                "STOP_DEP_TIME": "06:20:30",
-                "STOP_SEQUENCE": 0
+            "trip_0": {
+                "TRIP_ID": "315_IJ",
+                "ROUTE_ID": "stop_0",
+                "STOP_INFO": []
             },
-            "stops": {
-                "STOP_ID": "stop_1",
-                "STOP_ARR_TIME": "06:20:30",
-                "STOP_DEP_time": "06:20:30",
-                "STOP_SEQUENCE": 4
+
+            "trip_1": {
+                "TRIP_ID": "315_IJ",
+                "ROUTE_ID": "stop_1",
+                "STOP_INFO": []
             }
         }
         result = fetch_bus_api_class.bus_trips_timings(
