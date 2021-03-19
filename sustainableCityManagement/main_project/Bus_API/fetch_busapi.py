@@ -13,6 +13,7 @@ class FetchBusApi:
         for location in all_stops:
             stop_custom_id = "stop_"+str(counter)
             result_response[stop_custom_id] = {}
+            result_response[stop_custom_id]["STOP_ID"] = location["stop_id"]
             result_response[stop_custom_id]["STOP_NAME"] = location["stop_name"]
             result_response[stop_custom_id]["STOP_LAT"] = location["stop_lat"]
             result_response[stop_custom_id]["STOP_LON"] = location["stop_lon"]
