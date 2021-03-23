@@ -1,12 +1,35 @@
 import sys
 import logging
 
-logger = None
+logger_bike = None
+logger_bus = None
+logger_app = None
 
 def bike_log():  # Creating custom logger to store logging information.
+    global logger_bike
+    if logger_bike is None:
+        logger = create_logger('Bike_API')
+        logger_bike = logger
+    return logger_bike
+
+def bus_log():  # Creating custom logger to store logging information.
+    global logger_bus
+    if logger_bus is None:
+        logger = create_logger('Bus_API')
+        logger_bus = logger
+    return logger_bus
+
+def app_log():  # Creating custom logger to store logging information.
+    global logger_app
+    if logger_app is None:
+        logger = create_logger('Application')
+        logger_app = logger
+    return logger_app
+
+def parkings_log():  # Creating custom logger to store logging information.
     global logger
     if logger is None:
-        create_logger('Bike_API')
+        create_logger('Parkings_API')
     return logger
 
 def parkings_log():  # Creating custom logger to store logging information.
@@ -16,7 +39,6 @@ def parkings_log():  # Creating custom logger to store logging information.
     return logger
 
 def create_logger(file_name):
-    global logger
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
 
@@ -32,3 +54,4 @@ def create_logger(file_name):
 
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
+    return logger

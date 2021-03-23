@@ -4,7 +4,8 @@ import sys
 import runserver_init
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sustainableCityManagement.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE",
+                          "sustainableCityManagement.settings")
     if(sys.argv[1] == 'runserver'):
         runserver_init.init()
     try:
@@ -22,4 +23,4 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
-    execute_from_command_line(sys.argv)
+execute_from_command_line(sys.argv)

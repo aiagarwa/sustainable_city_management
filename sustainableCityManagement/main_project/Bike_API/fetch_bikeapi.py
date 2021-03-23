@@ -18,6 +18,7 @@ if config_vals is None:
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 
+
 class FetchBikeApi:
     def bikeapi(self, locations=False, store_bike_data_to_database = StoreBikeDataToDatabase()):
         now_time = datetime.datetime.now()

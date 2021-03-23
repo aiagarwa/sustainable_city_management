@@ -19,11 +19,11 @@ class BikeAvailabilityProcessedData(EmbeddedDocument):
 
 # Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity
 
+
 class BikeProcessedData(Document):
     data = ListField(EmbeddedDocumentField(BikeAvailabilityProcessedData))
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsageProcessed'}
-    logger.info('BikeProcessedData document created successfully.')
 
 # Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
 
@@ -40,17 +40,19 @@ class BikePredictedData(Document):
     data = ListField(EmbeddedDocumentField(BikeAvailabilityPredictedData))
     name = StringField(max_length=200)
     meta = {'collection': 'BikeUsagePredict'}
-    logger.info('BikePredictedData document created successfully.')
 
 # This method gets the raw data from DB, process and store in different collection in DB.
+
 
 class StoreProcessedBikeDataToDB:
     def store_bikedata(self, days_historical):
         now_time = datetime.now(pytz.utc)
         try:
             for i in range(days_historical):
-                delay_time = (now_time - timedelta(days=i)).strftime("%Y%m%d%H%M")
-                delay_time_formatted = datetime.strptime(delay_time, "%Y%m%d%H%M")
+                delay_time = (now_time - timedelta(days=i)
+                              ).strftime("%Y%m%d%H%M")
+                delay_time_formatted = datetime.strptime(
+                    delay_time, "%Y%m%d%H%M")
                 data_day = (now_time - timedelta(days=i)
                             ).strftime("%Y-%m-%dT00:00:00Z")
                 data_day_formatted = datetime.strptime(
@@ -62,7 +64,8 @@ class StoreProcessedBikeDataToDB:
                     {"$match": {"data.day": data_day_formatted}}
                 ]
                 store_bike_data_to_database = StoreBikeDataToDatabase()
-                tmp_result = store_bike_data_to_database.fetch_data_from_db_for_day(delay_time_formatted)
+                tmp_result = store_bike_data_to_database.fetch_data_from_db_for_day(
+                    delay_time_formatted)
                 # Going through all the items in the fetched data from DB and storing the average of daily usage (Location based).
                 for item in tmp_result:
                     # Get the number of documents with a particular location name
@@ -76,7 +79,8 @@ class StoreProcessedBikeDataToDB:
                     q_set = BikeProcessedData.objects(
                         name=item["name"]).aggregate(*pipeline)
                     if len(list(q_set)) < 1:
-                        bikedata = bikedata._qs.filter(name=item["name"]).first()
+                        bikedata = bikedata._qs.filter(
+                            name=item["name"]).first()
                         in_use_bikes_arr = []
                         for stand_details in item["historical"]:
                             in_use_bikes_arr.append(
@@ -93,7 +97,6 @@ class StoreProcessedBikeDataToDB:
             raise
 
     # This method gets the raw data from DB, process and store in different collection in DB.
-
 
     def store_bikedata_all_locations(self, days_historical):
         now_time = datetime.now(pytz.utc)
@@ -129,7 +132,8 @@ class StoreProcessedBikeDataToDB:
                 q_set = BikeProcessedData.objects(
                     name="ALL_LOCATIONS").aggregate(*pipeline)
                 if len(list(q_set)) < 1:
-                    bikedata = bikedata._qs.filter(name="ALL_LOCATIONS").first()
+                    bikedata = bikedata._qs.filter(
+                        name="ALL_LOCATIONS").first()
                     bikesAvailability = BikeAvailabilityProcessedData(day=(now_time - timedelta(days=i)).strftime(
                         "%Y-%m-%d"), total_stands=total_stands_all_locations, in_use=in_use_all_locations)
                     bikedata.data.append(bikesAvailability)
@@ -143,10 +147,10 @@ class StoreProcessedBikeDataToDB:
 
     # To Create location list.
 
-
     def create_location_list(self):
         now_time = datetime.now(pytz.utc)
-        data_day = (now_time - timedelta(days=1)).strftime("%Y-%m-%dT00:00:00Z")
+        data_day = (now_time - timedelta(days=1)
+                    ).strftime("%Y-%m-%dT00:00:00Z")
         data_day_formatted = datetime.strptime(data_day, "%Y-%m-%dT%H:%M:%SZ")
         pipeline = [
             {
@@ -166,7 +170,6 @@ class StoreProcessedBikeDataToDB:
             logger.error(
                 'Train data for location list is empty.Check for the availability of processed DB[Bikes] data ')
         return(train_data)
-
 
     def get_in_use_arr(self, days_historical):
         now_time = datetime.now(pytz.utc)
@@ -195,7 +198,6 @@ class StoreProcessedBikeDataToDB:
                 'Train data for bike in use is empty.Check for the availability of processed DB[Bikes] data ')
         return train_data
 
-
     def store_predict_data_in_db(self, days_historical):
         now_time = datetime.now(pytz.utc)
         day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
@@ -222,16 +224,17 @@ class StoreProcessedBikeDataToDB:
                         day=day_ahead, total_stands=item["total"], in_use=predict_bikes_usage(item["in_use"]))
                     bikedata.data.append(bikesAvailability)
                     bikedata.save()
-            logger.info('Predicted data for day ahead stored in DB successfully.')
+            logger.info(
+                'Predicted data for day ahead stored in DB successfully.')
         except:
             logger.exception('Unable to store predicted data on to DB')
             raise
 
-
     def fetch_processed_data(self, days_historical):
         now_time = datetime.now(pytz.utc)
         curr_time = now_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-        curr_time_formatted = datetime.strptime(curr_time, "%Y-%m-%dT%H:%M:%SZ")
+        curr_time_formatted = datetime.strptime(
+            curr_time, "%Y-%m-%dT%H:%M:%SZ")
         data_day = (now_time - timedelta(days=days_historical)
                     ).strftime("%Y-%m-%dT00:00:00Z")
         data_day_formatted = datetime.strptime(data_day, "%Y-%m-%dT%H:%M:%SZ")
@@ -248,7 +251,7 @@ class StoreProcessedBikeDataToDB:
                 },
                 "name":"$name",
                 "_id":0}
-            },
+             },
         ]
         q_set = BikeProcessedData.objects().aggregate(*pipeline)
         list_q_set = list(q_set)
@@ -256,7 +259,6 @@ class StoreProcessedBikeDataToDB:
             logger.error(
                 'No processed data for historical was retrieved. Check for the availability of processed DB[Bikes] data ')
         return list_q_set
-
 
     def fetch_predicted_data(self, predict_date):
         predict_date_formatted = datetime.strptime(
