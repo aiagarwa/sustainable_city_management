@@ -133,7 +133,60 @@ class Buses extends React.Component {
       });
   }
 
-  componentDidMount() {
+  drawPathBetweenBusStopsId(startStop, destinationStop) {
+    // const start = [53.344, -6.233];
+    // const destination = [53.342, -6.236];
+
+    const map = this.state.map;
+
+    // Retrieve start & destination stops coordinates
+    let start = null;
+    let destination = null;
+    for (const busStop of this.state.busStops) {
+      if (busStop.stop_id == startStop) {
+        start = [busStop.lat, busStop.lng];
+      } else if (busStop.stop_id == destinationStop) {
+        destination = [busStop.lat, busStop.lng];
+      }
+
+      if (start && destination) break;
+    }
+
+    const apiKey = '5b3ce3597851110001cf62489c45fd4df8464534ba7a6bab835d5cc8';
+
+    axios
+      .get(`https://api.openrouteservice.org/v2/directions/driving-hgv?api_key=${apiKey}&start=${start.reverse().join(',')}&end=${destination.reverse().join(',')}`)
+      .then(res => {
+        let latlngs = [];
+        latlngs.push(start.reverse());
+        for (const c of res.data.features[0].geometry.coordinates) {
+          latlngs.push(c.reverse());
+        }
+        latlngs.push(destination.reverse());
+
+        const options = {
+          "delay": 400,
+          "dashArray": [
+            10,
+            20
+          ],
+          "weight": 5,
+          "color": "#0000FF",
+          "pulseColor": "#FFFFFF",
+          "paused": false,
+          "reverse": false,
+          "hardwareAccelerated": true
+        };
+
+        const antPolyline = new AntPath(latlngs, options);
+        antPolyline.addTo(map);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  populateBusStops() {
     axios
       .get('http://127.0.0.1:8000/main/busstop_locations/')
       .then(res => {
@@ -141,11 +194,12 @@ class Buses extends React.Component {
         let busStops_list = [];
         let counter = 0;
         for (const stop of Object.keys(res.data.DATA.RESULT)) {
-          if (counter++ > 800) break;
-          if (busStops_tmp.includes(res.data.DATA.RESULT[stop].STOP_NAME) == false) {
-            busStops_tmp.push(res.data.DATA.RESULT[stop].STOP_NAME);
+          //if (counter++ > 800) break;
+          if (busStops_tmp.includes(res.data.DATA.RESULT[stop].STOP_ID) == false) {
+            busStops_tmp.push(res.data.DATA.RESULT[stop].STOP_ID);
             busStops_list.push({
               stop: stop,
+              stop_id: res.data.DATA.RESULT[stop].STOP_ID,
               name: res.data.DATA.RESULT[stop].STOP_NAME,
               lat: res.data.DATA.RESULT[stop].STOP_LAT,
               lng: res.data.DATA.RESULT[stop].STOP_LON,
@@ -156,10 +210,53 @@ class Buses extends React.Component {
         this.setState({ busStops: busStops_list });
 
         // this.drawPathBetweenBusStops("stop_76", "stop_85");
+        this.populateTrips();
       })
       .catch(error => {
         console.error(error);
       });
+  }
+
+  drawPathForTrip(index) {
+    console.log(this.state.busTrips)
+    let trip = this.state.busTrips[index];
+    let stops_list = trip.stops_list;
+
+    for(let i=0; i<stops_list.length-1; i++) {
+      console.log(stops_list[i].stop_id)
+      console.log(stops_list[i+1].stop_id)
+      this.drawPathBetweenBusStopsId(stops_list[i].stop_id, stops_list[i+1].stop_id);
+    }
+
+  }
+
+  populateTrips(){
+    axios
+      .get('http://127.0.0.1:8000/main/busstop_timings/')
+      .then(res => {
+        let trips_list = [];
+        for (const trip of Object.keys(res.data.DATA.RESULT)) {
+          trips_list.push({
+            trip: trip,
+            trip_id: res.data.DATA.RESULT[trip].TRIP_ID,
+            route_id: res.data.DATA.RESULT[trip].ROUTE_ID,
+            stops_list: res.data.DATA.RESULT[trip].STOP_INFO,
+            icon: iconDefault,
+            });
+        }
+        
+        this.setState({ busTrips: trips_list });
+        for(let i=0; i<this.state.busTrips.length; i++) {
+          this.drawPathForTrip(i);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  componentDidMount() {
+    this.populateBusStops();
   }
 
   constructor(props) {
@@ -169,6 +266,7 @@ class Buses extends React.Component {
       map: null,
       markers: [],
       busStops: [],
+      busTrips: [],
       options: {
         chart: {
           id: "basic-bar",

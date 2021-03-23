@@ -1,9 +1,9 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
 from main_project.Bike_API.store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
-from main_project.Logs.service_logs import bike_log
+from main_project.Logs.service_logs import app_log
 from mongoengine import *
 
-logger = bike_log()
+logger = app_log()
 logger.info('Server_Starts')
 
 def save_raw_to_database():

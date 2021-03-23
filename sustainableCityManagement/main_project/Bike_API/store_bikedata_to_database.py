@@ -41,9 +41,10 @@ class BikesStandsLocation(Document):
     meta = {'collection': 'BikeStandsLocation'}
     logger.info('BikesStandLocation document created successfully.')
 
+
 class StoreBikeDataToDatabase:
 
-#  This method all locations of bike stands in db.
+    #  This method all locations of bike stands in db.
     def save_bike_stands_location(self):
         url = config_vals["stations_api_url"]
         payload = {}
@@ -63,15 +64,15 @@ class StoreBikeDataToDatabase:
         except:
             logger.exception('Storing bike stand location into DB failed!')
             raise
-    
-    # This method fetch the data from bike api for each day 
+
+    # This method fetch the data from bike api for each day
 
     def get_bikedata_day(self, days_historical):
         now_time = datetime.now(pytz.utc)
         curr_time = (now_time - timedelta(days=days_historical)
-                    ).strftime("%Y%m%d%H%M")
+                     ).strftime("%Y%m%d%H%M")
         delay_time = (now_time - timedelta(days=days_historical + 1)
-                    ).strftime("%Y%m%d%H%M")
+                      ).strftime("%Y%m%d%H%M")
         url = config_vals["location_api_url"] + "?dfrom=" + \
             str(delay_time)+"&dto="+str(curr_time)
         payload = {}
@@ -85,7 +86,6 @@ class StoreBikeDataToDatabase:
             logger.exception('Not able to fetch data from API')
             raise
 
-    
     # This method fetch the live data from bike api (default timespan: 5 minutes)
 
     def get_bikedata_live(self, minutes_delay):
@@ -93,21 +93,20 @@ class StoreBikeDataToDatabase:
         curr_time = now_time.strftime("%Y%m%d%H%M")
         url = ""
         delay_time = (now_time - timedelta(minutes=minutes_delay)
-                    ).strftime("%Y%m%d%H%M")
+                      ).strftime("%Y%m%d%H%M")
         url = config_vals["location_api_url"] + "?dfrom=" + \
             str(delay_time)+"&dto="+str(curr_time)
         payload = {}
         headers = {}
         # Fetching response from the URL.
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            response = requests.get(url, headers=headers, data=payload)
             tmp_result = json.loads(response.text)
             return tmp_result
         except:
             logger.exception('Not able to fetch data from API')
             raise
 
- 
     # This method saves the locations for Bike Usage in DB
 
     def bike_usage_save_locations(self, days_historical):
@@ -119,13 +118,16 @@ class StoreBikeDataToDatabase:
                     bikestands.save()
                 except:
                     pass
-            logger.info('Bike stand locations for Bike Usage stored into DB successfully.')
+            logger.info(
+                'Bike stand locations for Bike Usage stored into DB successfully.')
         except:
-            logger.exception('Storing bike stand location for Bike Usage into DB failed!')
+            logger.exception(
+                'Storing bike stand location for Bike Usage into DB failed!')
             raise
 
 
 # This method gets the data from API for a single day and store in DB.
+
 
     def bikedata_day(self, days_historical):
         bikeusagedata = self.get_bikedata_day(days_historical)
@@ -145,11 +147,8 @@ class StoreBikeDataToDatabase:
             logger.exception('Storing bikestand data for days into DB failed!')
             raise
 
-  
     # This method gets the data from API every 5 minutes and store in DB.
-
-    @staticmethod
-    def bikedata_minutes(minutes_delay=5):
+    def bikedata_minutes(self, minutes_delay=5):
         bikeusagedata = self.get_bikedata_live(minutes_delay)
         try:
             for item in bikeusagedata:
@@ -172,11 +171,12 @@ class StoreBikeDataToDatabase:
                                 bike_stands=stand_details["bike_stands"], available_bike_stands=stand_details["available_bike_stands"], time=datetimeConvert)
                             bikestands.historical.append(bikesAvailability)
                     bikestands.save()  # Saves Bike Availability Data
-            logger.info('Bikestand data for minutes stored into DB successfully.')
+            logger.info(
+                'Bikestand data for minutes stored into DB successfully.')
         except:
-            logger.exception('Storing bikestand data for minutes into DB failed!')
+            logger.exception(
+                'Storing bikestand data for minutes into DB failed!')
             raise
-
 
     # This method stores the data for n number of days in MongoDB
 
@@ -186,7 +186,6 @@ class StoreBikeDataToDatabase:
             self.bike_usage_save_locations(i)
             self.bikedata_day(i)
         logger.info('Bike stand data for days stored in to DB successfully.')
-
 
     # Fetch Data for Locations
 
@@ -199,9 +198,7 @@ class StoreBikeDataToDatabase:
             logger.error('Location data not retrieved from DB')
         return locations
 
-
     # Fetch bikedata from db for a particular date
-
     def fetch_data_from_db_for_day(self, dateForData):
         start_date_str = dateForData.strftime("%Y-%m-%dT00:00:00Z")
         end_date_str = dateForData.strftime("%Y-%m-%dT23:59:59Z")
@@ -220,7 +217,7 @@ class StoreBikeDataToDatabase:
                 },
                 "name": "$name",
                 "_id": 0}
-            },
+             },
         ]
         q_set = BikeStands.objects().aggregate(*pipeline)  # Fetch Data from DB
         list_q_set = list(q_set)
@@ -229,8 +226,6 @@ class StoreBikeDataToDatabase:
         return list_q_set
 
     # This method returns the Bikes availablity data for all locations (Bike Stands) for last few minutes
-
-
     def fetch_data_from_db_for_minutes(self):
         pipeline = [
             {"$unwind": "$historical"},
@@ -239,10 +234,10 @@ class StoreBikeDataToDatabase:
                         "historical": {"$push": "$historical"}}},
             {"$project": {
                 "historical": {"$slice": ["$historical", -1]
-                            },
+                               },
                 "name":"$name",
                 "_id":0}
-            },
+             },
         ]
         q_set = BikeStands.objects().aggregate(
             *pipeline, allowDiskUse=True)  # Fetch Data from DB
