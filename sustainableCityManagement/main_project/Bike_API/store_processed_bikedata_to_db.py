@@ -4,42 +4,16 @@ from ..Config.config_handler import read_config
 from ..Logs.service_logs import bike_log
 from mongoengine import *
 from datetime import datetime, timedelta
+from ..Bike_API.bike_collections_db import BikeProcessedData
+from ..Bike_API.bike_collections_db import BikeAvailabilityProcessedData
+from ..Bike_API.bike_collections_db import BikePredictedData
+from ..Bike_API.bike_collections_db import BikeAvailabilityPredictedData
+
 import pytz
 
 # Calling logging function for bike _API
 logger = bike_log()
 config_vals = read_config("Bike_API")
-
-
-# Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
-class BikeAvailabilityProcessedData(EmbeddedDocument):
-    total_stands = IntField()
-    in_use = IntField()
-    day = DateField()
-
-# Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity
-
-
-class BikeProcessedData(Document):
-    data = ListField(EmbeddedDocumentField(BikeAvailabilityProcessedData))
-    name = StringField(max_length=200)
-    meta = {'collection': 'BikeUsageProcessed'}
-
-# Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
-
-
-class BikeAvailabilityPredictedData(EmbeddedDocument):
-    total_stands = IntField()
-    in_use = IntField()
-    day = DateField()
-
-# Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity
-
-
-class BikePredictedData(Document):
-    data = ListField(EmbeddedDocumentField(BikeAvailabilityPredictedData))
-    name = StringField(max_length=200)
-    meta = {'collection': 'BikeUsagePredict'}
 
 # This method gets the raw data from DB, process and store in different collection in DB.
 
