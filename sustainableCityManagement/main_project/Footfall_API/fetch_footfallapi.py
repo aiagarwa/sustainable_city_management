@@ -1,6 +1,6 @@
 import sys
 # from ..Logs.service_logs import bus_log
-from store_footfall_data_in_database import StoreFootfallData
+from .store_footfall_data_in_database import StoreFootfallData
 # from ..Config.config_handler import read_config
 from datetime import datetime, timedelta
 import copy
@@ -8,7 +8,7 @@ import copy
 # import collections
 import json
 
-class FootballApi:
+class FootfallApi:
     def __init__(self):
         self.FootfallObj = StoreFootfallData()
     
@@ -32,6 +32,6 @@ class FootballApi:
             result_response[location] = item["count"]
         return result_response
 
-obj = FootballApi()
+# obj = FootfallApi()
 # print(obj.footfall_datebased("2021-01-03","2021-01-05"))
 # print(obj.footfall_overall())
