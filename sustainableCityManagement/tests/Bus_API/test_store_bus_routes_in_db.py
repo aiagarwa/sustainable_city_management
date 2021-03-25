@@ -3,10 +3,7 @@ from datetime import datetime, timedelta, date
 from django.test import TestCase
 from unittest.mock import MagicMock
 from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoutesData
-from main_project.Bus_API.store_bus_routes_data_in_database import BusStops
-from main_project.Bus_API.store_bus_routes_data_in_database import BusRoutes
-from main_project.Bus_API.store_bus_routes_data_in_database import BusTrips
-from main_project.Bus_API.store_bus_routes_data_in_database import BusTimings
+from main_project.Bus_API.bus_collections_db import BusStops, BusTimings, BusRoutes, BusTrips
 from mongoengine import *
 import mongomock as mm
 from decimal import Decimal
@@ -106,8 +103,7 @@ class TestStoreBusRoutesData(TestCase):
         read_bus_trip = StoreBusRoutesData()
         assert read_bus_trip.read_bus_trips()[0] == [
             'route_id', 'service_id', 'trip_id', 'shape_id', 'trip_headsign', 'direction_id']
-        assert read_bus_trip.read_bus_trips(
-        )[1][2] == "1368811.1.10-100-e19-1.255.I"
+        assert read_bus_trip.read_bus_trips()[1][2] == "1381339.3.10-101-e19-1.261.I"
 
     def test_store_bus_trips(self):
         store_bus_trips = StoreBusRoutesData()

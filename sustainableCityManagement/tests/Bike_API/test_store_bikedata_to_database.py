@@ -1,5 +1,5 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
-from main_project.Bike_API.store_bikedata_to_database import BikesStandsLocation, BikeStands, BikeAvailability
+from main_project.Bike_API.bike_collections_db import BikesStandsLocation, BikeStands, BikeAvailability
 from django.test import TestCase
 from unittest.mock import MagicMock
 from decimal import Decimal
