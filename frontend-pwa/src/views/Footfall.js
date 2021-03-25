@@ -197,8 +197,8 @@ class Footfall extends React.Component {
 
       // Add markers
       markers.push({
-        name: parking_name,
-        area: parkings_coordinates[parking_name].area,
+        // name: parking_name,
+        // area: parkings_coordinates[parking_name].area,
         position: [
           parkings_coordinates[parking_name].lat,
           parkings_coordinates[parking_name].lng,
@@ -209,7 +209,7 @@ class Footfall extends React.Component {
           iconAnchor: [0, 24],
           labelAnchor: [-6, 0],
           popupAnchor: [0, -36],
-          html: `<i class="fa fa-map-marker-alt fa-3x" style="color:red;"></i>`,
+          html: `<i class="fas fa-shoe-prints fa-2x" style="color:black;"></i>`,
         },
       });
     }
