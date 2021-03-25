@@ -29,7 +29,10 @@ class FootfallApi:
         counter = 0
         for item in footfall_overall:
             location = item["location"]
-            result_response[location] = item["count"]
+            result_response[location] = {}
+            result_response[location]["Footfall"] = item["count"]
+            result_response[location]["Lat"] = "to-be-added"
+            result_response[location]["Lon"] = "to-be-added"
         return result_response
 
 # obj = FootfallApi()
