@@ -46,7 +46,7 @@ class StoreParkingsData:
                 parkingsAvailability = ParkingsAvailability(updateTimestamp=timestamp, parkings=parkings)
                 parkingsAvailability.save()
 
-                return [parkingsAvailability]
+                return ParkingsAvailability.objects(updateTimestamp=timestamp)
         except:
             logger.exception('Not able to fetch data from API')
             raise
@@ -59,10 +59,9 @@ class StoreParkingsData:
         start_date = datetime.strptime(start_date_str, "%Y-%m-%dT%H:%M:%SZ")
         end_date = datetime.strptime(end_date_str, "%Y-%m-%dT%H:%M:%SZ")
         
-        q_set = ParkingsAvailability.objects(updateTimestamp__gte=start_date, updateTimestamp__lte=end_date)
-        return q_set
+        return ParkingsAvailability.objects(updateTimestamp__gte=start_date, updateTimestamp__lte=end_date)
     
-    
+
     def fetch_data_from_db_historical(self, dateFrom, dateTo):
         # For each day between dateFrom and dateTo, fetch "fetch_data_from_db_for_day"
         res = []

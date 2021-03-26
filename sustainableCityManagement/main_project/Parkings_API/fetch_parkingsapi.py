@@ -31,11 +31,10 @@ class FetchParkingsApi:
 
         if not startdate and not enddate:
             # Live data if no startdate nor enddate
-            res = self.parkingsApiObj.get_parkings_spaces_availability_live()
+            res = json.loads(self.parkingsApiObj.get_parkings_spaces_availability_live().to_json())
         elif startdate and not enddate:
             # Get data for one day
-            print("day")
-            res = self.parkingsApiObj.fetch_data_from_db_for_day(startdate)
+            res = json.loads(self.parkingsApiObj.fetch_data_from_db_for_day(startdate).to_json())
         else:
             # Get data for all days (average each day data)
             # Loop from startdate to enddate in parkingsApiObj dedicatedmethod
