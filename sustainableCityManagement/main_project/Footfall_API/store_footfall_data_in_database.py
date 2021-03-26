@@ -7,22 +7,7 @@ import csv
 import time as time
 import pandas as pd
 from datetime import datetime
-
-connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
-
-class FootfallInfo(EmbeddedDocument):
-    data_date = DateTimeField()
-    count = IntField()
-
-class FootfallDateBased(Document):
-    location = StringField(max_length=200, unique=True)
-    footfall_data = ListField(EmbeddedDocumentField(FootfallInfo))
-    meta = {"collection": "footfall_datebased"}
-
-class FootfallOverall(Document):
-    location = StringField(max_length=200, unique=True)
-    count = IntField()
-    meta = {"collection": "footfall_overall"}
+from ..Footfall_API.footfall_collections_db import FootfallInfo, FootfallDateBased, FootfallOverall
 
 
 class StoreFootfallData:
@@ -33,8 +18,8 @@ class StoreFootfallData:
     def read_footfall(self):
         readfile = []
         not_reqd_columns = []
-        # self.df = pd.read_csv("../sustainableCityManagement/main_project/Footfall_API/resources/pedestrian_footfall.csv")
-        self.df = pd.read_csv("./resources/pedestrian_footfall.csv")
+        self.df = pd.read_csv("../sustainableCityManagement/main_project/Footfall_API/resources/pedestrian_footfall.csv")
+        # self.df = pd.read_csv("./resources/pedestrian_footfall.csv")
         columns = list(self.df.columns)
         for item in columns:
             if " IN" in item or " OUT" in item:
