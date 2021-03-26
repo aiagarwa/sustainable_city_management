@@ -39,3 +39,15 @@ class BusTimings(Document):
     stop_sequence = IntField()
     meta = {'collection': 'Bus_Timings'
             }
+
+class Coordinate(EmbeddedDocument):
+    lat = DecimalField(precision=6, rounding='ROUND_HALF_UP')
+    lon = DecimalField(precision=6, rounding='ROUND_HALF_UP')
+
+class BusPath(Document):
+    _id = StringField(max_length=200)
+    start_stop_id = StringField(max_length=200)
+    end_stop_id = StringField(max_length=200)
+    coordinates = ListField(EmbeddedDocumentField(Coordinate))
+    meta = {'collection': 'Bus_Paths'
+            }
