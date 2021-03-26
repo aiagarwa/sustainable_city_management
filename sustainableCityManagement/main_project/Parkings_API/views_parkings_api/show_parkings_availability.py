@@ -19,7 +19,12 @@ class ParkingsAvailability(APIView):
         startTime = processTiming.time()
         call_uuid = uuid.uuid4()    
         ID = "PARKINGS_AVAILABILITY"
-        result = parkings.parkings_availability()
+        
+        startdate = request.query_params.get("startdate", None)
+        enddate = request.query_params.get("enddate", None)
+
+        result = parkings.parkings_availability(startdate, enddate)
+        
         # If query param doesn't match any condition above.
         return JsonResponse(
             {

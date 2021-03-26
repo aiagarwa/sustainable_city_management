@@ -27,12 +27,14 @@ class FootfallApi:
         result_response = {}
         footfall_overall = self.FootfallObj.fetch_footfall_overall()
         counter = 0
-        for item in footfall_overall:
-            location = item["location"]
-            result_response[location] = {}
-            result_response[location]["Footfall"] = item["count"]
-            result_response[location]["Lat"] = "to-be-added"
-            result_response[location]["Lon"] = "to-be-added"
+        with open("./main_project/Footfall_API/resources/footfall_locations.json","r") as f:
+            loaded_locations = json.load(f)
+            for item in footfall_overall:
+                location = item["location"]
+                result_response[location] = {}
+                result_response[location]["Footfall"] = item["count"]
+                result_response[location]["Lat"] = loaded_locations[location]["lat"]
+                result_response[location]["Lon"] = loaded_locations[location]["lon"]
         return result_response
 
 # obj = FootfallApi()

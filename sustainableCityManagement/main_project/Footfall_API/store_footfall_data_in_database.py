@@ -19,6 +19,7 @@ class StoreFootfallData:
         readfile = []
         not_reqd_columns = []
         self.df = pd.read_csv("../sustainableCityManagement/main_project/Footfall_API/resources/pedestrian_footfall.csv")
+        # self.df = pd.read_csv("./resources/pedestrian_footfall.csv")
         columns = list(self.df.columns)
         for item in columns:
             if " IN" in item or " OUT" in item:
@@ -128,7 +129,7 @@ class StoreFootfallData:
         return locations
 
 
-a = StoreFootfallData()
+# a = StoreFootfallData()
 # a.store_footfall_locations()
 # a.store_footfall_overall()
 # a.store_footfall_data_datebased()
