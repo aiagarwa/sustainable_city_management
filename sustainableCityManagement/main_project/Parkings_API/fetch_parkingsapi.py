@@ -22,9 +22,29 @@ class FetchParkingsApi:
     def __init__(self):
         self.parkingsApiObj = StoreParkingsData()
     
-    def parkings_availability(self):
-        res = self.parkingsApiObj.fetch_data_from_db_for_day(datetime.now())
-        return res
+    def parkings_availability(self, startdate, enddate):
+        # Parse datetime
+        if startdate:
+            startdate = datetime.strptime(startdate, "%Y-%m-%d")
+        if enddate:
+            enddate = datetime.strptime(enddate, "%Y-%m-%d")
+
+        if not startdate and not enddate:
+            # Live data if no startdate nor enddate
+            res = self.parkingsApiObj.get_parkings_spaces_availability_live()
+        elif startdate and not enddate:
+            # Get data for one day
+            print("day")
+            res = self.parkingsApiObj.fetch_data_from_db_for_day(startdate)
+        else:
+            # Get data for all days (average each day data)
+            # Loop from startdate to enddate in parkingsApiObj dedicatedmethod
+            res = self.parkingsApiObj.fetch_data_from_db_historical(startdate, enddate)
+        
+        if res:
+            return json.loads(res.to_json())
+        else:
+            return []
 
     def parkings_locations(self):
         return [
