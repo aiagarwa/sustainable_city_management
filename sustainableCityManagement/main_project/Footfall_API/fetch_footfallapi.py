@@ -31,8 +31,8 @@ class FootfallApi:
             location = item["location"]
             result_response[location] = {}
             result_response[location]["Footfall"] = item["count"]
-            result_response[location]["Lat"] = "to-be-added"
-            result_response[location]["Lon"] = "to-be-added"
+            result_response[location]["Lat"] = 53.34416060960417
+            result_response[location]["Lon"] = -6.262745776634299
         return result_response
 
 # obj = FootfallApi()
