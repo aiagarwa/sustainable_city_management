@@ -11,18 +11,38 @@ import time as processTiming
 from datetime import timedelta, datetime, time, date
 from rest_framework.decorators import api_view
 from django.shortcuts import render
-from ..fetch_busapi import FetchBusApi
+from ..fetch_footfallapi import FootfallApi
 
 # API to fetch bike data -> Historical, live and locations are fetched through this API.
 
-class BusStopsLocations(APIView):
+class FootfallDatebasedData(APIView):
     @classmethod
-    def get(self, request, bus_stops_locations = FetchBusApi()):
+    def get(self, request, footfall_datbased_data = FootfallApi()):
         startTime = processTiming.time()
         call_uuid = uuid.uuid4()    
-        ID = "BUS_STOPS_INFO"
-        result = bus_stops_locations.bus_stand_locations()
-        # If query param doesn't match any condition above.
+        ID = "FOOTFALL_DATEBASED_INFO"
+        startDate = request.query_params.get("startdate", "")
+        endDate = request.query_params.get("enddate", "")
+        result = footfall_datbased_data.footfall_datebased(startDate,endDate)
+        return JsonResponse(
+            {
+                "API_ID": ID,
+                "CALL_UUID": call_uuid,
+                "DATA": {
+                    "RESULT": result
+                },
+                "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
+        )
+
+
+
+class FootfallOverallData(APIView):
+    @classmethod
+    def get(self, request, footfall_overall_data = FootfallApi()):
+        startTime = processTiming.time()
+        call_uuid = uuid.uuid4()    
+        ID = "FOOTFALL_OVERALL_INFO"
+        result = footfall_overall_data.footfall_overall()
         return JsonResponse(
             {
                 "API_ID": ID,
