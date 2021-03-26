@@ -129,7 +129,7 @@ class StoreFootfallData:
         return locations
 
 
-a = StoreFootfallData()
+# a = StoreFootfallData()
 # a.store_footfall_locations()
 # a.store_footfall_overall()
 # a.store_footfall_data_datebased()

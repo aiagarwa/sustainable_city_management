@@ -6,9 +6,8 @@ from main_project.Footfall_API.store_footfall_data_in_database import StoreFootf
 from main_project.Parkings_API.store_parkingsdata_to_database import StoreParkingsData
 from main_project.Logs.service_logs import app_log
 from mongoengine import *
-#from main_project.Logs.service_logs import app_log
-# logger = app_log()
-# logger.info('Server_Starts')
+logger = app_log()
+logger.info('Server_Starts')
 
 
 def save_raw_bikedata_to_database():
@@ -104,6 +103,3 @@ def init():
     # save_bus_data_to_database()
     # save_footfall_data_to_database()
     # save_parkings_data_to_database()
-    from datetime import datetime
-    parking = StoreParkingsData()
-    print(parking.fetch_data_from_db_for_day(datetime(2021, 3, 25)))
