@@ -9,6 +9,7 @@ from ..Config.config_handler import read_config
 from ..Parkings_API.parkings_collections_db import ParkingsAvailability,ParkingAvailability
 import json
 import logging
+import statistics
 # Calling logging function for Parkings_API
 logger = bike_log()
 # config_vals = read_config("Parkings_API")
@@ -61,11 +62,45 @@ class StoreParkingsData:
         q_set = ParkingsAvailability.objects(updateTimestamp__gte=start_date, updateTimestamp__lte=end_date)
         return q_set
     
+    
     def fetch_data_from_db_historical(self, dateFrom, dateTo):
         # For each day between dateFrom and dateTo, fetch "fetch_data_from_db_for_day"
-        return []
+        res = []
+        for dayDate in self.daterange(dateFrom, dateTo):
+            q_set = self.fetch_data_from_db_for_day(dayDate)
+            
+            if not q_set:
+                continue
+            
+            dayAvgSpaces = {}
+            for parkingsAvailability in q_set:
+                for parkingAvailability in parkingsAvailability["parkings"]:
 
-# parking = StoreParkingsData()
-# parking.get_parkings_spaces_availability_live()
+                    if not parkingAvailability["name"] in dayAvgSpaces:
+                        dayAvgSpaces[parkingAvailability["name"]] = []
+                        
+                    # If available space is not None (i.e. missing data)
+                    if parkingAvailability["availableSpaces"]:
+                        dayAvgSpaces[parkingAvailability["name"]].append(parkingAvailability["availableSpaces"])
 
-# print(parking.fetch_data_from_db_for_day(datetime(2021, 3, 25)))
+            # Average day's availability values for each parking
+            for parkingName in dayAvgSpaces:
+                if dayAvgSpaces[parkingName]:
+                    dayAvgSpaces[parkingName] = int(statistics.mean(dayAvgSpaces[parkingName]))
+                else:
+                    dayAvgSpaces[parkingName] = None # If no available data to compute average
+
+            res.append({
+                "_id": { "$oid": None },
+                "updateTimestamp": {
+                    "$date": dayDate
+                },
+                "parkings": dayAvgSpaces
+            })
+
+        return res
+    
+
+    def daterange(self, start_date, end_date):
+        for n in range(int((end_date - start_date).days) + 1):
+            yield start_date + timedelta(n)
