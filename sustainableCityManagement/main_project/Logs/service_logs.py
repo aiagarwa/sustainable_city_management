@@ -4,27 +4,40 @@ import logging
 logger_bike = None
 logger_bus = None
 logger_app = None
+logger_emergency = None
+
 
 def bike_log():  # Creating custom logger to store logging information.
     global logger_bike
     if logger_bike is None:
-        logger = create_logger('Bike_API')
+        logger = create_logger('bike_api')
         logger_bike = logger
     return logger_bike
+
 
 def bus_log():  # Creating custom logger to store logging information.
     global logger_bus
     if logger_bus is None:
-        logger = create_logger('Bus_API')
+        logger = create_logger('bus_api')
         logger_bus = logger
     return logger_bus
+
 
 def app_log():  # Creating custom logger to store logging information.
     global logger_app
     if logger_app is None:
-        logger = create_logger('Application')
+        logger = create_logger('application')
         logger_app = logger
     return logger_app
+
+
+def emergency_service_log():  # Creating custom logger to store logging information.
+    global logger_emergency
+    if logger_emergency is None:
+        logger = create_logger('emergency_service_api')
+        logger_emergency = logger
+    return logger_emergency
+
 
 def create_logger(file_name):
     logger = logging.getLogger(__name__)
@@ -32,7 +45,7 @@ def create_logger(file_name):
 
     formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
     file_handler = logging.FileHandler(
-        './main_project/Logs/' + file_name +'.log')
+        './main_project/Logs/' + file_name + '.log')
     file_handler.setLevel(logging.ERROR)
 
     file_handler.setFormatter(formatter)
