@@ -42,7 +42,7 @@ class FetchParkingsApi:
             res = self.parkingsApiObj.fetch_data_from_db_historical(startdate, enddate)
         
         if res:
-            return json.loads(res.to_json())
+            return res
         else:
             return []
 

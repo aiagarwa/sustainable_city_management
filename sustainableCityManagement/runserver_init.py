@@ -80,3 +80,6 @@ def init():
     # save_bus_data_to_database()
     # save_footfall_data_to_database()
     # save_parkings_data_to_database()
+    from datetime import datetime
+    parking = StoreParkingsData()
+    print(parking.fetch_data_from_db_for_day(datetime(2021, 3, 25)))
