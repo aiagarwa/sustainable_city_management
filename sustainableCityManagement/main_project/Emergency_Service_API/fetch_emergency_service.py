@@ -50,7 +50,7 @@ class FetchEmergencyServiceApi:
         for items in all_station:
             station_custom_id = "Garda_Station_"+str(counter)
             result_response[station_custom_id] = {}
-            result_response[station_custom_id]["STATION_NAME"] = items["station_name"]
+            result_response[station_custom_id]["STATION_NAME"] = items["station"]
             result_response[station_custom_id]["STATION_ADDRESS"] = items["station_address"]
             result_response[station_custom_id]["STATION_DIVISION"] = items["station_division"]
             result_response[station_custom_id]["STATION_DIVISIONAL_HQ"] = items["station_divisional_hq"]
