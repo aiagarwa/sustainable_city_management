@@ -7,48 +7,8 @@ import pytz
 import csv
 import time as time
 import pandas as pd
-from main_project.Logs.service_logs import bus_log
-
-
-class BusStops(Document):
-    stop_name = StringField(max_length=200)
-    stop_id = StringField(max_length=200, unique=True)
-    stop_lat = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    stop_lon = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    meta = {'collection': 'Bus_Stops'
-            }
-
-
-class BusRoutes(Document):
-    route_name = StringField(max_length=200)
-    route_id = StringField(max_length=200, unique=True)
-    meta = {'collection': 'Bus_Routes'
-            }
-
-
-class StopsInfo(EmbeddedDocument):
-    stop_id = StringField(max_length=200)
-    stop_arrival_time = StringField()
-    stop_departure_time = StringField()
-    stop_sequence = IntField()
-
-
-class BusTrips(Document):
-    trip_id = StringField(max_length=200, unique=True)
-    route_id = StringField(max_length=200)
-    stops = ListField(EmbeddedDocumentField(StopsInfo))
-    meta = {'collection': 'Bus_Trips'
-            }
-
-
-class BusTimings(Document):
-    trip_id = StringField(max_length=200, unique=True)
-    stop_id = StringField(max_length=200)
-    stop_arrival_time = DateTimeField()
-    stop_departure_time = DateTimeField()
-    stop_sequence = IntField()
-    meta = {'collection': 'Bus_Timings'
-            }
+from ..Logs.service_logs import bus_log
+from ..Bus_API.bus_collections_db import BusStops, BusTimings, BusRoutes, BusTrips, StopsInfo
 
 
 class StoreBusRoutesData:
@@ -120,7 +80,7 @@ class StoreBusRoutesData:
     def read_bus_trips(self):
         readfile = []
         self.logger.info("Reading Bus Trips file")
-        with open("../sustainableCityManagement/main_project/Bus_API/resources/trips_test.csv", "r", encoding="utf8") as f:
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/trips.csv", "r", encoding="utf8") as f:
             # with open("./resources/routes.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile

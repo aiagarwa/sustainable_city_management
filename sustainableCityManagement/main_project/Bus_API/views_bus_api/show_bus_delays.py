@@ -3,15 +3,10 @@ import uuid
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.views import APIView
-# from django.views.decorators.csrf import csrf_exempt
 import time as processTiming
-# from datetime import timedelta, datetime, time, date
 from datetime import time
 from rest_framework.decorators import api_view
-# from django.shortcuts import render
 from ..process_bus_delays import ProcessBusDelays
-
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
 
 class BusTripDelays(APIView):
     @classmethod

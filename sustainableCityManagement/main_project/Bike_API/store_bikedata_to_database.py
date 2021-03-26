@@ -6,40 +6,14 @@ from datetime import datetime, timedelta
 import pytz
 from ..Logs.service_logs import bike_log
 from ..Config.config_handler import read_config
+from ..Bike_API.bike_collections_db import BikeStands
+from ..Bike_API.bike_collections_db import BikeAvailability
+from ..Bike_API.bike_collections_db  import BikesStandsLocation
 import logging
+
 # Calling logging function for bike _API
 logger = bike_log()
 config_vals = read_config("Bike_API")
-
-
-# Define Embedded Document structure to store in Mongo DB. This contains Data related to Bikes availability. This is used by Bikestands Document
-
-
-class BikeAvailability(EmbeddedDocument):
-    bike_stands = IntField()
-    available_bike_stands = IntField()
-    time = DateTimeField()
-    logger.info('BikeAvailability structure defined successfully.')
-    # time = StringField(max_length=200) #, unique=True)
-
-# Define Document Structure to store in Mongo DB. This contains Data related to Bike Stands Location and Bikes Availablity
-
-
-class BikeStands(Document):
-    historical = ListField(EmbeddedDocumentField(BikeAvailability))
-    name = StringField(max_length=200, unique=True)
-    meta = {'collection': 'BikeUsage'}
-    logger.info('BikeUsage document created successfully.')
-
-# Define Document for location
-
-
-class BikesStandsLocation(Document):
-    name = StringField(max_length=200, required=True, unique=True)
-    latitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    longitude = DecimalField(precision=3, rounding='ROUND_HALF_UP')
-    meta = {'collection': 'BikeStandsLocation'}
-    logger.info('BikesStandLocation document created successfully.')
 
 
 class StoreBikeDataToDatabase:

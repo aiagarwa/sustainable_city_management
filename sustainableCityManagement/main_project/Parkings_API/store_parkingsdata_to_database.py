@@ -6,22 +6,11 @@ from datetime import datetime, timedelta
 import pytz
 from ..Logs.service_logs import bike_log
 from ..Config.config_handler import read_config
+from ..Parkings_API.parkings_collections_db import ParkingsAvailability,ParkingAvailability
 import logging
 # Calling logging function for Parkings_API
 logger = bike_log()
 # config_vals = read_config("Parkings_API")
-
-
-# Define Document Structure to store in Mongo DB. This contains Data related to Parking Spaces
-class ParkingAvailability(EmbeddedDocument):
-    name = StringField(max_length=200)
-    area = StringField(max_length=200) # Deprecated
-    availableSpaces = IntField()
-
-class ParkingsAvailability(Document):
-    updateTimestamp = DateTimeField(unique=True)
-    parkings = ListField(EmbeddedDocumentField(ParkingAvailability))
-    meta = {'collection': 'ParkingsAvailability'}
 
 class StoreParkingsData:
 
@@ -75,7 +64,7 @@ class StoreParkingsData:
         # For each day between dateFrom and dateTo, fetch "fetch_data_from_db_for_day"
         return None
 
-parking = StoreParkingsData()
-# parking.get_parkings_spaces_availability_live()
+# parking = StoreParkingsData()
+# # parking.get_parkings_spaces_availability_live()
 
-print(parking.fetch_data_from_db_for_day(datetime(2021, 3, 23)))
+# print(parking.fetch_data_from_db_for_day(datetime(2021, 3, 23)))

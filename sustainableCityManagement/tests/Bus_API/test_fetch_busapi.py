@@ -38,12 +38,14 @@ class TestFetchBusApi(TestCase):
 
         expected_result = {
             "stop_0": {
+                "STOP_ID": "stop_0",
                 "STOP_NAME": "test_name_1",
                 "STOP_LAT": 1,
                 "STOP_LON": 2
             },
 
             "stop_1": {
+                "STOP_ID": "stop_1",
                 "STOP_NAME": "test_name_2",
                 "STOP_LAT": 3,
                 "STOP_LON": 4
