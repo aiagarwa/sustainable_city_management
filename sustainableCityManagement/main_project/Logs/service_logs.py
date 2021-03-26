@@ -39,6 +39,20 @@ def emergency_service_log():  # Creating custom logger to store logging informat
     return logger_emergency
 
 
+def parkings_log():  # Creating custom logger to store logging information.
+    global logger
+    if logger is None:
+        create_logger('Parkings_API')
+    return logger
+
+
+def parkings_log():  # Creating custom logger to store logging information.
+    global logger
+    if logger is None:
+        create_logger('Parkings_API')
+    return logger
+
+
 def create_logger(file_name):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
