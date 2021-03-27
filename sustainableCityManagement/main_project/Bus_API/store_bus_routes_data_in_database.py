@@ -8,7 +8,7 @@ import csv
 import time as time
 import pandas as pd
 from ..Logs.service_logs import bus_log
-from ..Bus_API.bus_collections_db import BusStops, BusTimings, BusRoutes, BusTrips, StopsInfo
+from ..Bus_API.bus_collections_db import BusStops, BusTimings, BusRoutes, BusTrips, StopsInfo, BusPath, Coordinate
 
 
 class StoreBusRoutesData:
@@ -124,6 +124,38 @@ class StoreBusRoutesData:
             self.logger.info("Retrieved Bus Trips from DB")
         return bus_trips
 
+    def read_bus_paths(self):
+        data = []
+        self.logger.info("Reading Bus Paths file")
+        with open("../sustainableCityManagement/main_project/Bus_API/resources/trips_paths.json", "r", encoding="utf8") as f:
+            data = json.loads(f.read())
+        return data
+
+    def store_bus_paths(self):
+        data = self.read_bus_paths()
+        self.logger.info("Storing Bus Paths Data in DB")
+        
+        for path in data['paths']:
+            start = path['start']
+            end = path['end']
+            bus_path = BusPath(_id = start+end, start_stop_id = start, end_stop_id = end)
+
+            coordinates = path['coordinates']
+            for coordinate in coordinates:
+                coordinate_obj = Coordinate(lat = coordinate[0], lon = coordinate[1])
+                bus_path.coordinates.append(coordinate_obj)
+            bus_path.save()
+    
+    def fetch_bus_paths(self, locationName="all"):
+        q_set = BusPath.objects()  # Fetch Data from DB
+        # Converts the Processed Bus Data from DB into JSON format
+        json_data = q_set.to_json()
+        bus_paths = json.loads(json_data)
+        if bus_paths is None:
+            self.logger.error('Bus Paths data not retrieved from DB')
+        else:
+            self.logger.info("Retrieved Bus Paths from DB")
+        return bus_paths
 
 # a = StoreBusRoutesData()
 # a.read_bus_stops()
