@@ -1,23 +1,24 @@
 from main_project.Bike_API.store_bikedata_to_database import StoreBikeDataToDatabase
 from main_project.Bike_API.store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
+from main_project.Emergency_Service_API.store_emergency_service_data_in_database import StoreServiceData
 from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoutesData
 from main_project.Footfall_API.store_footfall_data_in_database import StoreFootfallData
 from main_project.Parkings_API.store_parkingsdata_to_database import StoreParkingsData
 from main_project.Logs.service_logs import app_log
 from mongoengine import *
-
 logger = app_log()
 logger.info('Server_Starts')
+
 
 def save_raw_bikedata_to_database():
     In = input("SAVE RAW DATA IN DB ? :")
     store_bikedata_to_database = StoreBikeDataToDatabase()
     if In == "yes":
-        store_bikedata_to_database.save_historic_data_in_db(5)
+        store_bikedata_to_database.save_historic_data_in_db(1)
         store_bikedata_to_database.save_bike_stands_location()
     else:
-        logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
+
 
 def save_processed_and_predicted_bike_data_to_database():
     In = input("SAVE PROCESSED AND PREDICTED DATA IN DB ? :")
@@ -28,6 +29,7 @@ def save_processed_and_predicted_bike_data_to_database():
         store_processed_bike_data_to_db.store_predict_data_in_db(5)
     else:
         pass
+
 
 def save_bus_data_to_database():
     In = input("SAVE BUS DATA IN DB ? :")
@@ -41,6 +43,24 @@ def save_bus_data_to_database():
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
 
+
+def save_emergency_data_to_database():
+    In = input("SAVE EMERGENCY DATA IN DB ? :")
+    store_emergency_service_data_to_database = StoreServiceData()
+    if In == "yes":
+        store_emergency_service_data_to_database.read_fire_stations()
+        store_emergency_service_data_to_database.store_fire_stations()
+        store_emergency_service_data_to_database.read_health_centers()
+        store_emergency_service_data_to_database.store_health_centers()
+        store_emergency_service_data_to_database.store_garda_stations()
+        store_emergency_service_data_to_database.store_garda_stations()
+        store_emergency_service_data_to_database.read_hospitals()
+        store_emergency_service_data_to_database.store_hospitals()
+    else:
+        logger.error('Storing raw data in DB failed because of key(yes) error')
+        pass
+
+
 def save_footfall_data_to_database():
     In = input("SAVE FOOTFALL DATA IN DB ? :")
     store_footfall_data_to_database = StoreFootfallData()
@@ -52,6 +72,7 @@ def save_footfall_data_to_database():
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
 
+
 def save_parkings_data_to_database():
     In = input("SAVE PARKINGS DATA IN DB ? :")
     store_parkings_data_to_database = StoreParkingsData()
@@ -61,19 +82,21 @@ def save_parkings_data_to_database():
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
 
+
 def check_to_drop_database():
     In = input("DROP DATABASE? :")
     store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
     if In == "yes":
-        conn=connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+        conn = connect(
+            host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
         conn.drop_database("sustainableCityManagementTest")
-        logger.info('Dropping database')
     else:
         pass
 
 
 def init():
-    connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+    connect(
+        host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
     # check_to_drop_database()
     # save_raw_bikedata_to_database()
     # save_processed_and_predicted_bike_data_to_database()
