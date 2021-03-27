@@ -24,6 +24,7 @@ import Bikes from "views/Bikes.js";
 // import Login from "views/Login.js";
 import Buses from "views/Buses.js";
 import Parkings from "views/Parkings";
+import Footfall from "views/Footfall";
 // import Typography from "views/Typography.js";
 // import TableList from "views/Tables.js";
 // import Maps from "views/Map.js";
@@ -105,7 +106,7 @@ var routes = [
     path: "/footfalls",
     name: "Footfalls",
     icon: "fas fa-shoe-prints",
-    component: Icons,
+    component: Footfall,
     layout: "/admin",
     requiresAuth: true,
   },
