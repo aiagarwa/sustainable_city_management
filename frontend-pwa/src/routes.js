@@ -91,6 +91,7 @@ var routes = [
     icon: "fas fa-parking",
     component: Parkings,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/emergency",
@@ -98,6 +99,7 @@ var routes = [
     icon: "fas fa-ambulance",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/footfalls",
@@ -105,6 +107,7 @@ var routes = [
     icon: "fas fa-shoe-prints",
     component: Icons,
     layout: "/admin",
+    requiresAuth: true,
   },
   // {
   //   path: "/icons",
