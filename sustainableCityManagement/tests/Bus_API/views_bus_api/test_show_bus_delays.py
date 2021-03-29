@@ -7,7 +7,7 @@ from main_project.Bus_API.process_bus_delays import ProcessBusDelays
 import json
 
 
-class TestShowBikeApi(TestCase):
+class TestShowBusApi(TestCase):
     @classmethod
     def setUpTestData(cls):
         pass
