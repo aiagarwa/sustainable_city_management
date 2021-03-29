@@ -99,7 +99,7 @@ class TestFetchEmergencyServiceApi(TestCase):
                 "CENTER_LONG": 25.38
             },
 
-            "Health_Center_0": {
+            "Health_Center_1": {
                 "CENTER_NAME": "315_2J",
                 "CENTER_ADDRESS": "dublin",
                 "CENTER_PHONE": "+353 08979",
@@ -107,8 +107,7 @@ class TestFetchEmergencyServiceApi(TestCase):
                 "CENTER_LONG": 20.38
             }
         }
-        result = fetch_health_center_class.health_centers_data(
-            healthCentersObj=StoreServiceData)
+        result = fetch_health_center_class.health_centers_data(healthCentersObj=store_health_center_data_to_database)
         self.assertDictEqual(result, expected_result)
 
     # def test_garda_stations_data(self):

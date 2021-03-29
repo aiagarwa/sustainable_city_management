@@ -22,8 +22,7 @@ class TestEmergencyService(TestCase):
 
         fetch_fire_service_api = FetchEmergencyServiceApi()
         expected_result = {"test": "test_value"}
-        fetch_fire_service_api.fire_stations_data(=MagicMock(
-            return_value=expected_result)
+        fetch_fire_service_api.fire_stations_data=MagicMock(return_value=expected_result)
 
         response=show_fire_service_data.get(
                 request_wrapper, fetch_fire_service_api)
@@ -51,7 +50,7 @@ class TestEmergencyService(TestCase):
 
         response=show_garda_stations.get(
             request_wrapper, fetch_garda_stations_api)
-        fetch_garda_stations_api.health_garda_stations_datacenters_data.assert_called_with()
+        fetch_garda_stations_api.garda_stations_data.assert_called_with()
 
         assert response.status_code == 200
         content=json.loads(response.content)
@@ -73,7 +72,7 @@ class TestEmergencyService(TestCase):
         fetch_hospital_api.hospitals_data=MagicMock(
             return_value=expected_result)
 
-        response=show_health_centers.get(
+        response=show_hospitals.get(
             request_wrapper, fetch_hospital_api)
         fetch_hospital_api.hospitals_data.assert_called_with()
 
