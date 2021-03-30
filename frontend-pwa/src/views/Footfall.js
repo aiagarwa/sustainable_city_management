@@ -89,10 +89,10 @@ class Footfall extends React.Component {
               html: `<i class="fas fa-shoe-prints fa-2x" style="color:black;"></i>`,
             },
           });
+
+          this.setState({markers: markers});
         }
       }
-      // console.log(markers);
-      // this.setState({ markers });
     );
   }
 
