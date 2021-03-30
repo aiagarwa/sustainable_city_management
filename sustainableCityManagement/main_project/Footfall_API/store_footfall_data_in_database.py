@@ -8,17 +8,21 @@ import time as time
 import pandas as pd
 from datetime import datetime
 from ..Footfall_API.footfall_collections_db import FootfallInfo, FootfallDateBased, FootfallOverall
+from ..Config.config_handler import read_config
+
+config_vals = read_config("Footfall_API")
 
 
 class StoreFootfallData:
     def __init__(self):
         # self.columns = []
         self.df = None
+        self.end_date = None
     
     def read_footfall(self):
         readfile = []
         not_reqd_columns = []
-        self.df = pd.read_csv("../sustainableCityManagement/main_project/Footfall_API/resources/pedestrian_footfall.csv")
+        self.df = pd.read_csv(config_vals["pedestrian_data_file"])
         # self.df = pd.read_csv("./resources/pedestrian_footfall.csv")
         columns = list(self.df.columns)
         for item in columns:
@@ -54,7 +58,6 @@ class StoreFootfallData:
             for date in list_dates:
                 mean_dict[location][datetime.strftime(date,"%Y-%m-%d")] = int(df.loc[df.Time == str(date),location])
         return(mean_dict)
-
 
     def store_footfall_overall(self):
         footfall_overall_data = self.calculate_average_footfall_overall()
@@ -128,8 +131,16 @@ class StoreFootfallData:
         locations = json.loads(json_data)
         return locations
 
+    def get_last_date(self):
+        self.read_footfall()
+        date_str = str(list(self.df["Time"])[-1]).split(" ")[0]
+        self.end_date = datetime.strptime(date_str, "%d-%m-%Y").strftime("%Y-%m-%d")
+        return(self.end_date)
+
+
 
 # a = StoreFootfallData()
+# a.get_last_date()
 # a.store_footfall_locations()
 # a.store_footfall_overall()
 # a.store_footfall_data_datebased()

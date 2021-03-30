@@ -12,3 +12,8 @@ Bus_API:
   api_key_name: x-api-key
   api_key_value: c91376114e7b459fb08de48a719eeb48
   bus_stop_file: resources/stops.txt
+
+Footfall_API:
+  pedestrian_data_file: ./main_project/Footfall_API/resources/pedestrian_footfall.csv
+  footfall_locations_file: ./main_project/Footfall_API/resources/footfall_locations.json
+  days_interval_size: 20
