@@ -146,7 +146,7 @@ class StoreBusRoutesData:
                 bus_path.coordinates.append(coordinate_obj)
             bus_path.save()
     
-    def fetch_bus_paths(self, locationName="all"):
+    def fetch_bus_paths(self):
         q_set = BusPath.objects()  # Fetch Data from DB
         # Converts the Processed Bus Data from DB into JSON format
         json_data = q_set.to_json()
