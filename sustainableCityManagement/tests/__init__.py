@@ -7,10 +7,10 @@ from tests.Bus_API.test_store_bus_routes_in_db import TestStoreBusRoutesData
 from tests.Bus_API.test_fetch_busapi import TestFetchBusApi
 from tests.Bus_API.views_bus_api.test_show_bus_data import TestBusStopsLocations
 from tests.Bus_API.test_process_bus_delays import TestProcessBusDelays
-from tests.Bus_API.views_bus_api.test_show_bus_delays import TestShowBikeApi
+from tests.Bus_API.views_bus_api.test_show_bus_delays import TestShowBusApi
 from tests.Emergency_Service_API.test_store_emergency_service_data_in_database import TestStoreServiceData
 from tests.Emergency_Service_API.test_fetch_emergency_service import TestFetchEmergencyServiceApi
-from tests.Emergency_Service_API.views_emergency_service_api.test_show_emergency_service_data import TestFireStations
+from tests.Emergency_Service_API.views_emergency_service_api.test_show_emergency_service_data import TestEmergencyService
 import mongomock
 from mongoengine import connect
 connect('mongoenginetest',

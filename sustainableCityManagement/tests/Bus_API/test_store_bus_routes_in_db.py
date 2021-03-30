@@ -14,10 +14,6 @@ class TestStoreBusRoutesData(TestCase):
     def setUpTestData(cls):
         pass
 
-    @classmethod
-    def tearDownClass(cls):
-        disconnect()
-
     def test_read_bus_stops(self):
         read_bus_stops = StoreBusRoutesData()
         assert read_bus_stops.read_bus_stops()[0] == [

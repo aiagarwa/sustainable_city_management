@@ -18,10 +18,6 @@ class TestStoreServiceData(TestCase):
     def setUpTestData(cls):
         pass
 
-    @classmethod
-    def tearDownClass(cls):
-        disconnect()
-
     # Testing firestation functions over database.
 
     def test_read_fire_stations(self):
@@ -169,14 +165,14 @@ class TestStoreServiceData(TestCase):
 
         garda_service_loc = fetch_service_garda.fetch_garda_station_informations()
 
-        assert fetch_garda_station["station_address"] == "Drogheda Road,Balbriggan,Co. Dublin,"
-        assert fetch_garda_station["station_division"] == "Dublin Metropolitan Region Northern Division"
-        assert fetch_garda_station["station_divisional_hq"] == "Ballymun"
-        assert fetch_garda_station["station_phone"] == "+353 1 8020510"
+        assert garda_service_loc[0]["station_address"] == "Drogheda Road,Balbriggan,Co. Dublin,"
+        assert garda_service_loc[0]["station_division"] == "Dublin Metropolitan Region Northern Division"
+        assert garda_service_loc[0]["station_divisional_hq"] == "Ballymun"
+        assert garda_service_loc[0]["station_phone"] == "+353 1 8020510"
         self.assertAlmostEqual(
-            fetch_garda_station["station_lat"], Decimal(0.786), None, None, 0.001)
+            garda_service_loc[0]["station_lat"], 0.786, None, None, 0.002)
         self.assertAlmostEqual(
-            fetch_garda_station["station_lon"], Decimal(-0.156), None, None, 0.001)
+            garda_service_loc[0]["station_lon"], -0.156, None, None, 0.002)
 
     # Testing hospital functions over database.
     def test_read_hospitals(self):
@@ -188,8 +184,7 @@ class TestStoreServiceData(TestCase):
 
     def test_store_hospitals(self):
         store_service = StoreServiceData()
-        conn = connect('mongoenginetest',
-                       host='mongomock://localhost', alias='default')
+        conn = get_connection()
         self.assertTrue(isinstance(conn, mm.MongoClient))
 
         expectedresult = [[], ["Midland Regional Hospital Portlaoise",
@@ -210,8 +205,7 @@ class TestStoreServiceData(TestCase):
 
     def test_fetch_hospital_informations(self):
         fetch_service = StoreServiceData()
-        conn = connect('mongoenginetest',
-                       host='mongomock://localhost', alias='default')
+        conn = get_connection()
         self.assertTrue(isinstance(conn, mm.MongoClient))
         expectedresult = [[], ["Midland Regional Hospital Portlaoise",
                                "Dublin Road, Portlaoise, Co. Laois, ", "yyy", 0.78656, -0.1563]]
