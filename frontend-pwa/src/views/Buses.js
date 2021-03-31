@@ -68,7 +68,6 @@ function download(data, filename, type) {
 
 class Buses extends React.Component {
   setBusesGraph(x, y) {
-    console.log(x, y);
     this.setState({
       options: {
         xaxis: {
@@ -191,8 +190,6 @@ class Buses extends React.Component {
       latlngs.push([c.lat, c.lon]);
     }
     latlngs.push(destination);
-
-    console.log(latlngs)
 
     const options = {
       "delay": 400,
