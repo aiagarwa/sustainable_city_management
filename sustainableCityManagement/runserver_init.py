@@ -4,6 +4,7 @@ from main_project.Emergency_Service_API.store_emergency_service_data_in_database
 from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoutesData
 from main_project.Footfall_API.store_footfall_data_in_database import StoreFootfallData
 from main_project.Parkings_API.store_parkingsdata_to_database import StoreParkingsData
+from main_project.Emergency_Service_API.store_emergency_service_data_in_database import StoreServiceData
 from main_project.Logs.service_logs import app_log
 from mongoengine import *
 logger = app_log()
@@ -93,6 +94,12 @@ def check_to_drop_database():
     else:
         pass
 
+def save_emergency_services_data_to_database():
+    store_emergency_services = StoreServiceData()
+    store_emergency_services.store_fire_stations()
+    store_emergency_services.store_garda_stations()
+    store_emergency_services.store_health_centers()
+    store_emergency_services.store_hospitals()
 
 def init():
     connect(
@@ -103,3 +110,4 @@ def init():
     # save_bus_data_to_database()
     # save_footfall_data_to_database()
     # save_parkings_data_to_database()
+    # save_emergency_services_data_to_database()
