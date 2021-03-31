@@ -17,3 +17,4 @@ Footfall_API:
   pedestrian_data_file: ./main_project/Footfall_API/resources/pedestrian_footfall.csv
   footfall_locations_file: ./main_project/Footfall_API/resources/footfall_locations.json
   days_interval_size: 20
+  days_to_consider_for_prediction: 1

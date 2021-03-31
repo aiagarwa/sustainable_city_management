@@ -21,9 +21,9 @@ class FootfallDatebasedData(APIView):
         startTime = processTiming.time()
         call_uuid = uuid.uuid4()    
         ID = "FOOTFALL_DATEBASED_INFO"
-        startDate = request.query_params.get("startdate", "")
-        endDate = request.query_params.get("enddate", "")
-        result = footfall_datbased_data.footfall_datebased(startDate,endDate)
+        days_interval = int(request.query_params.get("days_interval", ""))
+        location = request.query_params.get("location", "")
+        result = footfall_datbased_data.footfall_datebased_graphvalues_predictions(location, days_interval)
         return JsonResponse(
             {
                 "API_ID": ID,
