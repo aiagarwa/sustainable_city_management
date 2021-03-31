@@ -10,7 +10,7 @@ from ..Config.config_handler import read_config
 config_vals = read_config("Footfall_API")
 
 
-def predict_footfall(arrayOfFootfallData, predictDays=1, previous_days_to_consider=config_vals["days_interval_size"]):
+def predict_footfall(arrayOfFootfallData, predictDays=1, previous_days_to_consider=config_vals["days_to_consider_for_prediction"]):
     X = []
     y = []
     for i in range(len(arrayOfFootfallData)-previous_days_to_consider):
