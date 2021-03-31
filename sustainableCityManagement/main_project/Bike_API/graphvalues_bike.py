@@ -18,7 +18,8 @@ if config_vals is None:
 # Below function is used for calling the graph values for bike usage on the basis of location.
 
 class GraphValuesBike:
-    def graphvalue_call_locationbased(self, days_historical=config_vals["default_days_historic"]):
+    def graphvalue_call_locationbased(self, days_historical=config_vals["default_days_historic"],
+                                        store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()):
         if days_historical == 1 or days_historical == 0:
             error_str = 'Assign days_historic parameter >= 2.'
             logger.error(error_str)
@@ -30,7 +31,6 @@ class GraphValuesBike:
         day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
         resultDictionary = {}
         try:
-            store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
             fetched_data = store_processed_bike_data_to_db.fetch_processed_data(days_historical)
             fetched_predicted = store_processed_bike_data_to_db.fetch_predicted_data(day_ahead_tmp)
             for loc in fetched_data:
