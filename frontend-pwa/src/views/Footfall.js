@@ -62,23 +62,21 @@ class Footfall extends React.Component {
 
         const areaLocations = res.data.DATA.RESULT;
 
-        for (const locations of Object.keys(areaLocations)) {
-          console.log(locations);
-          const footfallCounts = areaLocations[locations].Footfall;
-          console.log(footfallCounts);
-          const footfall_LAT = areaLocations[locations].Lat;
-          console.log(footfall_LAT);
-          const footfall_LON = areaLocations[locations].Lon;
-          console.log(footfall_LON);
+        let locations = []
+        for (const location of Object.keys(areaLocations)) {
+          locations.push(location)
+          const footfallCounts = areaLocations[location].Footfall;
+          const footfall_LAT = areaLocations[location].Lat;
+          const footfall_LON = areaLocations[location].Lon;
 
           // Add markers
           markers.push({
             position: [
-              areaLocations[locations].Lat,
-              areaLocations[locations].Lon,
+              areaLocations[location].Lat,
+              areaLocations[location].Lon,
             ],
             // locations: areaLocation,
-            areaName: locations,
+            areaName: location,
             FootfallCounts: footfallCounts,
 
             icon: {
@@ -90,17 +88,86 @@ class Footfall extends React.Component {
             },
           });
 
-          this.setState({markers: markers});
+          this.setState({
+            markers: markers,
+            locations: locations
+          });
         }
       }
     );
   }
+
+  setFootfallGraph(x, y) {
+    console.log(x, y);
+    this.setState({
+      options: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+              borderColor: "#00E396",
+              label: {
+                borderColor: "#00E396",
+                orientation: "horizontal",
+                text: "Prediction",
+              },
+            },
+          ],
+        },
+      },
+      series: [
+        {
+          name: "Footfalls",
+          data: y,
+        },
+      ],
+      graphLoading: false,
+    });
+  }
+
+  onChangeFootfallLocation = (e) => {
+    const location = e.target.value;
+    this.setState({ graphLoading: true });
+    this.setState({ footfallLocationSelected: location });
+
+    if(location == "Not Selected") {
+      const x = [];
+      const y = [];
+      this.setFootfallGraph(x, y);
+      return;
+    }
+
+    axios.get(
+        "http://127.0.0.1:8000/main/footfall_datebased/?days_interval=6&location=" + location
+      )
+      .then((res) => {
+        let result = res.data.DATA.RESULT
+        const x = Object.keys(result[location]);
+        const y = Object.values(result[location]);
+        this.setFootfallGraph(x, y)
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ graphLoading: false });
+      });
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       markers: [],
+      options: {
+        chart: {
+          id: "basic-bar",
+        },
+      },
+      series: [],
+      footfallLocationSelected: "",
+      locations: []
     };
   }
 
@@ -149,6 +216,63 @@ class Footfall extends React.Component {
                     </MapContainer>
                   </div>
                 </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col md="12">
+              <Card className="card-chart">
+                <CardHeader>
+                  <CardTitle tag="h5">
+                    Footfall History{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                  <p className="card-category">
+                    Evolution of footfalls over time
+                  </p>
+                </CardHeader>
+                <CardBody>
+                  <FormGroup row>
+                    <Col sm={12} md={4}>
+                      <Label>Footfall location selection</Label>
+                      <Input
+                        type="select"
+                        name="select"
+                        onChange={this.onChangeFootfallLocation}
+                        value={this.state.footfallLocationSelected}
+                      >
+                        <option>Not Selected</option>
+                        {this.state.locations.map(
+                          ((location, index) => (
+                            <option key={index}>{location}</option>
+                          )
+                        ))}
+                      </Input>
+                    </Col>
+                  </FormGroup>
+
+                  <div className="mixed-chart">
+                    <Chart
+                      options={this.state.options}
+                      series={this.state.series}
+                      type="line"
+                      height="250"
+                    />
+                  </div>
+                </CardBody>
+                <CardFooter>
+                  <hr />
+                  <div className="card-stats">
+                    <i className="fa fa-check" /> Data information certified
+                  </div>
+                </CardFooter>
               </Card>
             </Col>
           </Row>
