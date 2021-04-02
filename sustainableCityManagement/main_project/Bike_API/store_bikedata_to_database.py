@@ -8,7 +8,7 @@ from ..Logs.service_logs import bike_log
 from ..Config.config_handler import read_config
 from ..Bike_API.bike_collections_db import BikeStands
 from ..Bike_API.bike_collections_db import BikeAvailability
-from ..Bike_API.bike_collections_db  import BikesStandsLocation
+from ..Bike_API.bike_collections_db import BikesStandsLocation
 import logging
 
 # Calling logging function for bike _API
@@ -101,7 +101,6 @@ class StoreBikeDataToDatabase:
 
 
 # This method gets the data from API for a single day and store in DB.
-
 
     def bikedata_day(self, days_historical):
         bikeusagedata = self.get_bikedata_day(days_historical)
@@ -220,3 +219,7 @@ class StoreBikeDataToDatabase:
             logger.error('Bikedata for minutes not retrieved from DB')
         # print(list(q_set))
         return (q_set)
+
+
+# a = StoreBikeDataToDatabase
+# a.get_bikedata_day(3, 1)

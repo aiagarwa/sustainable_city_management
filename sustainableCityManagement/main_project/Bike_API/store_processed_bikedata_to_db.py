@@ -8,7 +8,7 @@ from ..Bike_API.bike_collections_db import BikeProcessedData
 from ..Bike_API.bike_collections_db import BikeAvailabilityProcessedData
 from ..Bike_API.bike_collections_db import BikePredictedData
 from ..Bike_API.bike_collections_db import BikeAvailabilityPredictedData
-
+from freezegun.api import FakeDatetime
 import pytz
 
 # Calling logging function for bike _API
@@ -19,7 +19,14 @@ config_vals = read_config("Bike_API")
 
 
 class StoreProcessedBikeDataToDB:
+    def fetch_bike_data(self):
+        store_bike_data_to_database = StoreBikeDataToDatabase()
+        result = store_bike_data_to_database.fetch_data_from_db_for_day(
+            delay_time_formatted)
+        return result
+
     def store_bikedata(self, days_historical):
+        tmp_result = self.fetch_bike_data()
         now_time = datetime.now(pytz.utc)
         try:
             for i in range(days_historical):
@@ -37,9 +44,6 @@ class StoreProcessedBikeDataToDB:
                     },
                     {"$match": {"data.day": data_day_formatted}}
                 ]
-                store_bike_data_to_database = StoreBikeDataToDatabase()
-                tmp_result = store_bike_data_to_database.fetch_data_from_db_for_day(
-                    delay_time_formatted)
                 # Going through all the items in the fetched data from DB and storing the average of daily usage (Location based).
                 for item in tmp_result:
                     # Get the number of documents with a particular location name
@@ -70,7 +74,7 @@ class StoreProcessedBikeDataToDB:
                 'Failed to process raw data for bikes usage based on location.Check data stored in raw DB.')
             raise
 
-    # This method gets the raw data from DB, process and store in different collection in DB.
+    # This method gets the raw data from DB, process and store as different collection in DB.
 
     def store_bikedata_all_locations(self, days_historical):
         now_time = datetime.now(pytz.utc)
@@ -95,6 +99,7 @@ class StoreProcessedBikeDataToDB:
                         item["data"]["total_stands"]
                     in_use_all_locations = in_use_all_locations + \
                         item["data"]["in_use"]
+
             # Get the number of documents with a particular location name
                 biketemp = BikeProcessedData._get_collection(
                 ).count_documents({'name': "ALL_LOCATIONS"})
@@ -114,6 +119,7 @@ class StoreProcessedBikeDataToDB:
                     bikedata.save()
             logger.info(
                 'Processed data based on location stored in DB successfully.')
+            return total_stands_all_locations
         except:
             logger.exception(
                 'Failed to process raw data for bikes availability based on location.Check data stored in raw DB.')
@@ -237,6 +243,8 @@ class StoreProcessedBikeDataToDB:
     def fetch_predicted_data(self, predict_date):
         predict_date_formatted = datetime.strptime(
             predict_date, "%Y-%m-%dT%H:%M:%SZ")
+        # predict_date_formatted = predict_date_formatted.strftime("%Y-%m-%d")
+        # print(predict_date_formatted)
         pipeline = [
             {
                 "$unwind": "$data"

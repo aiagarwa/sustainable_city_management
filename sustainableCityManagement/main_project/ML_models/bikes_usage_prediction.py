@@ -29,7 +29,8 @@ def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_cons
 
         # adding prediction to the list of values (needed to create the to_predict)
         arrayOfUsagePerDay.append(y_pred[0])
-        X.append(to_predict)  # adding train data point (needed for training)
+        # adding train data point (needed for training)
+        X.append(to_predict)
         y.append(y_pred)  # adding test data point (needed for training)
         results.append(y_pred)  # adding prediction to results
 
