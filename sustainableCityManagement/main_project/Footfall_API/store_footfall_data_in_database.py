@@ -6,12 +6,13 @@ import pytz
 import csv
 import time as time
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..Footfall_API.footfall_collections_db import FootfallInfo, FootfallDateBased, FootfallOverall
 from ..Config.config_handler import read_config
 
 config_vals = read_config("Footfall_API")
 
+connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
 
 class StoreFootfallData:
     def __init__(self):
@@ -131,19 +132,56 @@ class StoreFootfallData:
         locations = json.loads(json_data)
         return locations
 
-    def get_last_date(self):
-        self.read_footfall()
-        date_str = str(list(self.df["Time"])[-1]).split(" ")[0]
-        self.end_date = datetime.strptime(date_str, "%d-%m-%Y").strftime("%Y-%m-%d")
+
+    def fetch_data_from_db_with_prediction(self, days_interval = 20, reqd_location = "Bachelors Walk"):
+        end_date = self.get_last_date()
+        start_date = datetime.strftime(datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=days_interval),"%Y-%m-%d")
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        pipeline = [
+            {"$project": {
+                "location": "$location",
+                "footfall_data": {"$filter": {
+                    "input": "$footfall_data",
+                    "as": "footfall_data",
+                    "cond": {"$and": [
+                        {"$lte": ["$$footfall_data.data_date", end_date]},
+                        {"$gte": ["$$footfall_data.data_date", start_date]}
+                        ]}
+                    }
+                },
+                "_id": 0}
+                },
+            ]
+        q_set = FootfallDateBased.objects(location=reqd_location).aggregate(*pipeline)  # Fetch Data from DB
+        list_q_set = list(q_set)
+        return list_q_set, end_date
+
+
+    def get_last_date(self, reqd_location = "Bachelors Walk"):
+        pipeline = [
+        {
+        "$unwind": "$footfall_data"
+        },
+        {"$sort": {"footfall_data.data_date": -1}},
+        {"$limit":1},
+        {"$project": { 
+        "location":"$location",
+        "footfall_data":"$footfall_data",
+        "_id":0}}
+        ]
+        q_set = FootfallDateBased.objects(location=reqd_location).aggregate(*pipeline)  # Fetch Data from DB
+        list_q_set = list(q_set)
+        self.end_date = list_q_set[0]["footfall_data"]["data_date"].strftime("%Y-%m-%d")
         return(self.end_date)
 
 
 
 # a = StoreFootfallData()
-# a.get_last_date()
+# print(a.fetch_data_from_db_with_prediction())
 # a.store_footfall_locations()
 # a.store_footfall_overall()
 # a.store_footfall_data_datebased()
 
-# print(a.fetch_data_from_db_for_day("2021-01-01","2021-01-02"))
+# print(a.fetch_data_from_db_for_day("2021-03-03","2021-03-04"))
 # print(a.fetch_footfall_overall())

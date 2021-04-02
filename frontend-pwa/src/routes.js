@@ -25,6 +25,7 @@ import Bikes from "views/Bikes.js";
 import Buses from "views/Buses.js";
 import Parkings from "views/Parkings";
 import Footfall from "views/Footfall";
+import EmergencyServices from "views/EmergencyServices";
 // import Typography from "views/Typography.js";
 // import TableList from "views/Tables.js";
 // import Maps from "views/Map.js";
@@ -98,7 +99,7 @@ var routes = [
     path: "/emergency",
     name: "Emergency Services",
     icon: "fas fa-ambulance",
-    component: Icons,
+    component: EmergencyServices,
     layout: "/admin",
     requiresAuth: true,
   },

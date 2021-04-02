@@ -3,6 +3,7 @@ from django.test import TestCase
 from unittest.mock import MagicMock
 from main_project.Config.config_handler import read_config
 import datetime
+import unittest
 
 
 class TestBikeUsagePrediction(TestCase):
@@ -15,4 +16,4 @@ class TestBikeUsagePrediction(TestCase):
         result = predict_bikes_usage(arrayOfUsagePerDay, predictDays=1,
                                      previous_days_to_consider=config_vals["days_to_consider_for_prediction"])
         expected_result = 23
-        assert expected_result == result
+        assert (expected_result == result)
