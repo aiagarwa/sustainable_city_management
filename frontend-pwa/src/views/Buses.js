@@ -68,7 +68,6 @@ function download(data, filename, type) {
 
 class Buses extends React.Component {
   setBusesGraph(x, y) {
-    console.log(x, y);
     this.setState({
       options: {
         xaxis: {
@@ -192,8 +191,6 @@ class Buses extends React.Component {
     }
     latlngs.push(destination);
 
-    console.log(latlngs)
-
     const options = {
       "delay": 400,
       "dashArray": [
@@ -208,8 +205,10 @@ class Buses extends React.Component {
       "hardwareAccelerated": true
     };
 
+    
     const antPolyline = new AntPath(latlngs, options);
-    antPolyline.addTo(map);
+    map.addLayer(antPolyline);
+    this.setState({antPathLastLayer: antPolyline});
   }
 
   populateBusStopsSaveToFile() {
@@ -291,16 +290,27 @@ class Buses extends React.Component {
     //download(JSON.stringify(this.state.save_trips), "trips_paths", "txt")
   }
 
+  getBusStopFromId(bus_stop_id) {
+    for (const busStop of this.state.busStops) {
+      if (busStop.stop_id == bus_stop_id) {
+        return busStop;
+      }
+    }
+  }
+
   drawPathForTrip(index) {
     //console.log(this.state.busTrips)
     let trip = this.state.busTrips[index];
     let stops_list = trip.stops_list;
 
+    let busStopList = [];
     for(let i=0; i<stops_list.length-1; i++) {
+      busStopList.push(this.getBusStopFromId(stops_list[i].stop_id));
       this.drawPathBetweenBusStopsId(stops_list[i].stop_id, stops_list[i+1].stop_id);
     }
+    busStopList.push(this.getBusStopFromId(stops_list[stops_list.length-1].stop_id));
 
-    //download(JSON.stringify(this.state.save_trips), "trips_paths", "txt")
+    this.setState({busStopsSelected: busStopList});
   }
 
   populateTripsSaveToFile(){
@@ -345,9 +355,9 @@ class Buses extends React.Component {
         let result = res.data.DATA.RESULT;
         this.setState({ bus_paths: result });
 
-        for(let i=0; i<this.state.busTrips.length; i++) {
+        /*for(let i=0; i<this.state.busTrips.length; i++) {
           this.drawPathForTrip(i);
-        }
+        }*/
       })
       .catch(error => {
         console.error(error);
@@ -368,8 +378,9 @@ class Buses extends React.Component {
             icon: iconDefault,
             });
         }
-        
+
         this.setState({ busTrips: trips_list });
+        console.log(this.state.busTrips)
         this.drawTrips();
       })
       .catch(error => {
@@ -407,7 +418,10 @@ class Buses extends React.Component {
       busSelection: "ALL",
       graphLoading: true,
       save_trips: {"paths": []},
-      bus_paths: {}
+      bus_paths: {},
+      busTripSelected: "",
+      busStopsSelected: [],
+      antPathLastLayer: null
     };
 
     this.mapCreated = this.mapCreated.bind(this);
@@ -417,6 +431,30 @@ class Buses extends React.Component {
   onChangeBusSelection(e) {
     alert(`Bus changed to ${e}`);
   }
+
+  onChangeBusTrip = (e) => {
+    if(this.state.antPathLastLayer != null){
+      this.state.map.eachLayer((layer) => {
+        if(layer._animatedPathClass == "leaflet-ant-path")
+          this.state.map.removeLayer(layer);
+      });
+    }
+
+    const trip = e.target.value;
+    this.setState({ graphLoading: true });
+    this.setState({ busTripSelected: trip });
+
+    if(trip == "Not Selected") {
+      this.setState({busStopsSelected: []});
+      return;
+    }
+
+    for(let i=0; i<this.state.busTrips.length; i++) {
+      if(this.state.busTrips[i].trip == trip){
+        this.drawPathForTrip(i);
+      }
+    }
+  };
 
   /**
    * Triggered when the map is created; currently creates path between two points for test purposes
@@ -440,6 +478,24 @@ class Buses extends React.Component {
               <Card>
                 <CardHeader>Buses Availability</CardHeader>
                 <CardBody>
+                <FormGroup row>
+                    <Col sm={12} md={4}>
+                      <Label>Bus trip selection</Label>
+                      <Input
+                        type="select"
+                        name="select"
+                        onChange={this.onChangeBusTrip}
+                        value={this.state.busTripSelected}
+                      >
+                        <option>Not Selected</option>
+                        {this.state.busTrips.map(
+                          ((trip_obj, index) => (
+                            <option key={index}>{trip_obj.trip}</option>
+                          )
+                          ))}
+                      </Input>
+                    </Col>
+                  </FormGroup>
                   <div className="leaflet-container">
                     <MapContainer
                       whenCreated={this.mapCreated}
@@ -452,7 +508,7 @@ class Buses extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {/* {this.state.busStops.map(
+                      {this.state.busStopsSelected.map(
                         ({ stop, name, lat, lng, icon }, idx) => (
                           <Marker
                             key={`marker-${idx}`}
@@ -462,12 +518,12 @@ class Buses extends React.Component {
                             <Popup>
                               <p>
                                 <b>{name}</b><br />
-                                {/* <i>{stop}</i> //////////////////////////////////////////////////////*}
+                                {/* <i>{stop}</i> */}
                               </p>
                             </Popup>
                           </Marker>
                         )
-                      )} */}
+                      )}
                     </MapContainer>
                   </div>
                 </CardBody>
