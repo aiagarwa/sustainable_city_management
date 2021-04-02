@@ -11,8 +11,8 @@ from .Emergency_Service_API.views_emergency_service_api.show_emergency_service_d
 from .Emergency_Service_API.views_emergency_service_api.show_emergency_service_data import Hospitals
 from .Bus_API.views_bus_api.show_bus_stops import BusStopsLocations
 from .Bus_API.views_bus_api.show_bus_paths import BusPathsAPI
-# from .Parkings_API.views_parkings_api.show_parkings_availability import ParkingsAvailability
-# from .Parkings_API.views_parkings_api.show_parkings_locations import ParkingsLocations
+from .Parkings_API.views_parkings_api.show_parkings_availability import ParkingsAvailability
+from .Parkings_API.views_parkings_api.show_parkings_locations import ParkingsLocations
 from .Parkings_API.views_parkings_api.show_parkings_availability import ParkingsAvailability
 from .Parkings_API.views_parkings_api.show_parkings_locations import ParkingsLocations
 from .Footfall_API.views_footfall_api.show_footfall_data import FootfallDatebasedData
@@ -31,10 +31,10 @@ urlpatterns = [
         name='bustrip_delay_info'),
     url(r'^bustrip_paths/$', BusPathsAPI.as_view(),
         name='bustrip_paths_info'),
-    # url(r'^parkings_locations/$', ParkingsLocations.as_view(),
-    #     name ='parkings_locations'),
-    # url(r'^parkings_availability/$', ParkingsAvailability.as_view(), 
-    #     name ='parkings_availability'),
+    url(r'^parkings_locations/$', ParkingsLocations.as_view(),
+        name ='parkings_locations'),
+    url(r'^parkings_availability/$', ParkingsAvailability.as_view(), 
+        name ='parkings_availability'),
     url(r'^footfall_overall/$', FootfallOverallData.as_view(), 
         name ='footfall_overall_data'),
     url(r'^fire_stations/$', FireStations.as_view(),
