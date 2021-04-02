@@ -65,7 +65,7 @@ class FetchEmergencyServiceApi:
         counter = 0
         all_centers = hospitalsObj.fetch_hospital_informations()
         for items in all_centers:
-            centers_custom_id = "Hospital"+str(counter)
+            centers_custom_id = "Hospital_"+str(counter)
             result_response[centers_custom_id] = {}
             result_response[centers_custom_id]["CENTER_NAME"] = items["center_name"]
             result_response[centers_custom_id]["CENTER_ADDRESS"] = items["center_address"]
