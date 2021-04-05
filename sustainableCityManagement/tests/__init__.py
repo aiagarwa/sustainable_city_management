@@ -13,7 +13,9 @@ from tests.Emergency_Service_API.test_store_emergency_service_data_in_database i
 from tests.Emergency_Service_API.test_fetch_emergency_service import TestFetchEmergencyServiceApi
 from tests.Emergency_Service_API.views_emergency_service_api.test_show_emergency_service_data import TestEmergencyService
 from tests.ML_Models.test_bikes_uasge_prediction import TestBikeUsagePrediction
+from mongoengine.connection import disconnect
 import mongomock
 from mongoengine import connect
+disconnect(alias='default')
 connect('mongoenginetest',
         host='mongomock://localhost', alias='default')

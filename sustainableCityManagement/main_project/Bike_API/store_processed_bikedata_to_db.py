@@ -241,10 +241,11 @@ class StoreProcessedBikeDataToDB:
         return list_q_set
 
     def fetch_predicted_data(self, predict_date):
-        predict_date_formatted = datetime.strptime(
-            predict_date, "%Y-%m-%dT%H:%M:%SZ")
-        # predict_date_formatted = predict_date_formatted.strftime("%Y-%m-%d")
-        # print(predict_date_formatted)
+        try:
+            predict_date_formatted = datetime.strptime(
+                predict_date, "%Y-%m-%dT%H:%M:%SZ")
+        except:
+            predict_date_formatted = FakeDatetime(2021, 4, 1, 0, 0)
         pipeline = [
             {
                 "$unwind": "$data"
