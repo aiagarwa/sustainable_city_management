@@ -11,6 +11,8 @@ class TestBikeUsagePrediction(TestCase):
     def setUpTestData(cls):
         pass
 
+    # Testing the prediction function works for given input array of data.
+
     def test_predict_bikes_usage(self):
         arrayOfUsagePerDay = [10, 20, 30, 15]
         result = predict_bikes_usage(arrayOfUsagePerDay, predictDays=1,
