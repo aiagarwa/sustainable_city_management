@@ -374,6 +374,7 @@ class Buses extends React.Component {
             trip: trip,
             trip_id: res.data.DATA.RESULT[trip].TRIP_ID,
             route_id: res.data.DATA.RESULT[trip].ROUTE_ID,
+            route_name: res.data.DATA.RESULT[trip].ROUTE_NAME,
             stops_list: res.data.DATA.RESULT[trip].STOP_INFO,
             icon: iconDefault,
             });
@@ -440,9 +441,10 @@ class Buses extends React.Component {
       });
     }
 
-    const trip = e.target.value;
+    const trip_name = e.target.value;
+    const trip = trip_name.split(" - ")[0]
     this.setState({ graphLoading: true });
-    this.setState({ busTripSelected: trip });
+    this.setState({ busTripSelected: trip_name });
 
     if(trip == "Not Selected") {
       this.setState({busStopsSelected: []});
@@ -490,7 +492,7 @@ class Buses extends React.Component {
                         <option>Not Selected</option>
                         {this.state.busTrips.map(
                           ((trip_obj, index) => (
-                            <option key={index}>{trip_obj.trip}</option>
+                            <option key={index}>{trip_obj.trip + ' - ' + trip_obj.route_name}</option>
                           )
                           ))}
                       </Input>
@@ -527,67 +529,6 @@ class Buses extends React.Component {
                     </MapContainer>
                   </div>
                 </CardBody>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col md="12">
-              <Card className="card-chart">
-                <CardHeader>
-                  <CardTitle tag="h5">
-                    Buses Usage{" "}
-                    <i
-                      style={{
-                        display: this.state.graphLoading
-                          ? "inline-block"
-                          : "none",
-                      }}
-                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
-                    ></i>
-                  </CardTitle>
-                  <p className="card-category">
-                    Evolution of Buses usage over time
-                  </p>
-                </CardHeader>
-                <CardBody>
-                  <FormGroup row>
-                    <Col sm={12} md={4}>
-                      <Label>Bus [idk] selection</Label>
-                      <Input
-                        type="select"
-                        name="select"
-                        onChange={this.onChangeBusSelection}
-                        value={this.state.busSelection}
-                      >
-                        <option>ALL</option>
-                        {this.state.markers.map(
-                          ({ position, content }, index) => (
-                            <option key={index}>{content}</option>
-                          )
-                        )}
-                      </Input>
-                    </Col>
-                  </FormGroup>
-
-                  <div className="mixed-chart">
-                    <Chart
-                      options={this.state.options}
-                      series={this.state.series}
-                      type="line"
-                      height="250"
-                    />
-                  </div>
-                </CardBody>
-                <CardFooter>
-                  {/* <div className="chart-legend">
-                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                      <i className="fa fa-circle text-warning" /> BMW 5 Series
-                    </div> */}
-                  <hr />
-                  <div className="card-stats">
-                    <i className="fa fa-check" /> Data information certified
-                  </div>
-                </CardFooter>
               </Card>
             </Col>
           </Row>
