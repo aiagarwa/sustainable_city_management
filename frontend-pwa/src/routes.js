@@ -72,22 +72,6 @@ var routes = [
     requiresAuth: true,
   },
   {
-    path: "/traffic",
-    name: "Traffic",
-    icon: "fas fa-traffic-light",
-    component: Icons,
-    layout: "/admin",
-    requiresAuth: true,
-  },
-  {
-    path: "/bins",
-    name: "Public bins",
-    icon: "fas fa-dumpster",
-    component: Icons,
-    layout: "/admin",
-    requiresAuth: true,
-  },
-  {
     path: "/parkings",
     name: "Parkings",
     icon: "fas fa-parking",

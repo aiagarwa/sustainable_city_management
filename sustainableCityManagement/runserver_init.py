@@ -110,4 +110,4 @@ def init():
     # save_bus_data_to_database()
     # save_footfall_data_to_database()
     # save_parkings_data_to_database()
-    # save_emergency_services_data_to_database()
+    save_emergency_services_data_to_database()
