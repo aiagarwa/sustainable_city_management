@@ -5,56 +5,43 @@ logger_bike = None
 logger_bus = None
 logger_app = None
 logger_emergency = None
+logger_parkings = None
 
 
 def bike_log():  # Creating custom logger to store logging information.
     global logger_bike
     if logger_bike is None:
-        logger = create_logger('bike_api')
-        logger_bike = logger
+        logger_bike = create_logger('bike_api')
     return logger_bike
 
 
 def bus_log():  # Creating custom logger to store logging information.
     global logger_bus
     if logger_bus is None:
-        logger = create_logger('bus_api')
-        logger_bus = logger
+        logger_bus = create_logger('bus_api')
     return logger_bus
 
 
 def app_log():  # Creating custom logger to store logging information.
     global logger_app
     if logger_app is None:
-        logger = create_logger('application')
-        logger_app = logger
+        logger_app = create_logger('application')
     return logger_app
-
 
 def emergency_service_log():  # Creating custom logger to store logging information.
     global logger_emergency
     if logger_emergency is None:
-        logger = create_logger('emergency_service_api')
-        logger_emergency = logger
+        logger_emergency = create_logger('emergency_service_api')
     return logger_emergency
 
-
 def parkings_log():  # Creating custom logger to store logging information.
-    global logger
-    if logger is None:
-        create_logger('Parkings_API')
-    return logger
-
-
-def parkings_log():  # Creating custom logger to store logging information.
-    global logger
-    if logger is None:
-        create_logger('Parkings_API')
-    return logger
-
+    global logger_parkings
+    if logger_parkings is None:
+        logger_parkings = create_logger('parkings')
+    return logger_parkings
 
 def create_logger(file_name):
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(file_name)
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
