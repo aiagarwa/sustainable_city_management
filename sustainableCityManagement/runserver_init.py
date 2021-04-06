@@ -10,6 +10,12 @@ from mongoengine import *
 logger = app_log()
 logger.info('Server_Starts')
 
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
 
 def save_raw_bikedata_to_database():
     In = input("SAVE RAW DATA IN DB ? :")
@@ -89,7 +95,7 @@ def check_to_drop_database():
     store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
     if In == "yes":
         conn = connect(
-            host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+            host=env('DATABASE_URI'), alias="default")
         conn.drop_database("sustainableCityManagementTest")
     else:
         pass
@@ -102,8 +108,9 @@ def save_emergency_services_data_to_database():
     store_emergency_services.store_hospitals()
 
 def init():
+    print("db uri", env('DATABASE_URI'))
     connect(
-        host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+        host=env('DATABASE_URI'), alias="default")
     # check_to_drop_database()
     # save_raw_bikedata_to_database()
     # save_processed_and_predicted_bike_data_to_database()
