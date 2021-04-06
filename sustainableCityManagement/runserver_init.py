@@ -14,11 +14,13 @@ import environ
 
 # Initialise environment variables
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(env_file="config/dev.env")
+# environ.Env.read_env(env_file="config/prod.env")
 
 
 def save_raw_bikedata_to_database():
-    In = input("SAVE RAW DATA IN DB ? :")
+    # In = input("SAVE RAW DATA IN DB ? :")
+    In = "yes"
     store_bikedata_to_database = StoreBikeDataToDatabase()
     if In == "yes":
         store_bikedata_to_database.save_historic_data_in_db(1)
@@ -28,7 +30,8 @@ def save_raw_bikedata_to_database():
 
 
 def save_processed_and_predicted_bike_data_to_database():
-    In = input("SAVE PROCESSED AND PREDICTED DATA IN DB ? :")
+    # In = input("SAVE PROCESSED AND PREDICTED DATA IN DB ? :")
+    In = "yes"
     store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
     if In == "yes":
         store_processed_bike_data_to_db.store_bikedata(5)
@@ -39,7 +42,8 @@ def save_processed_and_predicted_bike_data_to_database():
 
 
 def save_bus_data_to_database():
-    In = input("SAVE BUS DATA IN DB ? :")
+    # In = input("SAVE BUS DATA IN DB ? :")
+    In = "yes"
     store_busdata_to_database = StoreBusRoutesData()
     if In == "yes":
         store_busdata_to_database.store_bus_stops()
@@ -52,7 +56,8 @@ def save_bus_data_to_database():
 
 
 def save_emergency_data_to_database():
-    In = input("SAVE EMERGENCY DATA IN DB ? :")
+    # In = input("SAVE EMERGENCY DATA IN DB ? :")
+    In = "yes"
     store_emergency_service_data_to_database = StoreServiceData()
     if In == "yes":
         store_emergency_service_data_to_database.read_fire_stations()
@@ -69,7 +74,8 @@ def save_emergency_data_to_database():
 
 
 def save_footfall_data_to_database():
-    In = input("SAVE FOOTFALL DATA IN DB ? :")
+    # In = input("SAVE FOOTFALL DATA IN DB ? :")
+    In = "yes"
     store_footfall_data_to_database = StoreFootfallData()
     if In == "yes":
         store_footfall_data_to_database.store_footfall_locations()
@@ -81,7 +87,8 @@ def save_footfall_data_to_database():
 
 
 def save_parkings_data_to_database():
-    In = input("SAVE PARKINGS DATA IN DB ? :")
+    # In = input("SAVE PARKINGS DATA IN DB ? :")
+    In = "yes"
     store_parkings_data_to_database = StoreParkingsData()
     if In == "yes":
         store_parkings_data_to_database.get_parkings_spaces_availability_live()
@@ -91,11 +98,12 @@ def save_parkings_data_to_database():
 
 
 def check_to_drop_database():
-    In = input("DROP DATABASE? :")
+    # In = input("DROP DATABASE? :")
+    In = "yes"
     store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()
     if In == "yes":
         conn = connect(
-            host=env('DATABASE_URI'), alias="default")
+            host=env('DATABASE_URI'), alias=env('DATABASE_ALIAS'))
         conn.drop_database("sustainableCityManagementTest")
     else:
         pass
@@ -108,13 +116,12 @@ def save_emergency_services_data_to_database():
     store_emergency_services.store_hospitals()
 
 def init():
-    print("db uri", env('DATABASE_URI'))
     connect(
-        host=env('DATABASE_URI'), alias="default")
-    # check_to_drop_database()
-    # save_raw_bikedata_to_database()
-    # save_processed_and_predicted_bike_data_to_database()
-    # save_bus_data_to_database()
-    # save_footfall_data_to_database()
-    # save_parkings_data_to_database()
-    # save_emergency_services_data_to_database()
+        host=env('DATABASE_URI'), alias=env('DATABASE_ALIAS'))
+    check_to_drop_database()
+    save_raw_bikedata_to_database()
+    save_processed_and_predicted_bike_data_to_database()
+    save_bus_data_to_database()
+    save_footfall_data_to_database()
+    save_parkings_data_to_database()
+    save_emergency_services_data_to_database()
