@@ -12,7 +12,7 @@ from ..Config.config_handler import read_config
 
 config_vals = read_config("Footfall_API")
 
-connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
+# connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
 
 class StoreFootfallData:
     def __init__(self):

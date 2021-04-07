@@ -18,3 +18,6 @@ Footfall_API:
   footfall_locations_file: ./main_project/Footfall_API/resources/footfall_locations.json
   days_interval_size: 20
   days_to_consider_for_prediction: 1
+
+Weather_API:
+  api_url: https://api.tomorrow.io/v4/timelines
