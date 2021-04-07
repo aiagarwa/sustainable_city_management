@@ -19,14 +19,13 @@ config_vals = read_config("Bike_API")
 
 
 class StoreProcessedBikeDataToDB:
-    def fetch_bike_data(self):
+    def fetch_bike_data(self, delay_time_formatted):
         store_bike_data_to_database = StoreBikeDataToDatabase()
         result = store_bike_data_to_database.fetch_data_from_db_for_day(
             delay_time_formatted)
         return result
 
     def store_bikedata(self, days_historical):
-        tmp_result = self.fetch_bike_data()
         now_time = datetime.now(pytz.utc)
         try:
             for i in range(days_historical):
@@ -44,6 +43,8 @@ class StoreProcessedBikeDataToDB:
                     },
                     {"$match": {"data.day": data_day_formatted}}
                 ]
+
+                tmp_result = self.fetch_bike_data(delay_time_formatted)
                 # Going through all the items in the fetched data from DB and storing the average of daily usage (Location based).
                 for item in tmp_result:
                     # Get the number of documents with a particular location name
