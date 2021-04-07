@@ -42,9 +42,7 @@ class FetchWeatherApi:
         startdate_in_data = fetched_data["data"]["timelines"][0]["startTime"]
         startdate_in_data = datetime.strptime(startdate_in_data,"%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
         
-        print(now_date)
-        print(startdate_in_data)
-        result_response = {"DATE_FETCHED" : startdate_in_data}
+        result_response = {"DATE_FETCHED" : now_date}
 
         if startdate_in_data != now_date:
             url = "https://api.tomorrow.io/v4/timelines?location=53.42952351654325,-6.248555851275721&fields=temperature&startTime=%sT05:00:00Z&fields=humidity&fields=weatherCode&units=metric&timesteps=1d&apikey=Pmudk9ZaWPD19Kh4jjGmJeTw5ZfbCwGn"%now_date
