@@ -83,31 +83,19 @@ class Dashboard extends React.Component {
         const time_zone = response.data.timezone;
         const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
         const windSpeedInfo = response.data.wind.speed;
-        // console.log("<<<< API INFO >>>>");
-        // console.log(response.data);
-
-        // console.log("<<< WEATHER INFO >>>");
+        console.log("<<<< API INFO >>>>");
+        console.log(response.data);
         this.setState({ weatherInfo: weatherInfo });
-        // console.log(weatherInfo);
-
-        // console.log("<<< WEATHER INFO EXTRA >>>");
         this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
-        // console.log(weatherInfoExtraTemp_min);
         this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
-        // console.log(weatherInfoExtraTemp_max);
 
-        // console.log("<<< WEATHER TIME STAMP >>>");
-        // console.log(time_zone);
+        console.log("<<< WEATHER TIME STAMP >>>");
+        console.log(time_zone);
         this.setState({ weatherTimeStamp: weatherTimeStamp });
-        // console.log(weatherTimeStamp);
-
-        // console.log("<<< WIND INFO >>>");
         this.setState({ windSpeedInfo: windSpeedInfo });
-        // console.log(windSpeedInfo);
       })
       .catch((error) => {
         alert(error.message);
-        // console.error(error);
       });
 
     axios
@@ -118,13 +106,11 @@ class Dashboard extends React.Component {
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
-        // console.log("<<< AIR POLLUTION >>>");
-        // console.log(response.data);
-        // console.log(response.data.list[0].main.aqi);
+        console.log("<<< AIR POLLUTION >>>");
+        console.log(response.data);
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
-        // alert(error.message);
         console.error(error);
       });
   }
@@ -197,7 +183,7 @@ class Dashboard extends React.Component {
                   <hr />
                   <div className="stats">
                     <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
-                    Updated now
+                    Updated
                     <p>
                       {this.state.weatherInfo &&
                         moment.unix(this.state.weatherTimeStamp).format("lll")}
