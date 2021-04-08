@@ -3,7 +3,7 @@ stages:
   # - test
   - deploy
 
-Deploy staging:
+Deploy production (master):
   type: deploy
   environment:
     name: production
