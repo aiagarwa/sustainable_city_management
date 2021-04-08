@@ -14,8 +14,8 @@ import environ
 
 # Initialise environment variables
 env = environ.Env()
-environ.Env.read_env(env_file="config/dev.env")
-# environ.Env.read_env(env_file="config/prod.env")
+# environ.Env.read_env(env_file="config/dev.env")
+environ.Env.read_env(env_file="config/prod.env")
 
 
 def save_raw_bikedata_to_database():
@@ -119,10 +119,10 @@ def save_emergency_services_data_to_database():
 def init():
     connect(
         host=env('DATABASE_URI'), alias=env('DATABASE_ALIAS'))
-    check_to_drop_database()
-    save_raw_bikedata_to_database()
-    save_processed_and_predicted_bike_data_to_database()
-    save_bus_data_to_database()
-    save_footfall_data_to_database()
-    save_parkings_data_to_database()
-    save_emergency_services_data_to_database()
+    # check_to_drop_database()
+    # save_raw_bikedata_to_database()
+    # save_processed_and_predicted_bike_data_to_database()
+    # save_bus_data_to_database()
+    # save_footfall_data_to_database()
+    # save_parkings_data_to_database()
+    # save_emergency_services_data_to_database()
