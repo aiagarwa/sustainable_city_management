@@ -28,6 +28,9 @@ import {
   CardTitle,
   Row,
   Col,
+  FormGroup,
+  Label,
+  Input,
 } from "reactstrap";
 import Chart from "react-apexcharts";
 // core components
@@ -66,10 +69,104 @@ class Dashboard extends React.Component {
           data: [30, 40, 45, 50, 49, 60, 70, 91],
         },
       ],
+      options_temperature: {
+        stroke: {
+          curve: "smooth",
+        },
+        chart: {
+          id: "basic-bar",
+        },
+        markers: {
+          size: 5,
+        },
+        colors: ["#0037ff"],
+      },
+      series_temperature: [],
+      options_humidity: {
+        stroke: {
+          curve: "smooth",
+        },
+        chart: {
+          id: "basic-bar",
+        },
+        markers: {
+          size: 5,
+        },
+        colors: ["#ff7300"],
+      },
+      series_humidity: [],
+      graphLoading: false,
     };
   }
 
+  populateTemperatureHumidityCharts(data) {
+    let x = Object.keys(data);
+    let y = Object.values(data);
+
+    x.shift();
+    y.shift();
+
+    console.log(x);
+    console.log(y);
+
+    let y_temperature = [];
+    let y_humidity = [];
+    let weather_data = [];
+
+    for (let i = 0; i < y.length; i++) {
+      y_temperature.push(y[i].TEMPERATURE);
+      y_humidity.push(y[i].HUMIDITY);
+      weather_data.push(y[i].WEATHER);
+    }
+
+    this.setState({
+      options_temperature: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+            },
+          ],
+        },
+      },
+      series_temperature: [
+        {
+          name: "Temperatures",
+          data: y_temperature,
+        },
+      ],
+
+      options_humidity: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+            },
+          ],
+        },
+      },
+      series_humidity: [
+        {
+          name: "Humidity",
+          data: y_humidity,
+        },
+      ],
+
+      graphLoading: false,
+    });
+  }
+
   componentDidMount() {
+    this.setState({
+      graphLoading: true,
+    });
+
     axios
       .request({
         method: "GET",
@@ -83,31 +180,19 @@ class Dashboard extends React.Component {
         const time_zone = response.data.timezone;
         const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
         const windSpeedInfo = response.data.wind.speed;
-        // console.log("<<<< API INFO >>>>");
-        // console.log(response.data);
-
-        // console.log("<<< WEATHER INFO >>>");
+        console.log("<<<< API INFO >>>>");
+        console.log(response.data);
         this.setState({ weatherInfo: weatherInfo });
-        // console.log(weatherInfo);
-
-        // console.log("<<< WEATHER INFO EXTRA >>>");
         this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
-        // console.log(weatherInfoExtraTemp_min);
         this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
-        // console.log(weatherInfoExtraTemp_max);
 
-        // console.log("<<< WEATHER TIME STAMP >>>");
-        // console.log(time_zone);
+        console.log("<<< WEATHER TIME STAMP >>>");
+        console.log(time_zone);
         this.setState({ weatherTimeStamp: weatherTimeStamp });
-        // console.log(weatherTimeStamp);
-
-        // console.log("<<< WIND INFO >>>");
         this.setState({ windSpeedInfo: windSpeedInfo });
-        // console.log(windSpeedInfo);
       })
       .catch((error) => {
         alert(error.message);
-        // console.error(error);
       });
 
     axios
@@ -118,14 +203,30 @@ class Dashboard extends React.Component {
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
-        // console.log("<<< AIR POLLUTION >>>");
-        // console.log(response.data);
-        // console.log(response.data.list[0].main.aqi);
+        console.log("<<< AIR POLLUTION >>>");
+        console.log(response.data);
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
-        // alert(error.message);
         console.error(error);
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url: "http://127.0.0.1:8000/main/weather_forecast/",
+      })
+      .then((response) => {
+        const data = response.data.DATA.RESULT;
+        this.populateTemperatureHumidityCharts(data);
+        localStorage.setItem("weather_forecast", JSON.stringify(data));
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("weather_forecast") != null) {
+          const data = JSON.parse(localStorage.getItem("weather_forecast"));
+          this.populateTemperatureHumidityCharts(data);
+        }
       });
   }
 
@@ -197,7 +298,7 @@ class Dashboard extends React.Component {
                   <hr />
                   <div className="stats">
                     <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
-                    Updated now
+                    Updated
                     <p>
                       {this.state.weatherInfo &&
                         moment.unix(this.state.weatherTimeStamp).format("lll")}
@@ -207,84 +308,89 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          {/** WEATHER STUFF */}
+
           <Row>
             <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Users Behavior</CardTitle>
-                  <p className="card-category">24 Hours performance</p>
-                </CardHeader>
-                <CardBody>
-                  <Line
-                    data={dashboard24HoursPerformanceChart.data}
-                    options={dashboard24HoursPerformanceChart.options}
-                    width={400}
-                    height={100}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="fa fa-history" /> Updated 3 minutes ago
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col md="4">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Email Statistics</CardTitle>
-                  <p className="card-category">Last Campaign Performance</p>
-                </CardHeader>
-                <CardBody>
-                  <Pie
-                    data={dashboardEmailStatisticsChart.data}
-                    options={dashboardEmailStatisticsChart.options}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <div className="legend">
-                    <i className="fa fa-circle text-primary" /> Opened{" "}
-                    <i className="fa fa-circle text-warning" /> Read{" "}
-                    <i className="fa fa-circle text-danger" /> Deleted{" "}
-                    <i className="fa fa-circle text-gray" /> Unopened
-                  </div>
-                  <hr />
-                  <div className="stats">
-                    <i className="fa fa-calendar" /> Number of emails sent
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col md="8">
               <Card className="card-chart">
                 <CardHeader>
-                  <CardTitle tag="h5">NASDAQ: AAPL</CardTitle>
-                  <p className="card-category">Line Chart with Points</p>
+                  <CardTitle tag="h5">
+                    Temperature Forecast{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                  <p className="card-category">14 Days Forecast</p>
                 </CardHeader>
                 <CardBody>
                   <div className="mixed-chart">
                     <Chart
-                      options={this.state.options}
-                      series={this.state.series}
-                      type="bar"
+                      options={this.state.options_temperature}
+                      series={this.state.series_temperature}
+                      type="line"
                       height="250"
                     />
                   </div>
                 </CardBody>
                 <CardFooter>
                   {/* <div className="chart-legend">
-                    <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                    <i className="fa fa-circle text-warning" /> BMW 5 Series
-                  </div> */}
+                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
+                      <i className="fa fa-circle text-warning" /> BMW 5 Series
+                    </div> */}
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
                   </div>
                 </CardFooter>
-                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - END >>>>>>>>>>> */}
+              </Card>
+            </Col>
+          </Row>
+
+          {/**WEATHER STUFF END */}
+
+          <Row>
+            <Col md="12">
+              <Card className="card-chart">
+                <CardHeader>
+                  <CardTitle tag="h5">
+                    Humidity Forecast{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                  <p className="card-category">14 Days Forecast</p>
+                </CardHeader>
+                <CardBody>
+                  <div className="mixed-chart">
+                    <Chart
+                      options={this.state.options_humidity}
+                      series={this.state.series_humidity}
+                      type="line"
+                      height="250"
+                    />
+                  </div>
+                </CardBody>
+                <CardFooter>
+                  {/* <div className="chart-legend">
+                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
+                      <i className="fa fa-circle text-warning" /> BMW 5 Series
+                    </div> */}
+                  <hr />
+                  <div className="card-stats">
+                    <i className="fa fa-check" /> Data information certified
+                  </div>
+                </CardFooter>
               </Card>
             </Col>
           </Row>
