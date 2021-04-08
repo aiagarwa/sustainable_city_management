@@ -50,6 +50,7 @@ def save_bus_data_to_database():
         store_busdata_to_database.store_bus_routes()
         store_busdata_to_database.store_bus_trips()
         store_busdata_to_database.store_bus_times()
+        store_busdata_to_database.store_bus_paths()
     else:
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass

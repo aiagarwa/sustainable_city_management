@@ -434,6 +434,19 @@ class Buses extends React.Component {
   }
 
   onChangeBusTrip = (e) => {
+    if(Object.keys(this.state.bus_paths).length > 0){
+      console.log(e);
+      this.onChangeBusTripExecution(e);
+    }
+    else {
+      let context = this;
+      setTimeout(function(){
+        context.onChangeBusTrip(e);
+      }, 100);
+    }
+  };
+
+  onChangeBusTripExecution = (e) => {
     if(this.state.antPathLastLayer != null){
       this.state.map.eachLayer((layer) => {
         if(layer._animatedPathClass == "leaflet-ant-path")
@@ -442,6 +455,7 @@ class Buses extends React.Component {
     }
 
     const trip_name = e.target.value;
+    console.log(trip_name);
     const trip = trip_name.split(" - ")[0]
     this.setState({ graphLoading: true });
     this.setState({ busTripSelected: trip_name });
