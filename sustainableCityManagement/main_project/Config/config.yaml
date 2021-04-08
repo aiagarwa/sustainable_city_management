@@ -1,0 +1,23 @@
+Bike_API:
+  stations_api_url: https://dublinbikes.staging.derilinx.com/api/v1/resources/stations
+  location_api_url: https://dublinbikes.staging.derilinx.com/api/v1/resources/historical/
+  db_name: sustainableCityManagementTest
+  db_port: 27017
+  default_days_historic: 5
+  # days_to_consider_for_prediction must be < default_days_historic
+  days_to_consider_for_prediction: 1
+
+Bus_API:
+  api_url: https://gtfsr.transportforireland.ie/v1/?format=json
+  api_key_name: x-api-key
+  api_key_value: c91376114e7b459fb08de48a719eeb48
+  bus_stop_file: resources/stops.txt
+
+Footfall_API:
+  pedestrian_data_file: ./main_project/Footfall_API/resources/pedestrian_footfall.csv
+  footfall_locations_file: ./main_project/Footfall_API/resources/footfall_locations.json
+  days_interval_size: 20
+  days_to_consider_for_prediction: 1
+
+Weather_API:
+  api_url: https://api.tomorrow.io/v4/timelines

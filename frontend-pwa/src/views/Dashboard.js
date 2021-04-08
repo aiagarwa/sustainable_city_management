@@ -36,36 +36,96 @@ import {
   dashboardEmailStatisticsChart,
   // dashboardNASDAQChart,
 } from "variables/charts.js";
-import axios from 'axios';
+import axios from "axios";
+import moment from "moment";
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      AqiInfo: null,
+      weatherInfo: null,
+      weatherInfoExtraTemp_min: null,
+      weatherInfoExtraTemp_max: null,
+      weatherTimeStamp: null,
+      windSpeedInfo: null,
+      time_zone: null,
       btcPrice: null,
       options: {
         chart: {
-          id: "basic-bar"
+          id: "basic-bar",
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-        }
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+        },
       },
       series: [
         {
           name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91]
-        }
-      ]
+          data: [30, 40, 45, 50, 49, 60, 70, 91],
+        },
+      ],
     };
   }
 
   componentDidMount() {
-    axios.get('https://api.coindesk.com/v1/bpi/currentprice/BTC.json')
-      .then(res => {
-        const price = Math.trunc(parseFloat(res.data.bpi.USD.rate.replace(',', '')));
-        this.setState({ btcPrice: price });
+    axios
+      .request({
+        method: "GET",
+        url:
+          "http://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
+      })
+      .then((response) => {
+        const weatherInfo = response.data.main.temp;
+        const weatherInfoExtraTemp_min = response.data.main.temp_min;
+        const weatherInfoExtraTemp_max = response.data.main.temp_max;
+        const time_zone = response.data.timezone;
+        const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
+        const windSpeedInfo = response.data.wind.speed;
+        // console.log("<<<< API INFO >>>>");
+        // console.log(response.data);
+
+        // console.log("<<< WEATHER INFO >>>");
+        this.setState({ weatherInfo: weatherInfo });
+        // console.log(weatherInfo);
+
+        // console.log("<<< WEATHER INFO EXTRA >>>");
+        this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
+        // console.log(weatherInfoExtraTemp_min);
+        this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
+        // console.log(weatherInfoExtraTemp_max);
+
+        // console.log("<<< WEATHER TIME STAMP >>>");
+        // console.log(time_zone);
+        this.setState({ weatherTimeStamp: weatherTimeStamp });
+        // console.log(weatherTimeStamp);
+
+        // console.log("<<< WIND INFO >>>");
+        this.setState({ windSpeedInfo: windSpeedInfo });
+        // console.log(windSpeedInfo);
+      })
+      .catch((error) => {
+        alert(error.message);
+        // console.error(error);
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url:
+          "http://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
+      })
+      .then((response) => {
+        const AqiInfo = response.data.list[0].main.aqi;
+        // console.log("<<< AIR POLLUTION >>>");
+        // console.log(response.data);
+        // console.log(response.data.list[0].main.aqi);
+        this.setState({ AqiInfo: AqiInfo });
+      })
+      .catch((error) => {
+        // alert(error.message);
+        console.error(error);
       });
   }
 
@@ -79,7 +139,6 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <Row>
                     <Col md="4" xs="5">
-
                       <div className="icon-big text-center icon-warning">
                         <i className="fas fa-thunderstorm-sun fa-2x fa-fw"> </i>
                       </div>
@@ -87,8 +146,14 @@ class Dashboard extends React.Component {
                     <Col md="8" xs="7">
                       <div className="numbers">
                         <p className="card-category">Weather</p>
-                        <CardTitle tag="p">-7 C</CardTitle>
-                        <p />
+                        <CardTitle tag="p">
+                          {this.state.weatherInfo}&deg;C
+                        </CardTitle>
+                        <p style={{ opacity: 0.6, fontSize: "small" }}>
+                          Minimum - {this.state.weatherInfoExtraTemp_min}
+                          &deg;C Maximum - {this.state.weatherInfoExtraTemp_max}
+                          &deg;C
+                        </p>
                       </div>
                     </Col>
                   </Row>
@@ -96,65 +161,16 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i> Update Now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i>{" "}
+                    Updated
+                    <p>
+                      {this.state.weatherInfo &&
+                        moment.unix(this.state.weatherTimeStamp).format("lll")}
+                    </p>
                   </div>
                 </CardFooter>
               </Card>
             </Col>
-            {/*
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-money-coins text-success" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">1 BTC</p>
-                        <CardTitle tag="p">$ {this.state.btcPrice}</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-calendar" /> Last day
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-vector text-danger" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">Errors</p>
-                        <CardTitle tag="p">23</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-clock" /> In the last hour
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            */}
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -167,16 +183,25 @@ class Dashboard extends React.Component {
                     <Col md="8" xs="7">
                       <div className="numbers">
                         <p className="card-category">Air Quality Index</p>
-                        <CardTitle tag="p">+8.9 mp/h</CardTitle>
+                        <CardTitle tag="p">{this.state.AqiInfo}</CardTitle>
+                        <p style={{ opacity: 0.6, fontSize: "small" }}>
+                          Wind - {this.state.windSpeedInfo}m/s
+                        </p>
                         <p />
                       </div>
                     </Col>
                   </Row>
                 </CardBody>
+                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - START>>>>>>>>>>> */}
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" /> Update now
+                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
+                    Updated now
+                    <p>
+                      {this.state.weatherInfo &&
+                        moment.unix(this.state.weatherTimeStamp).format("lll")}
+                    </p>
                   </div>
                 </CardFooter>
               </Card>
@@ -259,6 +284,7 @@ class Dashboard extends React.Component {
                     <i className="fa fa-check" /> Data information certified
                   </div>
                 </CardFooter>
+                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - END >>>>>>>>>>> */}
               </Card>
             </Col>
           </Row>
@@ -267,5 +293,4 @@ class Dashboard extends React.Component {
     );
   }
 }
-
 export default Dashboard;

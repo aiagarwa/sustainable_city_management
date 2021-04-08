@@ -20,7 +20,12 @@ import Dashboard from "views/Dashboard.js";
 // import Bikes from "views/Bikes.js";
 // import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
-import BikesOpenStreet from "views/BikesOpenStreet.js";
+import Bikes from "views/Bikes.js";
+// import Login from "views/Login.js";
+import Buses from "views/Buses.js";
+import Parkings from "views/Parkings";
+import Footfall from "views/Footfall";
+import EmergencyServices from "views/EmergencyServices";
 // import Typography from "views/Typography.js";
 // import TableList from "views/Tables.js";
 // import Maps from "views/Map.js";
@@ -28,12 +33,20 @@ import BikesOpenStreet from "views/BikesOpenStreet.js";
 // import UpgradeToPro from "views/Upgrade.js";
 
 var routes = [
+  // {
+  //   path: "/login",
+  //   name: "Login",
+  //   icon: "fas fa-university",
+  //   component: Login,
+  //   layout: "/admin",
+  // },
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: "fas fa-university",
     component: Dashboard,
     layout: "/admin",
+    requiresAuth: false,
   },
   // {
   //   path: "/bikes",
@@ -43,53 +56,44 @@ var routes = [
   //   layout: "/admin",
   // },
   {
-    path: "/bikesOpenStreet",
-    name: "Bikes Open Street",
+    path: "/bikes",
+    name: "Bikes",
     icon: "fas fa-bicycle",
-    component: BikesOpenStreet,
+    component: Bikes,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/buses",
     name: "Buses",
     icon: "fas fa-bus-alt",
-    component: Icons,
+    component: Buses,
     layout: "/admin",
-  },
-  {
-    path: "/traffic",
-    name: "Traffic",
-    icon: "fas fa-traffic-light",
-    component: Icons,
-    layout: "/admin",
-  },
-  {
-    path: "/bins",
-    name: "Public bins",
-    icon: "fas fa-dumpster",
-    component: Icons,
-    layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/parkings",
     name: "Parkings",
     icon: "fas fa-parking",
-    component: Icons,
+    component: Parkings,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/emergency",
     name: "Emergency Services",
     icon: "fas fa-ambulance",
-    component: Icons,
+    component: EmergencyServices,
     layout: "/admin",
+    requiresAuth: true,
   },
   {
     path: "/footfalls",
     name: "Footfalls",
     icon: "fas fa-shoe-prints",
-    component: Icons,
+    component: Footfall,
     layout: "/admin",
+    requiresAuth: true,
   },
   // {
   //   path: "/icons",

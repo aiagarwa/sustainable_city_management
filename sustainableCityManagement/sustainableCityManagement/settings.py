@@ -51,11 +51,10 @@ MIDDLEWARE = [
 
     'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'sustainableCityManagement.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -124,8 +123,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-DEBUG=True
+DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-CRONJOBS = [("*/5 * * * *","main_project.Bike_API.store_bike.bikedata_minutes")]
+CRONJOBS = [("*/5 * * * *", "main_project.Bike_API.store_bikedata_to_database.StoreBikeDataToDatabase.bikedata_minutes")]

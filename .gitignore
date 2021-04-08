@@ -1,6 +1,13 @@
 __pycache__
 node_modules
 .vscode
+*.pyc
 
 # misc
 .DS_Store
+
+Bike_API.log
+Bus_API.log
+Application.log
+emergency_service_api.log
+StoreDataTest.csv
