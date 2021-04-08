@@ -19,7 +19,7 @@ Deploy staging:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh-add -L
   script:
-    - ssh -o "IdentitiesOnly=yes" -i ~/.ssh/id_rsa azureuser@13.69.24.55 "cd /home/azureuser/sustainable-city-management && git checkout master && git pull origin master && cd /home/azureuser/sustainable-city-management/sustainableCityManagement && docker build -t ase-sustainable-city-management . && (docker stop ase-api || true && docker rm ase-api || true) && docker run -d --env \"VIRTUAL_HOST=ase-api.bfles.ch\" --env \"LETSENCRYPT_HOST=ase-api.bfles.ch\" --name ase-api ase-sustainable-city-management && exit"
+    - ssh -o "IdentitiesOnly=yes" -i ~/.ssh/id_rsa azureuser@13.69.24.55 "cd /home/azureuser/sustainable-city-management && git checkout master && git pull origin master && cd /home/azureuser/sustainable-city-management/sustainableCityManagement && docker build -t ase-api . && (docker stop ase-api || true && docker rm ase-api || true) && docker run -d --env \"VIRTUAL_HOST=ase-api.bfles.ch\" --env \"LETSENCRYPT_HOST=ase-api.bfles.ch\" --name ase-api ase-api && exit"
   only:
     - master
   tags:
