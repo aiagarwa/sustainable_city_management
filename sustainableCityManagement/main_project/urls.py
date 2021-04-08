@@ -17,6 +17,7 @@ from .Parkings_API.views_parkings_api.show_parkings_availability import Parkings
 from .Parkings_API.views_parkings_api.show_parkings_locations import ParkingsLocations
 from .Footfall_API.views_footfall_api.show_footfall_data import FootfallDatebasedData
 from .Footfall_API.views_footfall_api.show_footfall_data import FootfallOverallData
+from .Weather_API.views_weather_api.show_weather import ShowWeatherApi
 
 # Building URL endpoints for API calls.
 urlpatterns = [
@@ -53,4 +54,6 @@ urlpatterns = [
         name='footfall_overall_data'),
     url(r'^footfall_datebased/$', FootfallDatebasedData.as_view(),
         name='footfall_datebased_data'),
+    url(r'^weather_forecast/$', ShowWeatherApi.as_view(),
+        name='weather_forecast_data')
 ]
