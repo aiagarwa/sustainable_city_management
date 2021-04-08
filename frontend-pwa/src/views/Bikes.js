@@ -119,8 +119,9 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
-              }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${
+              (1 - rgbRatio) * 200 + 50
+            }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
