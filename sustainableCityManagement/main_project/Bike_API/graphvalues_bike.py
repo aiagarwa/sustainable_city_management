@@ -2,86 +2,82 @@ import json
 import collections
 from collections import Counter
 from datetime import datetime, timedelta
-from ..Logs.service_logs import bike_log
-from .store_bikedata_to_database import StoreBikeDataToDatabase
-from .store_processed_bikedata_to_db import StoreProcessedBikeDataToDB
-from ..Config.config_handler import read_config
-
-# Calling logging function for bike _API
-logger = bike_log()
-
-
-config_vals = read_config("Bike_API")
-if config_vals is None:
-    logger.error('No data retrieved from config files.')
+from .fetch_bikeapi import bikeapi
+from ..ML_models.bikes_usage_prediction import predict_bikes_usage
+from .store_bikedata_to_database import fetch_bike_stands_location
 
 # Below function is used for calling the graph values for bike usage on the basis of location.
+def graphvalue_call_locationbased(days_historical = 5):
+    if days_historical == 1 or days_historical == 0:
+            return ({"ERROR" : "Assign days_historic parameter >= 2."})
 
-class GraphValuesBike:
-    def graphvalue_call_locationbased(self, days_historical=config_vals["default_days_historic"],
-                                        store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()):
-        if days_historical == 1 or days_historical == 0:
-            error_str = 'Assign days_historic parameter >= 2.'
-            logger.error(error_str)
-            raise ValueError(error_str)
+# Building base temporary dictionary with required fields.
+    tmpDict = bikeapi(historical=True)
 
-        now_time = datetime.now()
-        day_ahead_tmp = (now_time - timedelta(days=-1)
-                        ).strftime("%Y-%m-%dT00:00:00Z")
-        day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-        resultDictionary = {}
-        try:
-            fetched_data = store_processed_bike_data_to_db.fetch_processed_data(days_historical)
-            fetched_predicted = store_processed_bike_data_to_db.fetch_predicted_data(day_ahead_tmp)
-            for loc in fetched_data:
-                if loc["name"] != "ALL_LOCATIONS":
-                    tmpDict = {}
-                    for item2 in loc["data"]:
-                        day = item2["day"].strftime("%Y-%m-%d")
-                        tmpDict[day] = item2["in_use"]
+# Empty dictionary for storing our result.
+    resultDict = {}
+    now_time = datetime.now()
+    day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
+    # all_locations = fetch_bike_stands_location()
 
-                    for item in fetched_predicted:
-                        if item["name"] == loc["name"]:
-                            tmpDict[day_ahead] = item["data"]["in_use"]
+# Looping through all the locations in the fetched temporay dictionary and building base required dictionary structure.
+    for location in tmpDict:
+        resultDict[location] = {"TOTAL_STANDS" : 0, "IN_USE" : {}}
 
-                    tmpDict = dict(collections.OrderedDict(
-                        sorted(tmpDict.items())))
-                    resultDictionary[loc["name"]] = {
-                        "TOTAL_STANDS": loc["data"][0]["total_stands"], "IN_USE": tmpDict}
-            return resultDictionary
-        except:
-            logger.exception(
-                'Failed to execute bikes usage based on location.Check overall location API.')
-            raise
+# Looping through the number of days we want historical data from and calling API with respective day as parameter.
+    for i in range(days_historical):
+        InputDict = bikeapi(historical=True, days_historical = i)
+        for location in InputDict:
+            resultDict[location]["TOTAL_STANDS"] = InputDict[location]["TOTAL_STANDS"]
+            resultDict[location]["IN_USE"][InputDict[location]["DAY"]] = InputDict[location]["IN_USE"]
 
-    # Below function is used for calling the graph values for overall bike usage over a given timespan and predict value a day ahead.
+# Looping through all locations in resultDict and updating the TOTAL_STANDS and storing the respective date and IN_USE value for the date.
+    for location in resultDict:
+        in_use_arr = []
+        for day in resultDict[location]["IN_USE"]:
+            in_use_arr.append(resultDict[location]["IN_USE"][day])
 
+# Calling the ML model for predicting the data for a day ahead.
+        predictedVal = predict_bikes_usage(in_use_arr, previous_days_to_consider = days_historical - 1)
+        resultDict[location]["IN_USE"][day_ahead] = predictedVal
+        resultDict[location]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict[location]["IN_USE"].items())))
+    return resultDict
 
-    def graphvalue_call_overall(self, days_historical=config_vals["default_days_historic"],
-                                        store_processed_bike_data_to_db = StoreProcessedBikeDataToDB()):
-        if days_historical == 1 or days_historical == 0:
-            error_str = 'Assign days_historic parameter >= 2.'
-            logger.error(error_str)
-            raise ValueError(error_str)
+# Below function is used for calling the graph values for overall bike usage over a given timespan and predict value a day ahead.
+def graphvalue_call_overall(days_historical = 5):
+    if days_historical == 1 or days_historical == 0:
+            return ({"ERROR" : "Assign days_historic parameter >= 2."})
 
-        now_time = datetime.now()
-        day_ahead_tmp = (now_time - timedelta(days=-1)
-                        ).strftime("%Y-%m-%dT00:00:00Z")
-        day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
-        resultDictionary = {}
-        try:
-            fetched_data = store_processed_bike_data_to_db.fetch_processed_data(days_historical)
-            fetched_predicted = store_processed_bike_data_to_db.fetch_predicted_data(day_ahead_tmp)
-            tmpDict = {}
-            for item in fetched_data[-1]["data"]:
-                day = item["day"].strftime("%Y-%m-%d")
-                tmpDict[day] = item["in_use"]
-            tmpDict[day_ahead] = fetched_predicted[-1]["data"]["in_use"]
-            tmpDict = dict(collections.OrderedDict(sorted(tmpDict.items())))
-            resultDictionary["ALL_LOCATIONS"] = {"TOTAL_STANDS": fetched_data[-1]["data"][0]["total_stands"],
-                                                "IN_USE": tmpDict}
-            return resultDictionary
-        except:
-            logger.exception(
-                'Failed to execute bikes usage based on location.Check overall location API.')
-            raise
+# Building base temporary dictionary with required fields.            
+    tmpDict = bikeapi(historical=True)
+
+# Empty dictionary for storing our result.
+    resultDict = {}
+    now_time = datetime.now()
+    day_ahead = (now_time - timedelta(days=-1)).strftime("%Y-%m-%d")
+
+# Building base required dictionary structure.
+    resultDict["ALL_LOCATIONS"] = {"TOTAL_STANDS" : 0, "IN_USE" : {}}
+    in_use_arr = []
+
+# Looping through the number of days we want historical data from and calling API with respective day as parameter.
+    for i in range(days_historical):
+        InputDict = bikeapi(historical=True, days_historical = i)
+        in_use_total = 0
+        day = (now_time - timedelta(days=i)).strftime("%Y-%m-%d")
+
+# Looping through all locations in resultDict and storing the TOTAL_STANDS sum as well as the respective date and sum of IN_USE values for the date.
+        for location in InputDict:
+            resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] = resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] + InputDict[location]["TOTAL_STANDS"]
+            in_use_total = in_use_total + InputDict[location]["IN_USE"]
+
+# Dividing the TOTAL_STANDS value by 2, since values are repeated while recursive addtition above.
+        resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"] == resultDict["ALL_LOCATIONS"]["TOTAL_STANDS"]//2
+        resultDict["ALL_LOCATIONS"]["IN_USE"][day] = in_use_total
+        in_use_arr.append(in_use_total)
+
+# Calling the ML model for predicting the data for a day ahead.
+    predictedVal = predict_bikes_usage(in_use_arr, previous_days_to_consider = days_historical - 1)
+    resultDict["ALL_LOCATIONS"]["IN_USE"][day_ahead] = predictedVal
+    resultDict["ALL_LOCATIONS"]["IN_USE"] = dict(collections.OrderedDict(sorted(resultDict["ALL_LOCATIONS"]["IN_USE"].items())))
+    return resultDict
