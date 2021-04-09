@@ -22,6 +22,7 @@ code {
 
 .card-class {
   overflow-y: scroll;
-  height: 500px;
+  height: 634px;
+  display: grid;
   width: 100%;
 }
