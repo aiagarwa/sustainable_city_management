@@ -12,10 +12,11 @@ import json
 
 config_vals = read_config("Footfall_API")
 
+
 class FootfallApi:
     def __init__(self):
         self.FootfallObj = StoreFootfallData()
-    
+
     # def footfall_datebased_tmp(self, start_date, end_date):
     #     result_response = {}
     #     footfall_dateBased = self.FootfallObj.fetch_data_from_db_for_day(start_date,end_date)
@@ -27,31 +28,29 @@ class FootfallApi:
     #             result_response[location][date] = data["count"]
     #     return result_response
 
-
-    def footfall_datebased_graphvalues_predictions(self, required_location, days_interval = config_vals["days_interval_size"]):
+    def footfall_datebased_graphvalues_predictions(self, required_location, days_interval=config_vals["days_interval_size"]):
         result_response = {}
         footfall_count_arr = []
-        footfall_dateBased, last_date = self.FootfallObj.fetch_data_from_db_with_prediction(days_interval, required_location)
-        prediction_date = datetime.strftime(last_date + timedelta(days=1),"%Y-%m-%d")
+        footfall_dateBased, last_date = self.FootfallObj.fetch_data_from_db_with_prediction(
+            days_interval, required_location)
+        prediction_date = datetime.strftime(
+            last_date + timedelta(days=1), "%Y-%m-%d")
         for item in footfall_dateBased:
             location = required_location
             result_response[location] = {}
             for data in item["footfall_data"]:
-                date = datetime.strftime(data["data_date"],"%Y-%m-%d")
+                date = datetime.strftime(data["data_date"], "%Y-%m-%d")
                 result_response[location][date] = data["count"]
                 footfall_count_arr.append(data["count"])
         predicted_val = predictor.predict_footfall(footfall_count_arr)
         result_response[required_location][prediction_date] = predicted_val
         return result_response
 
-
-
-
     def footfall_overall(self):
         result_response = {}
         footfall_overall = self.FootfallObj.fetch_footfall_overall()
         counter = 0
-        with open(config_vals["footfall_locations_file"],"r") as f:
+        with open(config_vals["footfall_locations_file"], "r") as f:
             loaded_locations = json.load(f)
             for item in footfall_overall:
                 location = item["location"]
