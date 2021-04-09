@@ -1,0 +1,26 @@
+stages:
+  # - build
+  # - test
+  - deploy
+
+Deploy production (master):
+  type: deploy
+  environment:
+    name: production
+    url: https://ase.bfles.ch/
+  before_script:
+    # Setup SSH deploy keys
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H '13.69.24.55' >> ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add -L
+  script:
+    - ssh -o "IdentitiesOnly=yes" -i ~/.ssh/id_rsa azureuser@13.69.24.55 "cd /home/azureuser/sustainable-city-management && (git checkout master || true) && git pull origin master && cd /home/azureuser/sustainable-city-management/sustainableCityManagement && sudo docker build -t ase-api-img . && (sudo docker stop ase-api || true && sudo docker rm ase-api || true) && sudo docker run -d --env \"VIRTUAL_HOST=ase-api.bfles.ch\" --env \"LETSENCRYPT_HOST=ase-api.bfles.ch\" --name ase-api ase-api-img && exit"
+  only:
+    - master
+  tags:
+    - ase
