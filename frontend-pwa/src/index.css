@@ -19,3 +19,9 @@ code {
   border-radius: 50%;
   display: inline-block;
 }
+
+.card-class {
+  overflow-y: scroll;
+  height: 500px;
+  width: 100%;
+}
