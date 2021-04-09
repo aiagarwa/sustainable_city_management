@@ -167,8 +167,12 @@ class Bikes extends React.Component {
         );
         recommendations = recommendations.slice(0, 8);
 
+        localStorage.setItem("bikestands_recommendations", JSON.stringify(recommendations));
+
         this.setState({ markers });
         this.setState({ recommendations });
+        this.setState({displayMap: "block"})
+        this.setState({displayList: "none"})
       })
       .catch((err) => {
         console.log(err);
@@ -177,6 +181,15 @@ class Bikes extends React.Component {
             localStorage.getItem("bikestands_stations")
           );
           this.setState({ markers });
+          this.setState({displayMap: "none"})
+          this.setState({displayList: "block"})
+        }
+
+        if (localStorage.getItem("bikestands_recommendations") != null) {
+          const recommendations = JSON.parse(
+            localStorage.getItem("bikestands_recommendations")
+          );
+          this.setState({ recommendations });
         }
       });
 
@@ -237,6 +250,8 @@ class Bikes extends React.Component {
       series: [],
       bikeStationSelection: "ALL",
       graphLoading: true,
+      displayMap: "block",
+      displayList: "none",
     };
   }
 
@@ -245,7 +260,7 @@ class Bikes extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col md="9">
+            <Col md="9" style={{display: this.state.displayMap}}>
               <Card>
                 <CardHeader>
                   <CardTitle tag="h5">Bikes Usage</CardTitle>
@@ -287,8 +302,39 @@ class Bikes extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-            <Col md="3">
+            <Col md="9" style={{display: this.state.displayList}}>
               <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody >
+                      {this.state.markers.map(
+                        (
+                          { position, content, totalStands, inUse, markerColor },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td>
+                              <span
+                                className="dot"
+                                style={{ backgroundColor: markerColor }}
+                              ></span>
+                            </td>
+                            <td><b>{content}</b></td>
+                            <td>{' Bike Stands: ' + totalStands}</td>
+                            <td>{' In use: ' + inUse}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md="3">
+              <Card id="recommendations">
                 <CardHeader>
                   <CardTitle tag="h5">Recommendations</CardTitle>
                   <div style={{ opacity: 0.6 }}>
@@ -321,40 +367,6 @@ class Bikes extends React.Component {
                               ></span>
                             </td>
                             <td>{text}</td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Bikes Usage</CardTitle>
-                </CardHeader>
-                <CardBody className="card-class">
-                  <Table>
-                    <tbody >
-                      {this.state.markers.map(
-                        (
-                          { position, content, totalStands, inUse, markerColor },
-                          idx
-                        ) => (
-                          <tr key={idx}>
-                            <td>
-                              <span
-                                className="dot"
-                                style={{ backgroundColor: markerColor }}
-                              ></span>
-                            </td>
-                            <td><b>{content}</b></td>
-                            <td>{' Bike Stands: ' + totalStands}</td>
-                            <td>{' In use: ' + inUse}</td>
                           </tr>
                         )
                       )}
