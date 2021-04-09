@@ -3,135 +3,127 @@
         "timelines": [
             {
                 "timestep": "1d",
-                "startTime": "2021-04-08T05:00:00Z",
+                "startTime": "2021-04-09T05:00:00Z",
                 "endTime": "2021-04-23T05:00:00Z",
                 "intervals": [
                     {
-                        "startTime": "2021-04-08T05:00:00Z",
-                        "values": {
-                            "temperature": 9.83,
-                            "humidity": 91.6,
-                            "weatherCode": 4200
-                        }
-                    },
-                    {
                         "startTime": "2021-04-09T05:00:00Z",
                         "values": {
-                            "temperature": 7.86,
-                            "humidity": 85.75,
-                            "weatherCode": 4000
+                            "temperature": 7.82,
+                            "humidity": 86.55,
+                            "weatherCode": 4200
                         }
                     },
                     {
                         "startTime": "2021-04-10T05:00:00Z",
                         "values": {
-                            "temperature": 7.59,
-                            "humidity": 89.01,
-                            "weatherCode": 5001
+                            "temperature": 7.9,
+                            "humidity": 90.75,
+                            "weatherCode": 4000
                         }
                     },
                     {
                         "startTime": "2021-04-11T05:00:00Z",
                         "values": {
-                            "temperature": 8.19,
-                            "humidity": 89.41,
-                            "weatherCode": 6000
+                            "temperature": 7.84,
+                            "humidity": 90.1,
+                            "weatherCode": 1102
                         }
                     },
                     {
                         "startTime": "2021-04-12T05:00:00Z",
                         "values": {
-                            "temperature": 10.83,
-                            "humidity": 94.15,
-                            "weatherCode": 4000
+                            "temperature": 9.65,
+                            "humidity": 85.82,
+                            "weatherCode": 6000
                         }
                     },
                     {
                         "startTime": "2021-04-13T05:00:00Z",
                         "values": {
-                            "temperature": 9.96,
-                            "humidity": 92.64,
-                            "weatherCode": 4000
+                            "temperature": 9.7,
+                            "humidity": 89.38,
+                            "weatherCode": 5001
                         }
                     },
                     {
                         "startTime": "2021-04-14T05:00:00Z",
                         "values": {
-                            "temperature": 8.66,
-                            "humidity": 90.35,
+                            "temperature": 8.82,
+                            "humidity": 93.72,
                             "weatherCode": 1102
                         }
                     },
                     {
                         "startTime": "2021-04-15T05:00:00Z",
                         "values": {
-                            "temperature": 9.72,
-                            "humidity": 93.29,
-                            "weatherCode": 1101
+                            "temperature": 8.37,
+                            "humidity": 93.71,
+                            "weatherCode": 1102
                         }
                     },
                     {
                         "startTime": "2021-04-16T05:00:00Z",
                         "values": {
-                            "temperature": 8.03,
-                            "humidity": 73.91,
+                            "temperature": 8.59,
+                            "humidity": 82.08,
                             "weatherCode": 4000
                         }
                     },
                     {
                         "startTime": "2021-04-17T05:00:00Z",
                         "values": {
-                            "temperature": 7.2,
-                            "humidity": 77.04,
-                            "weatherCode": 4000
+                            "temperature": 6.24,
+                            "humidity": 82.8,
+                            "weatherCode": 1102
                         }
                     },
                     {
                         "startTime": "2021-04-18T05:00:00Z",
                         "values": {
-                            "temperature": 6.7,
-                            "humidity": 92.55,
-                            "weatherCode": 5001
+                            "temperature": 5.87,
+                            "humidity": 83.73,
+                            "weatherCode": 4000
                         }
                     },
                     {
                         "startTime": "2021-04-19T05:00:00Z",
                         "values": {
-                            "temperature": 8.07,
-                            "humidity": 90.47,
-                            "weatherCode": 1102
+                            "temperature": 6.43,
+                            "humidity": 92.5,
+                            "weatherCode": 1101
                         }
                     },
                     {
                         "startTime": "2021-04-20T05:00:00Z",
                         "values": {
-                            "temperature": 9.97,
-                            "humidity": 89.83,
-                            "weatherCode": 1102
+                            "temperature": 8.32,
+                            "humidity": 90.03,
+                            "weatherCode": 4000
                         }
                     },
                     {
                         "startTime": "2021-04-21T05:00:00Z",
                         "values": {
-                            "temperature": 11.08,
-                            "humidity": 89.99,
-                            "weatherCode": 1102
+                            "temperature": 9.55,
+                            "humidity": 85.55,
+                            "weatherCode": 4000
                         }
                     },
                     {
                         "startTime": "2021-04-22T05:00:00Z",
                         "values": {
-                            "temperature": 11.59,
-                            "humidity": 93.08,
+                            "temperature": 10.78,
+                            "humidity": 82.23,
                             "weatherCode": 1102
                         }
                     },
                     {
                         "startTime": "2021-04-23T05:00:00Z",
                         "values": {
-                            "temperature": 8.64,
-                            "humidity": 93.73,
-                            "weatherCode": 1100
+                            "temperature": 8.58,
+                            "humidity": 87.29,
+                            "weatherCode": 1001
                         }
                     }
                 ]

@@ -38,6 +38,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+
 const iconDefault = L.divIcon({
   className: "custom-pin",
   iconAnchor: [0, 24],
@@ -133,6 +134,7 @@ class Bikes extends React.Component {
             content: station,
             totalStands: totalStands,
             inUse: bikesInUse,
+            markerColor: markerColor,
             icon: {
               className: "custom-pin",
               iconAnchor: [0, 24],
@@ -246,7 +248,7 @@ class Bikes extends React.Component {
             <Col md="9">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Bikes Availability</CardTitle>
+                  <CardTitle tag="h5">Bikes Usage</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -328,6 +330,41 @@ class Bikes extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          <Row>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody >
+                      {this.state.markers.map(
+                        (
+                          { position, content, totalStands, inUse, markerColor },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td>
+                              <span
+                                className="dot"
+                                style={{ backgroundColor: markerColor }}
+                              ></span>
+                            </td>
+                            <td><b>{content}</b></td>
+                            <td>{' Bike Stands: ' + totalStands}</td>
+                            <td>{' In use: ' + inUse}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
           <Row>
             <Col md="12">
               <Card className="card-chart">
