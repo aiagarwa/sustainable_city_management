@@ -16,9 +16,10 @@ from ..graphvalues_bike import GraphValuesBike
 
 # API to fetch bike data -> Historical, live and locations are fetched through this API.
 
+
 class ShowBikeApi(APIView):
     @classmethod
-    def get(self, request, fetch_bike_api = FetchBikeApi()):
+    def get(self, request, fetch_bike_api=FetchBikeApi()):
         startTime = processTiming.time()
         call_uuid = uuid.uuid4()
         ID = "BIKE_INFO"
