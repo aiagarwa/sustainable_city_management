@@ -100,18 +100,19 @@ class StoreBusRoutesData:
         fields = ['trip_id', 'arrival_time','departure_time','stop_id','stop_sequence']
         readfile = self.pd.read_csv("../sustainableCityManagement/main_project/Bus_API/resources/stop_times.csv",encoding="utf8",
                         dtype={'trip_id':"string",'arrival_time':"string",'departure_time':"string",'stop_id':"string",'stop_sequence':'int8'},
-                        usecols=fields,
-                        chunksize=10000
+                        usecols=fields
                         )
         self.logger.info("Storing Arrival and Departure Timings for Bus Trips in DB")
-        for item in readfile:
-            for i in item.index:
-                trips = BusTrips.objects(trip_id=item["trip_id"][i]).first()
-                if trips is not None:
-                    stopsInfo = StopsInfo(stop_id=item["stop_id"][i], stop_arrival_time=item["arrival_time"][i],
-                                          stop_departure_time=item["departure_time"][i], stop_sequence=item["stop_sequence"][i])
-                    trips.stops.append(stopsInfo)
-                    trips.save()
+        for i in readfile.index:
+            # for i in item.index:
+            trips = BusTrips.objects(trip_id=readfile["trip_id"][i]).first()
+            if trips is not None:
+                # stopsInfo = StopsInfo(stop_id=item["stop_id"], stop_arrival_time=item["arrival_time"],
+                #                         stop_departure_time=item["departure_time"], stop_sequence=item["stop_sequence"])
+                stopsInfo = StopsInfo(stop_id=readfile["stop_id"][i], stop_arrival_time=readfile["arrival_time"][i],
+                                        stop_departure_time=readfile["departure_time"][i], stop_sequence=readfile["stop_sequence"][i])
+                trips.stops.append(stopsInfo)
+                trips.save()
 
     def fetch_bustrips(self):
         q_set = BusTrips.objects()  # Fetch Data from DB
