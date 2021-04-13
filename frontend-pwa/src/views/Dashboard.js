@@ -1,24 +1,6 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+// import { Line, Pie } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,
@@ -31,11 +13,6 @@ import {
 } from "reactstrap";
 import Chart from "react-apexcharts";
 // core components
-import {
-  dashboard24HoursPerformanceChart,
-  dashboardEmailStatisticsChart,
-  // dashboardNASDAQChart,
-} from "variables/charts.js";
 import axios from "axios";
 import moment from "moment";
 
@@ -44,6 +21,7 @@ class Dashboard extends React.Component {
     super(props);
 
     this.state = {
+      PollutionData: null,
       AqiInfo: null,
       weatherInfo: null,
       weatherInfoExtraTemp_min: null,
@@ -66,15 +44,106 @@ class Dashboard extends React.Component {
           data: [30, 40, 45, 50, 49, 60, 70, 91],
         },
       ],
+      options_temperature: {
+        stroke: {
+          curve: "smooth",
+        },
+        chart: {
+          id: "basic-bar",
+        },
+        markers: {
+          size: 5,
+        },
+        colors: ["#0037ff"],
+      },
+      series_temperature: [],
+      options_humidity: {
+        stroke: {
+          curve: "smooth",
+        },
+        chart: {
+          id: "basic-bar",
+        },
+        markers: {
+          size: 5,
+        },
+        colors: ["#ff7300"],
+      },
+      series_humidity: [],
+      graphLoading: false,
     };
   }
 
+  populateTemperatureHumidityCharts(data) {
+    let x = Object.keys(data);
+    let y = Object.values(data);
+
+    x.shift();
+    y.shift();
+
+    let y_temperature = [];
+    let y_humidity = [];
+    let weatherData = [];
+
+    for (let i = 0; i < y.length; i++) {
+      y_temperature.push(y[i].TEMPERATURE);
+      y_humidity.push(y[i].HUMIDITY);
+      weatherData.push(y[i].WEATHER);
+    }
+
+    this.setState({
+      options_temperature: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+            },
+          ],
+        },
+      },
+      series_temperature: [
+        {
+          name: "Temperatures",
+          data: y_temperature,
+        },
+      ],
+
+      options_humidity: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+            },
+          ],
+        },
+      },
+      series_humidity: [
+        {
+          name: "Humidity",
+          data: y_humidity,
+        },
+      ],
+
+      graphLoading: false,
+    });
+  }
+
   componentDidMount() {
+    this.setState({
+      graphLoading: true,
+    });
+
     axios
       .request({
         method: "GET",
         url:
-          "http://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
+          "https://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
         const weatherInfo = response.data.main.temp;
@@ -83,48 +152,59 @@ class Dashboard extends React.Component {
         const time_zone = response.data.timezone;
         const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
         const windSpeedInfo = response.data.wind.speed;
-        // console.log("<<<< API INFO >>>>");
-        // console.log(response.data);
-
-        // console.log("<<< WEATHER INFO >>>");
         this.setState({ weatherInfo: weatherInfo });
-        // console.log(weatherInfo);
-
-        // console.log("<<< WEATHER INFO EXTRA >>>");
         this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
-        // console.log(weatherInfoExtraTemp_min);
         this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
-        // console.log(weatherInfoExtraTemp_max);
-
-        // console.log("<<< WEATHER TIME STAMP >>>");
-        // console.log(time_zone);
         this.setState({ weatherTimeStamp: weatherTimeStamp });
-        // console.log(weatherTimeStamp);
-
-        // console.log("<<< WIND INFO >>>");
         this.setState({ windSpeedInfo: windSpeedInfo });
-        // console.log(windSpeedInfo);
       })
       .catch((error) => {
         alert(error.message);
-        // console.error(error);
       });
 
     axios
       .request({
         method: "GET",
         url:
-          "http://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
+          "https://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
-        // console.log("<<< AIR POLLUTION >>>");
-        // console.log(response.data);
-        // console.log(response.data.list[0].main.aqi);
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
-        // alert(error.message);
+        console.error(error);
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url: "/main/weather_forecast/",
+      })
+      .then((response) => {
+        const data = response.data.DATA.RESULT;
+        this.populateTemperatureHumidityCharts(data);
+        localStorage.setItem("weather_forecast", JSON.stringify(data));
+      })
+      .catch((err) => {
+        if (localStorage.getItem("weather_forecast") != null) {
+          const data = JSON.parse(localStorage.getItem("weather_forecast"));
+          this.populateTemperatureHumidityCharts(data);
+        }
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url:
+          "https://api.openweathermap.org/data/2.5/air_pollution/history?lat=53.3302&lon=6.3106&start=1302698655&end=1618317855&appid=65e9f2e630845d95f854d161fb6976e7",
+      })
+      .then((response) => {
+        const PollutionData = response.data;
+        console.log(PollutionData);
+        this.setState({ PollutionData: PollutionData });
+      })
+      .catch((error) => {
         console.error(error);
       });
   }
@@ -151,7 +231,8 @@ class Dashboard extends React.Component {
                         </CardTitle>
                         <p style={{ opacity: 0.6, fontSize: "small" }}>
                           Minimum - {this.state.weatherInfoExtraTemp_min}
-                          &deg;C Maximum - {this.state.weatherInfoExtraTemp_max}
+                          &deg;C <br />
+                          Maximum - {this.state.weatherInfoExtraTemp_max}
                           &deg;C
                         </p>
                       </div>
@@ -192,12 +273,12 @@ class Dashboard extends React.Component {
                     </Col>
                   </Row>
                 </CardBody>
-                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - START>>>>>>>>>>> */}
+
                 <CardFooter>
                   <hr />
                   <div className="stats">
                     <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
-                    Updated now
+                    Updated
                     <p>
                       {this.state.weatherInfo &&
                         moment.unix(this.state.weatherTimeStamp).format("lll")}
@@ -207,84 +288,94 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          {/** HISTORICAL - AIR POLLUTION vs POPULATION */}
+          {/**LINKS 
+          https://data.cso.ie/
+          https://www.dublindashboard.ie/themes#environment
+          
+        */}
+
+          <Row></Row>
+
+          {/** WEATHER STUFF */}
+
           <Row>
             <Col md="12">
-              <Card>
+              <Card className="card-chart">
                 <CardHeader>
-                  <CardTitle tag="h5">Users Behavior</CardTitle>
-                  <p className="card-category">24 Hours performance</p>
+                  <CardTitle tag="h5">
+                    Temperature Forecast{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                  <p className="card-category">14 Days Forecast</p>
                 </CardHeader>
                 <CardBody>
-                  <Line
-                    data={dashboard24HoursPerformanceChart.data}
-                    options={dashboard24HoursPerformanceChart.options}
-                    width={400}
-                    height={100}
-                  />
+                  <div className="mixed-chart">
+                    <Chart
+                      options={this.state.options_temperature}
+                      series={this.state.series_temperature}
+                      type="line"
+                      height="250"
+                    />
+                  </div>
                 </CardBody>
                 <CardFooter>
                   <hr />
-                  <div className="stats">
-                    <i className="fa fa-history" /> Updated 3 minutes ago
+                  <div className="card-stats">
+                    <i className="fa fa-check" /> Data information certified
                   </div>
                 </CardFooter>
               </Card>
             </Col>
           </Row>
+
+          {/**WEATHER STUFF END */}
+
           <Row>
-            <Col md="4">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Email Statistics</CardTitle>
-                  <p className="card-category">Last Campaign Performance</p>
-                </CardHeader>
-                <CardBody>
-                  <Pie
-                    data={dashboardEmailStatisticsChart.data}
-                    options={dashboardEmailStatisticsChart.options}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <div className="legend">
-                    <i className="fa fa-circle text-primary" /> Opened{" "}
-                    <i className="fa fa-circle text-warning" /> Read{" "}
-                    <i className="fa fa-circle text-danger" /> Deleted{" "}
-                    <i className="fa fa-circle text-gray" /> Unopened
-                  </div>
-                  <hr />
-                  <div className="stats">
-                    <i className="fa fa-calendar" /> Number of emails sent
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col md="8">
+            <Col md="12">
               <Card className="card-chart">
                 <CardHeader>
-                  <CardTitle tag="h5">NASDAQ: AAPL</CardTitle>
-                  <p className="card-category">Line Chart with Points</p>
+                  <CardTitle tag="h5">
+                    Humidity Forecast{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                  <p className="card-category">14 Days Forecast</p>
                 </CardHeader>
                 <CardBody>
                   <div className="mixed-chart">
                     <Chart
-                      options={this.state.options}
-                      series={this.state.series}
-                      type="bar"
+                      options={this.state.options_humidity}
+                      series={this.state.series_humidity}
+                      type="line"
                       height="250"
                     />
                   </div>
                 </CardBody>
                 <CardFooter>
                   {/* <div className="chart-legend">
-                    <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                    <i className="fa fa-circle text-warning" /> BMW 5 Series
-                  </div> */}
+                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
+                      <i className="fa fa-circle text-warning" /> BMW 5 Series
+                    </div> */}
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
                   </div>
                 </CardFooter>
-                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - END >>>>>>>>>>> */}
               </Card>
             </Col>
           </Row>

@@ -11,3 +11,6 @@ Bus_API.log
 Application.log
 emergency_service_api.log
 StoreDataTest.csv
+
+myVenv
+bin
