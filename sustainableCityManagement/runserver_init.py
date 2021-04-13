@@ -14,8 +14,8 @@ import environ
 
 # Initialise environment variables
 env = environ.Env()
-# environ.Env.read_env(env_file="config/dev.env")
-environ.Env.read_env(env_file="config/prod.env")
+environ.Env.read_env(env_file="config/dev.env")
+# environ.Env.read_env(env_file="config/prod.env")
 
 
 def save_raw_bikedata_to_database():
