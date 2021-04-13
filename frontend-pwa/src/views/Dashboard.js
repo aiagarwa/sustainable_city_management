@@ -1,24 +1,6 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+// import { Line, Pie } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,
@@ -28,17 +10,9 @@ import {
   CardTitle,
   Row,
   Col,
-  FormGroup,
-  Label,
-  Input,
 } from "reactstrap";
 import Chart from "react-apexcharts";
 // core components
-import {
-  dashboard24HoursPerformanceChart,
-  dashboardEmailStatisticsChart,
-  // dashboardNASDAQChart,
-} from "variables/charts.js";
 import axios from "axios";
 import moment from "moment";
 
@@ -47,6 +21,7 @@ class Dashboard extends React.Component {
     super(props);
 
     this.state = {
+      PollutionData: null,
       AqiInfo: null,
       weatherInfo: null,
       weatherInfoExtraTemp_min: null,
@@ -106,17 +81,14 @@ class Dashboard extends React.Component {
     x.shift();
     y.shift();
 
-    console.log(x);
-    console.log(y);
-
     let y_temperature = [];
     let y_humidity = [];
-    let weather_data = [];
+    let weatherData = [];
 
     for (let i = 0; i < y.length; i++) {
       y_temperature.push(y[i].TEMPERATURE);
       y_humidity.push(y[i].HUMIDITY);
-      weather_data.push(y[i].WEATHER);
+      weatherData.push(y[i].WEATHER);
     }
 
     this.setState({
@@ -180,14 +152,9 @@ class Dashboard extends React.Component {
         const time_zone = response.data.timezone;
         const weatherTimeStamp = response.data.sys.sunrise - -time_zone;
         const windSpeedInfo = response.data.wind.speed;
-        console.log("<<<< API INFO >>>>");
-        console.log(response.data);
         this.setState({ weatherInfo: weatherInfo });
         this.setState({ weatherInfoExtraTemp_min: weatherInfoExtraTemp_min });
         this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
-
-        console.log("<<< WEATHER TIME STAMP >>>");
-        console.log(time_zone);
         this.setState({ weatherTimeStamp: weatherTimeStamp });
         this.setState({ windSpeedInfo: windSpeedInfo });
       })
@@ -203,8 +170,6 @@ class Dashboard extends React.Component {
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
-        console.log("<<< AIR POLLUTION >>>");
-        console.log(response.data);
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
@@ -222,11 +187,25 @@ class Dashboard extends React.Component {
         localStorage.setItem("weather_forecast", JSON.stringify(data));
       })
       .catch((err) => {
-        console.log(err);
         if (localStorage.getItem("weather_forecast") != null) {
           const data = JSON.parse(localStorage.getItem("weather_forecast"));
           this.populateTemperatureHumidityCharts(data);
         }
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url:
+          "https://api.openweathermap.org/data/2.5/air_pollution/history?lat=53.3302&lon=6.3106&start=1302698655&end=1618317855&appid=65e9f2e630845d95f854d161fb6976e7",
+      })
+      .then((response) => {
+        const PollutionData = response.data;
+        console.log(PollutionData);
+        this.setState({ PollutionData: PollutionData });
+      })
+      .catch((error) => {
+        console.error(error);
       });
   }
 
@@ -252,7 +231,8 @@ class Dashboard extends React.Component {
                         </CardTitle>
                         <p style={{ opacity: 0.6, fontSize: "small" }}>
                           Minimum - {this.state.weatherInfoExtraTemp_min}
-                          &deg;C Maximum - {this.state.weatherInfoExtraTemp_max}
+                          &deg;C <br />
+                          Maximum - {this.state.weatherInfoExtraTemp_max}
                           &deg;C
                         </p>
                       </div>
@@ -293,7 +273,7 @@ class Dashboard extends React.Component {
                     </Col>
                   </Row>
                 </CardBody>
-                {/* <<<<<<<<<<<<<< DUMMY PLACEHOLDERS - START>>>>>>>>>>> */}
+
                 <CardFooter>
                   <hr />
                   <div className="stats">
@@ -308,6 +288,15 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          {/** HISTORICAL - AIR POLLUTION vs POPULATION */}
+          {/**LINKS 
+          https://data.cso.ie/
+          https://www.dublindashboard.ie/themes#environment
+          
+        */}
+
+          <Row></Row>
 
           {/** WEATHER STUFF */}
 
@@ -339,10 +328,6 @@ class Dashboard extends React.Component {
                   </div>
                 </CardBody>
                 <CardFooter>
-                  {/* <div className="chart-legend">
-                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                      <i className="fa fa-circle text-warning" /> BMW 5 Series
-                    </div> */}
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
