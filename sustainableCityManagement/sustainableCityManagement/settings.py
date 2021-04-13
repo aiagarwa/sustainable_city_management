@@ -25,7 +25,7 @@ SECRET_KEY = 'cr1ve41h70(axwr+0g$3^1&#=bd1zd#0lv0bw(&nk5b%@dk&q1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ase-api.bfles.ch', '127.0.0.1', 'localhost']
 
 
 # Application definition
