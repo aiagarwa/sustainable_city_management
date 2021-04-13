@@ -171,7 +171,7 @@ class Dashboard extends React.Component {
       .request({
         method: "GET",
         url:
-          "http://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
+          "https://api.openweathermap.org/data/2.5/weather?q=Dublin&units=metric&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
         const weatherInfo = response.data.main.temp;
@@ -199,7 +199,7 @@ class Dashboard extends React.Component {
       .request({
         method: "GET",
         url:
-          "http://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
+          "https://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
       })
       .then((response) => {
         const AqiInfo = response.data.list[0].main.aqi;
