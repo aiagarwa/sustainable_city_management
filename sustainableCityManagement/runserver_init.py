@@ -5,6 +5,7 @@ from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoute
 from main_project.Footfall_API.store_footfall_data_in_database import StoreFootfallData
 from main_project.Parkings_API.store_parkingsdata_to_database import StoreParkingsData
 from main_project.Emergency_Service_API.store_emergency_service_data_in_database import StoreServiceData
+from main_project.Parkings_Recreational_Places_API.store_recreational_locations_in_db import StoreRecreationalPlacesParkingsData
 from main_project.Logs.service_logs import app_log
 from mongoengine import *
 logger = app_log()
@@ -14,8 +15,8 @@ import environ
 
 # Initialise environment variables
 env = environ.Env()
-environ.Env.read_env(env_file="config/dev.env")
-# environ.Env.read_env(env_file="config/prod.env")
+# environ.Env.read_env(env_file="config/dev.env")
+environ.Env.read_env(env_file="config/prod.env")
 
 
 def save_raw_bikedata_to_database():
@@ -97,6 +98,18 @@ def save_parkings_data_to_database():
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
 
+def save_recreational_places_parkings_data_to_database():
+    # In = input("SAVE RECREATIONAL PLACES PARKINGS DATA IN DB ? :")
+    In = "yes"
+    store_recreational_places_parkings_data_to_database = StoreRecreationalPlacesParkingsData()
+    if In == "yes":
+        store_recreational_places_parkings_data_to_database.store_beaches_locations()
+        store_recreational_places_parkings_data_to_database.store_cinemas_locations()
+        store_recreational_places_parkings_data_to_database.store_parks_locations()
+        store_recreational_places_parkings_data_to_database.store_playing_pitches_locations()
+    else:
+        logger.error('Storing raw data in DB failed because of key(yes) error')
+        pass
 
 def check_to_drop_database():
     # In = input("DROP DATABASE? :")
@@ -126,3 +139,4 @@ def init():
     # save_footfall_data_to_database()
     # save_parkings_data_to_database()
     # save_emergency_services_data_to_database()
+    # save_recreational_places_parkings_data_to_database()

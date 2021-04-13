@@ -104,11 +104,8 @@ class StoreBusRoutesData:
                         )
         self.logger.info("Storing Arrival and Departure Timings for Bus Trips in DB")
         for i in readfile.index:
-            # for i in item.index:
             trips = BusTrips.objects(trip_id=readfile["trip_id"][i]).first()
             if trips is not None:
-                # stopsInfo = StopsInfo(stop_id=item["stop_id"], stop_arrival_time=item["arrival_time"],
-                #                         stop_departure_time=item["departure_time"], stop_sequence=item["stop_sequence"])
                 stopsInfo = StopsInfo(stop_id=readfile["stop_id"][i], stop_arrival_time=readfile["arrival_time"][i],
                                         stop_departure_time=readfile["departure_time"][i], stop_sequence=readfile["stop_sequence"][i])
                 trips.stops.append(stopsInfo)
