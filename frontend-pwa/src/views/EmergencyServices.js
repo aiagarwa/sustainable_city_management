@@ -77,15 +77,6 @@ class EmergencyServices extends React.Component {
           const healthCenters_PHONE =
             healthCentersLocations[locations].CENTER_PHONE;
 
-          // console.log(locations);
-          // console.log(healthCentersName);
-          // console.log(healthCenters_LONG);
-          // console.log(healthCenters_LAT);
-          // console.log(healthCenters_ADDRESS);
-          // console.log(healthCenters_PHONE);
-
-          // Add markers
-
           markers_health.push({
             position: [healthCenters_LAT, healthCenters_LONG],
             HealthCenterName: healthCentersName,
@@ -101,7 +92,16 @@ class EmergencyServices extends React.Component {
             },
           });
         }
+
+        localStorage.setItem("emergency_services_health", JSON.stringify(markers_health));
         this.setState({ markers_health: markers_health });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("emergency_services_health") != null) {
+          const markers_health = JSON.parse(localStorage.getItem("emergency_services_health"));
+          this.setState({ markers_health: markers_health });
+        }
       });
 
     axios
@@ -123,14 +123,6 @@ class EmergencyServices extends React.Component {
             gardaStations[locations].STATION_ADDRESS;
           const gardaStations_PHONE = gardaStations[locations].STATION_PHONE;
 
-          // console.log(gardaStations);
-          // console.log(locations);
-          // console.log(gardaStationsName);
-          // console.log(gardaStations_LAT);
-          // console.log(gardaStations_LONG);
-          // console.log(gardaStations_ADDRESS);
-          // console.log(gardaStations_PHONE);
-
           // Add markers
           markers_garda.push({
             position: [gardaStations_LAT, gardaStations_LONG],
@@ -148,7 +140,15 @@ class EmergencyServices extends React.Component {
           });
         }
 
+        localStorage.setItem("emergency_services_garda", JSON.stringify(markers_garda));
         this.setState({ markers_garda: markers_garda });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("emergency_services_garda") != null) {
+          const markers_garda = JSON.parse(localStorage.getItem("emergency_services_garda"));
+          this.setState({ markers_garda: markers_garda });
+        }
       });
 
     axios
@@ -192,8 +192,16 @@ class EmergencyServices extends React.Component {
             },
           });
         }
+
+        localStorage.setItem("emergency_services_hospitals", JSON.stringify(markers_hospital));
         this.setState({ markers_hospital: markers_hospital });
-        console.log(markers_hospital);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("emergency_services_hospitals") != null) {
+          const markers_hospital = JSON.parse(localStorage.getItem("emergency_services_hospitals"));
+          this.setState({ markers_hospital: markers_hospital });
+        }
       });
 
     axios.get("/main/fire_stations/").then(async (res) => {
@@ -236,7 +244,16 @@ class EmergencyServices extends React.Component {
           },
         });
       }
+
+      localStorage.setItem("emergency_services_fire", JSON.stringify(markers_fireStations));
       this.setState({ markers_fireStations: markers_fireStations });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (localStorage.getItem("emergency_services_fire") != null) {
+        const markers_fireStations = JSON.parse(localStorage.getItem("emergency_services_fire"));
+        this.setState({ markers_fireStations: markers_fireStations });
+      }
     });
   }
 
