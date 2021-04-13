@@ -214,7 +214,7 @@ class Dashboard extends React.Component {
     axios
       .request({
         method: "GET",
-        url: "http://127.0.0.1:8000/main/weather_forecast/",
+        url: "/main/weather_forecast/",
       })
       .then((response) => {
         const data = response.data.DATA.RESULT;
