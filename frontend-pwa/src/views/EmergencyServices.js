@@ -55,7 +55,7 @@ class EmergencyServices extends React.Component {
 
   async componentDidMount() {
     axios
-      .get("http://127.0.0.1:8000/main/health_centers/")
+      .get("/main/health_centers/")
       .then(async (res) => {
         let results = res.data.DATA.RESULT;
         console.log(results);
@@ -105,7 +105,7 @@ class EmergencyServices extends React.Component {
       });
 
     axios
-      .get("http://127.0.0.1:8000/main/garda_stations/")
+      .get("/main/garda_stations/")
       .then(async (res) => {
         let results = res.data.DATA.RESULT;
         console.log(results);
@@ -152,7 +152,7 @@ class EmergencyServices extends React.Component {
       });
 
     axios
-      .get("http://127.0.0.1:8000/main/hospital_centers/")
+      .get("/main/hospital_centers/")
       .then(async (res) => {
         let results = res.data.DATA.RESULT;
         console.log(results);
@@ -196,7 +196,7 @@ class EmergencyServices extends React.Component {
         console.log(markers_hospital);
       });
 
-    axios.get("http://127.0.0.1:8000/main/fire_stations/").then(async (res) => {
+    axios.get("/main/fire_stations/").then(async (res) => {
       let results = res.data.DATA.RESULT;
       console.log(results);
 

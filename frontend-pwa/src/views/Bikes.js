@@ -38,6 +38,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+
 const iconDefault = L.divIcon({
   className: "custom-pin",
   iconAnchor: [0, 24],
@@ -83,7 +84,7 @@ class Bikes extends React.Component {
   async getLiveValues() {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/main/bikestands_details/?type=live"
+        "/main/bikestands_details/?type=live"
       );
       const bikeStationsLive = res.data.DATA.RESULT;
       return bikeStationsLive;
@@ -95,7 +96,7 @@ class Bikes extends React.Component {
   componentDidMount() {
     this.setState({ graphLoading: true });
     axios
-      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+      .get("/main/bikestands_details/?type=locations")
       .then(async (res) => {
         console.log(res.data);
         let { markers, recommendations } = this.state;
@@ -119,9 +120,8 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${
-              (1 - rgbRatio) * 200 + 50
-            }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
+              }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
@@ -133,6 +133,7 @@ class Bikes extends React.Component {
             content: station,
             totalStands: totalStands,
             inUse: bikesInUse,
+            markerColor: markerColor,
             icon: {
               className: "custom-pin",
               iconAnchor: [0, 24],
@@ -165,8 +166,12 @@ class Bikes extends React.Component {
         );
         recommendations = recommendations.slice(0, 8);
 
+        localStorage.setItem("bikestands_recommendations", JSON.stringify(recommendations));
+
         this.setState({ markers });
         this.setState({ recommendations });
+        this.setState({ displayMap: "block" })
+        this.setState({ displayList: "none" })
       })
       .catch((err) => {
         console.log(err);
@@ -175,12 +180,21 @@ class Bikes extends React.Component {
             localStorage.getItem("bikestands_stations")
           );
           this.setState({ markers });
+          this.setState({ displayMap: "none" })
+          this.setState({ displayList: "block" })
+        }
+
+        if (localStorage.getItem("bikestands_recommendations") != null) {
+          const recommendations = JSON.parse(
+            localStorage.getItem("bikestands_recommendations")
+          );
+          this.setState({ recommendations });
         }
       });
 
     axios
       .get(
-        "http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5"
+        "/main/bikestands_graph/?location_based=no&days_historic=5"
       )
       .then((res) => {
         console.log(res.data);
@@ -207,7 +221,7 @@ class Bikes extends React.Component {
     const station = e.target.value;
     axios
       .get(
-        "http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5"
+        "/main/bikestands_graph/?location_based=yes&days_historic=5"
       )
       .then((res) => {
         this.setState({ bikeStationSelection: station });
@@ -235,6 +249,8 @@ class Bikes extends React.Component {
       series: [],
       bikeStationSelection: "ALL",
       graphLoading: true,
+      displayMap: "block",
+      displayList: "none",
     };
   }
 
@@ -243,10 +259,10 @@ class Bikes extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col md="9">
+            <Col md="9" style={{ display: this.state.displayMap }}>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Bikes Availability</CardTitle>
+                  <CardTitle tag="h5">Bikes Usage</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -285,8 +301,39 @@ class Bikes extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-            <Col md="3">
+            <Col md="9" style={{ display: this.state.displayList }}>
               <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody >
+                      {this.state.markers.map(
+                        (
+                          { position, content, totalStands, inUse, markerColor },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td>
+                              <span
+                                className="dot"
+                                style={{ backgroundColor: markerColor }}
+                              ></span>
+                            </td>
+                            <td><b>{content}</b></td>
+                            <td>{' Bike Stands: ' + totalStands}</td>
+                            <td>{' In use: ' + inUse}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md="3">
+              <Card id="recommendations">
                 <CardHeader>
                   <CardTitle tag="h5">Recommendations</CardTitle>
                   <div style={{ opacity: 0.6 }}>
@@ -328,6 +375,7 @@ class Bikes extends React.Component {
               </Card>
             </Col>
           </Row>
+
           <Row>
             <Col md="12">
               <Card className="card-chart">

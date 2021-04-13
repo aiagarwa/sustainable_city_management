@@ -55,7 +55,7 @@ class Footfall extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("http://127.0.0.1:8000/main/footfall_overall/").then(
+    axios.get("/main/footfall_overall/").then(
       async (res) => {
         console.log(res.data);
         let { markers } = this.state;
@@ -141,7 +141,7 @@ class Footfall extends React.Component {
     }
 
     axios.get(
-        "http://127.0.0.1:8000/main/footfall_datebased/?days_interval=6&location=" + location
+        "/main/footfall_datebased/?days_interval=6&location=" + location
       )
       .then((res) => {
         let result = res.data.DATA.RESULT
