@@ -80,11 +80,15 @@ class Parkings extends React.Component {
           });
         }
 
-        console.log(markers);
+        localStorage.setItem("parkings_availability", JSON.stringify(markers));
         this.setState({ markers });
       })
       .catch((err) => {
         console.log(err);
+        if (localStorage.getItem("parkings_availability") != null) {
+          const markers = JSON.parse(localStorage.getItem("parkings_availability"));
+          this.setState({ markers });
+        }
       });
   }
 
@@ -104,10 +108,15 @@ class Parkings extends React.Component {
           };
         }
 
+        localStorage.setItem("parkings_locations", JSON.stringify(parkings_coordinates_dictionary));
         this.setParkingMarkers(parkings_coordinates_dictionary);
       })
       .catch((err) => {
         console.log(err);
+        if (localStorage.getItem("parkings_locations") != null) {
+          const parkings_coordinates_dictionary = JSON.parse(localStorage.getItem("parkings_locations"));
+          this.setParkingMarkers(parkings_coordinates_dictionary);
+        }
       });
   }
 

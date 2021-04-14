@@ -64,6 +64,3 @@ class FetchWeatherApi:
             result_response[dateVal]["WEATHER"] = weatherCodes[dates_data["values"]["weatherCode"]]
 
         return result_response
-
-a = FetchWeatherApi()
-print(a.weatherapi())
