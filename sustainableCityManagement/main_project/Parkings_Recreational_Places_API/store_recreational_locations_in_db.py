@@ -14,7 +14,7 @@ class StoreRecreationalPlacesParkingsData:
     def read_beaches_locations(self):
         readfile = []
         self.logger.info("Reading Beaches file")
-        with open("../sustainableCityManagement/main_project/PArkings_Recreational_Places_API/resources/Beaches.csv", "r", encoding="utf8") as f:
+        with open("../sustainableCityManagement/main_project/Parkings_Recreational_Places_API/resources/Beaches.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
