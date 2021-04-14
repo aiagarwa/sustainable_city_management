@@ -173,7 +173,7 @@ class Dashboard extends React.Component {
         this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
 
     axios
@@ -205,7 +205,7 @@ class Dashboard extends React.Component {
         this.setState({ PollutionData: PollutionData });
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
   }
 
