@@ -53,7 +53,7 @@ class Parkings extends React.Component {
     let { markers } = this.state;
 
     axios
-      .get("http://127.0.0.1:8000/main/parkings_availability/")
+      .get("/main/parkings_availability/")
       .then(async (res) => {
         let parkings_avaliabilities = res.data.DATA.RESULT[0].parkings;
         console.log(parkings_avaliabilities);
@@ -80,17 +80,21 @@ class Parkings extends React.Component {
           });
         }
 
-        console.log(markers);
+        localStorage.setItem("parkings_availability", JSON.stringify(markers));
         this.setState({ markers });
       })
       .catch((err) => {
         console.log(err);
+        if (localStorage.getItem("parkings_availability") != null) {
+          const markers = JSON.parse(localStorage.getItem("parkings_availability"));
+          this.setState({ markers });
+        }
       });
   }
 
   getParkingCoordinatesAndSetMarkers() {
     axios
-      .get("http://127.0.0.1:8000/main/parkings_locations/")
+      .get("/main/parkings_locations/")
       .then(async (res) => {
         const parkings_coordinates = res.data.DATA.RESULT;
 
@@ -104,10 +108,15 @@ class Parkings extends React.Component {
           };
         }
 
+        localStorage.setItem("parkings_locations", JSON.stringify(parkings_coordinates_dictionary));
         this.setParkingMarkers(parkings_coordinates_dictionary);
       })
       .catch((err) => {
         console.log(err);
+        if (localStorage.getItem("parkings_locations") != null) {
+          const parkings_coordinates_dictionary = JSON.parse(localStorage.getItem("parkings_locations"));
+          this.setParkingMarkers(parkings_coordinates_dictionary);
+        }
       });
   }
 

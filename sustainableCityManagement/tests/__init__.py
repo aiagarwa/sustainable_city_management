@@ -17,6 +17,7 @@ from tests.Footfall_API.test_fetch_footfallapi import TestFetchFootfallApi
 from tests.Footfall_API.views_footfall_api.test_show_footfall_data import TestShowFootfallApi
 from tests.Footfall_API.views_footfall_api.test_show_footfall_data import TestFootfallOverallData
 from tests.ML_Models.test_bikes_uasge_prediction import TestBikeUsagePrediction
+from tests.Parkings_Recreational_Places_API.test_store_recreational_locations_in_db import TestStoreRecreationalPlacesData
 from mongoengine.connection import disconnect
 import mongomock
 from mongoengine import connect

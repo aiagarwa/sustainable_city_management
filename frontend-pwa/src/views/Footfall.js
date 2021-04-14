@@ -55,7 +55,7 @@ class Footfall extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("http://127.0.0.1:8000/main/footfall_overall/").then(
+    axios.get("/main/footfall_overall/").then(
       async (res) => {
         console.log(res.data);
         let { markers } = this.state;
@@ -88,13 +88,26 @@ class Footfall extends React.Component {
             },
           });
 
+          localStorage.setItem("footfall_markers", JSON.stringify(markers));
+          localStorage.setItem("footfall_locations", JSON.stringify(locations));
           this.setState({
             markers: markers,
             locations: locations
           });
         }
       }
-    );
+    )
+    .catch((err) => {
+      console.log(err);
+      if (localStorage.getItem("footfall_locations") != null) {
+        const markers = JSON.parse(localStorage.getItem("footfall_markers"));
+        const locations = JSON.parse(localStorage.getItem("footfall_locations"));
+        this.setState({
+          markers: markers,
+          locations: locations
+        });
+      }
+    });
   }
 
   setFootfallGraph(x, y) {
@@ -141,17 +154,26 @@ class Footfall extends React.Component {
     }
 
     axios.get(
-        "http://127.0.0.1:8000/main/footfall_datebased/?days_interval=6&location=" + location
+        "/main/footfall_datebased/?days_interval=6&location=" + location
       )
       .then((res) => {
         let result = res.data.DATA.RESULT
         const x = Object.keys(result[location]);
         const y = Object.values(result[location]);
-        this.setFootfallGraph(x, y)
+
+        localStorage.setItem("footfall_graph_x"+location, JSON.stringify(x));
+        localStorage.setItem("footfall_graph_y"+location, JSON.stringify(y));
+        this.setFootfallGraph(x, y);
       })
       .catch((err) => {
         console.log(err);
         this.setState({ graphLoading: false });
+
+        if (localStorage.getItem("footfall_graph_y"+location) != null) {
+          const x = JSON.parse(localStorage.getItem("footfall_graph_x"+location));
+          const y = JSON.parse(localStorage.getItem("footfall_graph_y"+location));
+          this.setFootfallGraph(x, y);
+        }
       });
   };
 

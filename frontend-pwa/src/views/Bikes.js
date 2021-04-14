@@ -84,7 +84,7 @@ class Bikes extends React.Component {
   async getLiveValues() {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/main/bikestands_details/?type=live"
+        "/main/bikestands_details/?type=live"
       );
       const bikeStationsLive = res.data.DATA.RESULT;
       return bikeStationsLive;
@@ -96,7 +96,7 @@ class Bikes extends React.Component {
   componentDidMount() {
     this.setState({ graphLoading: true });
     axios
-      .get("http://127.0.0.1:8000/main/bikestands_details/?type=locations")
+      .get("/main/bikestands_details/?type=locations")
       .then(async (res) => {
         console.log(res.data);
         let { markers, recommendations } = this.state;
@@ -120,9 +120,8 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${
-              (1 - rgbRatio) * 200 + 50
-            }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
+              }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
@@ -171,8 +170,8 @@ class Bikes extends React.Component {
 
         this.setState({ markers });
         this.setState({ recommendations });
-        this.setState({displayMap: "block"})
-        this.setState({displayList: "none"})
+        this.setState({ displayMap: "block" })
+        this.setState({ displayList: "none" })
       })
       .catch((err) => {
         console.log(err);
@@ -181,8 +180,8 @@ class Bikes extends React.Component {
             localStorage.getItem("bikestands_stations")
           );
           this.setState({ markers });
-          this.setState({displayMap: "none"})
-          this.setState({displayList: "block"})
+          this.setState({ displayMap: "none" })
+          this.setState({ displayList: "block" })
         }
 
         if (localStorage.getItem("bikestands_recommendations") != null) {
@@ -195,7 +194,7 @@ class Bikes extends React.Component {
 
     axios
       .get(
-        "http://127.0.0.1:8000/main/bikestands_graph/?location_based=no&days_historic=5"
+        "/main/bikestands_graph/?location_based=no&days_historic=5"
       )
       .then((res) => {
         console.log(res.data);
@@ -222,7 +221,7 @@ class Bikes extends React.Component {
     const station = e.target.value;
     axios
       .get(
-        "http://127.0.0.1:8000/main/bikestands_graph/?location_based=yes&days_historic=5"
+        "/main/bikestands_graph/?location_based=yes&days_historic=5"
       )
       .then((res) => {
         this.setState({ bikeStationSelection: station });
@@ -260,7 +259,7 @@ class Bikes extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col md="9" style={{display: this.state.displayMap}}>
+            <Col md="9" style={{ display: this.state.displayMap }}>
               <Card>
                 <CardHeader>
                   <CardTitle tag="h5">Bikes Usage</CardTitle>
@@ -302,7 +301,7 @@ class Bikes extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-            <Col md="9" style={{display: this.state.displayList}}>
+            <Col md="9" style={{ display: this.state.displayList }}>
               <Card>
                 <CardHeader>
                   <CardTitle tag="h5">Bikes Usage</CardTitle>

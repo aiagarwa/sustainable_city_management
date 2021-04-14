@@ -213,7 +213,7 @@ class Buses extends React.Component {
 
   populateBusStopsSaveToFile() {
     axios
-      .get('http://127.0.0.1:8000/main/busstop_locations/')
+      .get('/main/busstop_locations/')
       .then(res => {
         let busStops_tmp = [];
         let busStops_list = [];
@@ -244,7 +244,7 @@ class Buses extends React.Component {
 
   populateBusStops() {
     axios
-      .get('http://127.0.0.1:8000/main/busstop_locations/')
+      .get('/main/busstop_locations/')
       .then(res => {
         let busStops_tmp = [];
         let busStops_list = [];
@@ -315,7 +315,7 @@ class Buses extends React.Component {
 
   populateTripsSaveToFile(){
     axios
-      .get('http://127.0.0.1:8000/main/busstop_timings/')
+      .get('/main/busstop_timings/')
       .then(res => {
         let trips_list = [];
         for (const trip of Object.keys(res.data.DATA.RESULT)) {
@@ -350,7 +350,7 @@ class Buses extends React.Component {
 
   drawTrips() {
     axios
-      .get('http://127.0.0.1:8000/main/bustrip_paths/')
+      .get('/main/bustrip_paths/')
       .then(res => {
         let result = res.data.DATA.RESULT;
         this.setState({ bus_paths: result });
@@ -366,7 +366,7 @@ class Buses extends React.Component {
 
   populateTrips(){
     axios
-      .get('http://127.0.0.1:8000/main/busstop_timings/')
+      .get('/main/busstop_timings/')
       .then(res => {
         let trips_list = [];
         for (const trip of Object.keys(res.data.DATA.RESULT)) {
