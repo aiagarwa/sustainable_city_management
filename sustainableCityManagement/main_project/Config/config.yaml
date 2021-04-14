@@ -21,3 +21,6 @@ Footfall_API:
 
 Weather_API:
   api_url: https://api.tomorrow.io/v4/timelines
+
+Parkings_API:
+  api_url: https://opendata.dublincity.ie/TrafficOpenData/CP_TR/CPDATA.xml
