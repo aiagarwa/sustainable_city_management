@@ -14,6 +14,10 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import AdminLayout from "layouts/Admin.js";
 import { Auth0Provider } from "@auth0/auth0-react";
+import axios from "axios";
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+const auth0redirectUri = process.env.REACT_APP_URL + "/admin/dashboard";
 
 const hist = createBrowserHistory();
 
@@ -23,7 +27,7 @@ ReactDOM.render(
       domain={process.env.REACT_APP_AUTH0_DOMAIN}
       clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
       // redirectUri={window.location.origin + "/admin/login"}
-      redirectUri="http://localhost:3000/admin/dashboard"
+      redirectUri={auth0redirectUri}
     >
       <Router history={hist}>
         <Switch>

@@ -132,18 +132,17 @@ class TestStoreBusRoutesData(TestCase):
 
         expectedresult_timings_df = pd.DataFrame({'trip_id': ["345.3.I", "345.3.I"], 'arrival_time': ["06:20:00", "06:25:00"], 'departure_time': [
                                                  "06:20:00", "06:25:00"], 'stop_id': ["7866R56", "7866RT7"], 'stop_sequence': [1, 2]})
-        expectedresult_timings_df.to_csv("StoreDataTest.csv")
         store_bus_trips.pd.read_csv = MagicMock(
-            return_value=pd.read_csv("StoreDataTest.csv", chunksize=2))
+            return_value=expectedresult_timings_df)
         store_bus_trips.store_bus_times()
 
         fetch_bus_trips = BusTrips.objects().first()
-
+        
         assert fetch_bus_trips["trip_id"] == "345.3.I"
-        assert fetch_bus_trips.stops[0]["stop_id"] == "7866R56"
-        assert fetch_bus_trips.stops[0]["stop_arrival_time"] == "06:20:00"
-        assert fetch_bus_trips.stops[0]["stop_departure_time"] == "06:20:00"
-        assert fetch_bus_trips.stops[0]["stop_sequence"] == 1
+        assert fetch_bus_trips["stops"][0]["stop_id"] == "7866R56"
+        assert fetch_bus_trips["stops"][0]["stop_arrival_time"] == "06:20:00"
+        assert fetch_bus_trips["stops"][0]["stop_departure_time"] == "06:20:00"
+        assert fetch_bus_trips["stops"][0]["stop_sequence"] == 1
 
     def test_fetch_bustrips(self):
         fetch_bus_trips = StoreBusRoutesData()
@@ -154,8 +153,10 @@ class TestStoreBusRoutesData(TestCase):
         fetch_bus_trips.read_bus_trips = MagicMock(return_value=expectedresult)
         fetch_bus_trips.store_bus_trips()
 
+        expectedresult_timings_df = pd.DataFrame({'trip_id': ["345.3.I", "345.3.I"], 'arrival_time': ["06:20:00", "06:25:00"], 'departure_time': [
+                                                 "06:20:00", "06:25:00"], 'stop_id': ["7866R56", "7866RT7"], 'stop_sequence': [1, 2]})
         fetch_bus_trips.pd.read_csv = MagicMock(
-            return_value=pd.read_csv("StoreDataTest.csv", chunksize=2))
+            return_value=expectedresult_timings_df)
         fetch_bus_trips.store_bus_times()
 
         bus_trips = fetch_bus_trips.fetch_bustrips()

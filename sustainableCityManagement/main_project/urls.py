@@ -18,6 +18,10 @@ from .Parkings_API.views_parkings_api.show_parkings_locations import ParkingsLoc
 from .Footfall_API.views_footfall_api.show_footfall_data import FootfallDatebasedData
 from .Footfall_API.views_footfall_api.show_footfall_data import FootfallOverallData
 from .Weather_API.views_weather_api.show_weather import ShowWeatherApi
+from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import CinemasParkings
+from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import ParksParkings
+from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import BeachesParkings
+from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import PlayingPitchesParkings
 
 # Building URL endpoints for API calls.
 urlpatterns = [
@@ -55,5 +59,13 @@ urlpatterns = [
     url(r'^footfall_datebased/$', FootfallDatebasedData.as_view(),
         name='footfall_datebased_data'),
     url(r'^weather_forecast/$', ShowWeatherApi.as_view(),
-        name='weather_forecast_data')
+        name='weather_forecast_data'),
+    url(r'^cinema_parkings/$', CinemasParkings.as_view(),
+        name='cinema_parkings_data'),
+    url(r'^parks_parkings/$', ParksParkings.as_view(),
+        name='parks_parkings_data'),
+    url(r'^beaches_parkings/$', BeachesParkings.as_view(),
+        name='beaches_parkings_data'),
+    url(r'^playing_pitches_parkings/$', PlayingPitchesParkings.as_view(),
+        name='playing_pitches_parkings_data')
 ]
