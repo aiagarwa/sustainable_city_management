@@ -69,6 +69,19 @@ class Dashboard extends React.Component {
         },
         colors: ["#ff7300"],
       },
+      series_population: [],
+      options_population: {
+        stroke: {
+          curve: "smooth",
+        },
+        chart: {
+          id: "basic-bar",
+        },
+        markers: {
+          size: 5,
+        },
+        colors: ["#ff7300"],
+      },
       series_humidity: [],
       graphLoading: false,
     };
@@ -134,6 +147,54 @@ class Dashboard extends React.Component {
     });
   }
 
+  populatePopulation(ireland_population, dublin_population) {
+    let x = []
+    let y_ireland = []
+    let y_dublin = []
+    let y_ireland_not_dublin = []
+
+    for(let i=0; i<ireland_population.length; i++) {
+      x.push(ireland_population[i].year);
+      y_ireland.push(ireland_population[i].population);
+      y_dublin.push(dublin_population[i].population);
+      y_ireland_not_dublin.push(ireland_population[i].population - dublin_population[i].population);
+    }
+
+    this.setState({
+      options_population: {
+        xaxis: {
+          categories: x,
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: x[x.length - 1],
+            },
+          ],
+        }
+      },
+      series_population: [
+        {
+          name: "Ireland Population",
+          data: y_ireland,
+          color: "blue"
+        },
+        {
+          name: "Ireland Population without Dublin",
+          data: y_ireland_not_dublin,
+          color: "orange"
+        },
+        {
+          name: "Dublin Population",
+          data: y_dublin,
+          color: "red"
+        }
+      ],
+
+      graphLoading: false,
+    });
+  }
+
   componentDidMount() {
     this.setState({
       graphLoading: true,
@@ -165,20 +226,6 @@ class Dashboard extends React.Component {
     axios
       .request({
         method: "GET",
-        url:
-          "https://api.openweathermap.org/data/2.5/air_pollution?lat=53.3302&lon=6.3106&appid=d50542e129f589c12a362e67f91906fe",
-      })
-      .then((response) => {
-        const AqiInfo = response.data.list[0].main.aqi;
-        this.setState({ AqiInfo: AqiInfo });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .request({
-        method: "GET",
         url: "/main/weather_forecast/",
       })
       .then((response) => {
@@ -196,16 +243,32 @@ class Dashboard extends React.Component {
     axios
       .request({
         method: "GET",
-        url:
-          "https://api.openweathermap.org/data/2.5/air_pollution/history?lat=53.3302&lon=6.3106&start=1302698655&end=1618317855&appid=65e9f2e630845d95f854d161fb6976e7",
+        url: "/main/ireland_population/",
       })
       .then((response) => {
-        const PollutionData = response.data;
-        console.log(PollutionData);
-        this.setState({ PollutionData: PollutionData });
+        const ireland_population = response.data.DATA.RESULT;
+
+        axios
+          .request({
+            method: "GET",
+            url: "/main/dublin_population/",
+          })
+          .then((response) => {
+            const dublin_population = response.data.DATA.RESULT;
+            console.log(dublin_population)
+            
+            localStorage.setItem("ireland_population", JSON.stringify(ireland_population));
+            localStorage.setItem("dublin_population", JSON.stringify(dublin_population));
+            this.populatePopulation(ireland_population, dublin_population);
+          })
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("dublin_population") != null) {
+          const dublin_population = JSON.parse(localStorage.getItem("dublin_population"));
+          const ireland_population = JSON.parse(localStorage.getItem("ireland_population"));
+          this.populatePopulation(ireland_population, dublin_population);
+        }
       });
   }
 
@@ -337,8 +400,6 @@ class Dashboard extends React.Component {
             </Col>
           </Row>
 
-          {/**WEATHER STUFF END */}
-
           <Row>
             <Col md="12">
               <Card className="card-chart">
@@ -371,6 +432,44 @@ class Dashboard extends React.Component {
                       <i className="fa fa-circle text-info" /> Tesla Model S{" "}
                       <i className="fa fa-circle text-warning" /> BMW 5 Series
                     </div> */}
+                  <hr />
+                  <div className="card-stats">
+                    <i className="fa fa-check" /> Data information certified
+                  </div>
+                </CardFooter>
+              </Card>
+            </Col>
+          </Row>
+
+          {/**WEATHER STUFF END */}
+
+          <Row>
+            <Col md="12">
+              <Card className="card-chart">
+                <CardHeader>
+                  <CardTitle tag="h5">
+                    Population Correlation{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <div className="mixed-chart">
+                    <Chart
+                      options={this.state.options_population}
+                      series={this.state.series_population}
+                      type="line"
+                      height="600"
+                    />
+                  </div>
+                </CardBody>
+                <CardFooter>
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified
