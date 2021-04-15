@@ -13,6 +13,7 @@ emergency_service_api.log
 parkings.log
 population_api.log
 StoreDataTest.csv
+weather_record.json
 
 myVenv
 bin
