@@ -11,6 +11,7 @@ Bike_API.log
 Application.log
 emergency_service_api.log
 parkings.log
+population_api.log
 StoreDataTest.csv
 
 myVenv

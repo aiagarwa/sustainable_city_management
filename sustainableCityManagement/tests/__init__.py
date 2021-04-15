@@ -23,6 +23,8 @@ from tests.Parkings_API.views_parkings_api.test_show_parkings_availability impor
 from tests.ML_Models.test_bikes_uasge_prediction import TestBikeUsagePrediction
 from tests.ML_Models.test_footfall_prediction import TestFootfallUsagePrediction
 from tests.Parkings_Recreational_Places_API.test_store_recreational_locations_in_db import TestStoreRecreationalPlacesData
+from tests.Population_API.test_store_population import TestStorePopulation
+from tests.Population_API.test_views_population import TestViewsPopulationApi
 from mongoengine.connection import disconnect
 import mongomock
 from mongoengine import connect
