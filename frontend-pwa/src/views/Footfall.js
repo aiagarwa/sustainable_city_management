@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
@@ -55,16 +37,17 @@ class Footfall extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("/main/footfall_overall/").then(
-      async (res) => {
+    axios
+      .get("/main/footfall_overall/")
+      .then(async (res) => {
         console.log(res.data);
         let { markers } = this.state;
 
         const areaLocations = res.data.DATA.RESULT;
 
-        let locations = []
+        let locations = [];
         for (const location of Object.keys(areaLocations)) {
-          locations.push(location)
+          locations.push(location);
           const footfallCounts = areaLocations[location].Footfall;
           const footfall_LAT = areaLocations[location].Lat;
           const footfall_LON = areaLocations[location].Lon;
@@ -92,22 +75,23 @@ class Footfall extends React.Component {
           localStorage.setItem("footfall_locations", JSON.stringify(locations));
           this.setState({
             markers: markers,
-            locations: locations
+            locations: locations,
           });
         }
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-      if (localStorage.getItem("footfall_locations") != null) {
-        const markers = JSON.parse(localStorage.getItem("footfall_markers"));
-        const locations = JSON.parse(localStorage.getItem("footfall_locations"));
-        this.setState({
-          markers: markers,
-          locations: locations
-        });
-      }
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("footfall_locations") != null) {
+          const markers = JSON.parse(localStorage.getItem("footfall_markers"));
+          const locations = JSON.parse(
+            localStorage.getItem("footfall_locations")
+          );
+          this.setState({
+            markers: markers,
+            locations: locations,
+          });
+        }
+      });
   }
 
   setFootfallGraph(x, y) {
@@ -146,32 +130,35 @@ class Footfall extends React.Component {
     this.setState({ graphLoading: true });
     this.setState({ footfallLocationSelected: location });
 
-    if(location == "Not Selected") {
+    if (location == "Not Selected") {
       const x = [];
       const y = [];
       this.setFootfallGraph(x, y);
       return;
     }
 
-    axios.get(
-        "/main/footfall_datebased/?days_interval=6&location=" + location
-      )
+    axios
+      .get("/main/footfall_datebased/?days_interval=6&location=" + location)
       .then((res) => {
-        let result = res.data.DATA.RESULT
+        let result = res.data.DATA.RESULT;
         const x = Object.keys(result[location]);
         const y = Object.values(result[location]);
 
-        localStorage.setItem("footfall_graph_x"+location, JSON.stringify(x));
-        localStorage.setItem("footfall_graph_y"+location, JSON.stringify(y));
+        localStorage.setItem("footfall_graph_x" + location, JSON.stringify(x));
+        localStorage.setItem("footfall_graph_y" + location, JSON.stringify(y));
         this.setFootfallGraph(x, y);
       })
       .catch((err) => {
         console.log(err);
         this.setState({ graphLoading: false });
 
-        if (localStorage.getItem("footfall_graph_y"+location) != null) {
-          const x = JSON.parse(localStorage.getItem("footfall_graph_x"+location));
-          const y = JSON.parse(localStorage.getItem("footfall_graph_y"+location));
+        if (localStorage.getItem("footfall_graph_y" + location) != null) {
+          const x = JSON.parse(
+            localStorage.getItem("footfall_graph_x" + location)
+          );
+          const y = JSON.parse(
+            localStorage.getItem("footfall_graph_y" + location)
+          );
           this.setFootfallGraph(x, y);
         }
       });
@@ -189,7 +176,7 @@ class Footfall extends React.Component {
       },
       series: [],
       footfallLocationSelected: "",
-      locations: []
+      locations: [],
     };
   }
 
@@ -271,10 +258,8 @@ class Footfall extends React.Component {
                         value={this.state.footfallLocationSelected}
                       >
                         <option>Not Selected</option>
-                        {this.state.locations.map(
-                          ((location, index) => (
-                            <option key={index}>{location}</option>
-                          )
+                        {this.state.locations.map((location, index) => (
+                          <option key={index}>{location}</option>
                         ))}
                       </Input>
                     </Col>
