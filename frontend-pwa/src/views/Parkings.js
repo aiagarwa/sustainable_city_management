@@ -1,40 +1,9 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
-import Chart from "react-apexcharts";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 // reactstrap components
-import {
-  Card,
-  CardTitle,
-  CardFooter,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Input,
-  Table,
-} from "reactstrap";
+import { Card, CardTitle, CardHeader, CardBody, Row, Col } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -58,11 +27,13 @@ class Parkings extends React.Component {
         let parkings_avaliabilities = res.data.DATA.RESULT[0].parkings;
         console.log(parkings_avaliabilities);
 
+        const markers_parkings = [];
+
         for (let i = 0; i < parkings_avaliabilities.length; i++) {
           let parking_name = parkings_avaliabilities[i].name;
 
           // Add markers
-          markers.push({
+          markers_parkings.push({
             name: parking_name,
             area: parkings_coordinates_dictionary[parking_name].area,
             position: [
@@ -80,16 +51,201 @@ class Parkings extends React.Component {
           });
         }
 
-        localStorage.setItem("parkings_availability", JSON.stringify(markers));
-        this.setState({ markers });
+        localStorage.setItem(
+          "parkings_availability",
+          JSON.stringify(markers_parkings)
+        );
+        this.setState({ markers_parkings });
+      })
+      .catch((err) => {
+        console.error(err);
+        if (localStorage.getItem("parkings_availability") != null) {
+          const markers_parkings = JSON.parse(
+            localStorage.getItem("parkings_availability")
+          );
+          this.setState({ markers_parkings });
+        }
+      });
+
+    axios
+      .get("/main/cinema_parkings/")
+      .then(async (res) => {
+        let results = res.data.DATA.RESULT;
+        console.log(results);
+        const markers_movies = [];
+
+        const movieParkings = res.data.DATA.RESULT;
+
+        for (const locations of Object.keys(movieParkings)) {
+          const movieParkingsName = movieParkings[locations].cinema_name;
+
+          const movieParkings_LAT = movieParkings[locations].cinema_lat;
+          const movieParkings_LONG = movieParkings[locations].cinema_lon;
+
+          const movieParkings_ADDRESS = movieParkings[locations].cinema_address;
+
+          // Add markers
+          markers_movies.push({
+            position: [movieParkings_LAT, movieParkings_LONG],
+            MovieParkingsName: movieParkingsName,
+            MovieParkingsAddress: movieParkings_ADDRESS,
+
+            icon: {
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#ff5100;"></i>`,
+            },
+          });
+        }
+
+        localStorage.setItem("parkings_movies", JSON.stringify(markers_movies));
+        this.setState({ markers_movies: markers_movies });
       })
       .catch((err) => {
         console.log(err);
-        if (localStorage.getItem("parkings_availability") != null) {
-          const markers = JSON.parse(localStorage.getItem("parkings_availability"));
-          this.setState({ markers });
+        if (localStorage.getItem("parkings_movies") != null) {
+          const markers_movies = JSON.parse(
+            localStorage.getItem("parkings_movies")
+          );
+          this.setState({ markers_movies: markers_movies });
         }
       });
+
+    axios
+      .get("/main/parks_parkings/")
+      .then(async (res) => {
+        let results = res.data.DATA.RESULT;
+        console.log(results);
+        const markers_parks = [];
+
+        const parksParkings = res.data.DATA.RESULT;
+
+        for (const locations of Object.keys(parksParkings)) {
+          const parksParkingsName = parksParkings[locations].park_name;
+
+          const parksParkings_LAT = parksParkings[locations].park_lat;
+          const parksParkings_LONG = parksParkings[locations].park_lon;
+
+          const parksParkings_ADDRESS = parksParkings[locations].park_address;
+
+          // Add markers
+          markers_parks.push({
+            position: [parksParkings_LAT, parksParkings_LONG],
+            ParksParkingsName: parksParkingsName,
+            ParksParkingsAddress: parksParkings_ADDRESS,
+
+            icon: {
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#0073ff;"></i>`,
+            },
+          });
+        }
+
+        localStorage.setItem("markers_parks", JSON.stringify(markers_parks));
+        this.setState({ markers_parks: markers_parks });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("markers_parks") != null) {
+          const markers_parks = JSON.parse(
+            localStorage.getItem("markers_parks")
+          );
+          this.setState({ markers_parks: markers_parks });
+        }
+      });
+
+      axios
+      .get("/main/beaches_parkings/")
+      .then(async (res) => {
+        let results = res.data.DATA.RESULT;
+        console.log(results);
+        const markers_beaches = [];
+
+        const beachesParkings = res.data.DATA.RESULT;
+
+        for (const locations of Object.keys(beachesParkings)) {
+          const beachesParkingsName = beachesParkings[locations].beach_name;
+
+          const beachesParkings_LAT = beachesParkings[locations].beach_lat;
+          const beachesParkings_LONG = beachesParkings[locations].beach_lon;
+
+          // Add markers
+          markers_beaches.push({
+            position: [beachesParkings_LAT, beachesParkings_LONG],
+            BeachesParkingsName: beachesParkingsName,
+
+            icon: {
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#00ff51;"></i>`,
+            },
+          });
+        }
+
+        localStorage.setItem("markers_beaches", JSON.stringify(markers_beaches));
+        this.setState({ markers_beaches: markers_beaches });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("markers_beaches") != null) {
+          const markers_beaches = JSON.parse(
+            localStorage.getItem("markers_beaches")
+          );
+          this.setState({ markers_beaches: markers_beaches });
+        }
+      });      
+
+      axios
+      .get("/main/playing_pitches_parkings/")
+      .then(async (res) => {
+        let results = res.data.DATA.RESULT;
+        console.log(results);
+        const markers_playingPitches = [];
+
+        const playingPitchesParkings = res.data.DATA.RESULT;
+
+        for (const locations of Object.keys(playingPitchesParkings)) {
+          const playingPitches_ParkingsName = playingPitchesParkings[locations].facility_name;
+          const playingPitches_ParkingsType = playingPitchesParkings[locations].facility_type;
+
+          const playingPitches_Parkings_LAT = playingPitchesParkings[locations].facility_lat;
+          const playingPitches_Parkings_LONG = playingPitchesParkings[locations].facility_lon;
+
+          // Add markers
+          markers_playingPitches.push({
+            position: [playingPitches_Parkings_LAT, playingPitches_Parkings_LONG],
+            playingPitchesParkingsName: playingPitches_ParkingsName,
+            playingPitchesParkingsType: playingPitches_ParkingsType,
+
+            icon: {
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#d000ff;"></i>`,
+            },
+          });
+        }
+
+        localStorage.setItem("markers_playingPitches", JSON.stringify(markers_playingPitches));
+        this.setState({ markers_playingPitches: markers_playingPitches });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("markers_playingPitches") != null) {
+          const markers_playingPitches = JSON.parse(
+            localStorage.getItem("markers_playingPitches")
+          );
+          this.setState({ markers_playingPitches: markers_playingPitches });
+        }
+      });          
   }
 
   getParkingCoordinatesAndSetMarkers() {
@@ -108,13 +264,18 @@ class Parkings extends React.Component {
           };
         }
 
-        localStorage.setItem("parkings_locations", JSON.stringify(parkings_coordinates_dictionary));
+        localStorage.setItem(
+          "parkings_locations",
+          JSON.stringify(parkings_coordinates_dictionary)
+        );
         this.setParkingMarkers(parkings_coordinates_dictionary);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         if (localStorage.getItem("parkings_locations") != null) {
-          const parkings_coordinates_dictionary = JSON.parse(localStorage.getItem("parkings_locations"));
+          const parkings_coordinates_dictionary = JSON.parse(
+            localStorage.getItem("parkings_locations")
+          );
           this.setParkingMarkers(parkings_coordinates_dictionary);
         }
       });
@@ -122,24 +283,17 @@ class Parkings extends React.Component {
 
   componentDidMount() {
     this.getParkingCoordinatesAndSetMarkers();
-    // localStorage.setItem("parkings_availability", JSON.stringify(markers));
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    //   if (localStorage.getItem("parkings_availability") != null) {
-    //     const markers = JSON.parse(
-    //       localStorage.getItem("parkings_availability")
-    //     );
-    //     this.setState({ markers });
-    //   }
-    // });
   }
 
   constructor(props) {
     super(props);
 
     this.state = {
-      markers: [],
+      markers_parkings: [],
+      markers_movies: [],
+      markers_parks: [],
+      markers_beaches: [],
+      markers_playingPitches: [],
     };
   }
 
@@ -165,26 +319,94 @@ class Parkings extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {this.state.markers.map(
-                        (
-                          { position, name, availableSpaces, area, icon },
-                          idx
-                        ) => (
-                          <Marker
-                            key={`marker-${idx}`}
-                            position={position}
-                            icon={L.divIcon(icon)}
-                          >
-                            <Popup>
-                              <p>
-                                <b>{name}</b>
-                              </p>
-                              <p>{"Area: " + area}</p>
-                              <p>{"Available Spaces: " + availableSpaces}</p>
-                            </Popup>
-                          </Marker>
-                        )
-                      )}
+                      {/** PARKINGS */}
+                      {this.state.markers_parkings.map((parking_name, idx) => (
+                        <Marker
+                          key={`marker-${idx}`}
+                          position={parking_name.position}
+                          icon={L.divIcon(parking_name.icon)}
+                        >
+                          <Popup>
+                            <p>
+                              <b>{"PARKINGS"}</b>
+                            </p>
+                            <p>{"Area: " + parking_name.area}</p>
+                            <p>
+                              {"Available Spaces: " +
+                                parking_name.availableSpaces}
+                            </p>
+                          </Popup>
+                        </Marker>
+                      ))}
+
+                      {/** MOVIES PARKINGS markers_parks*/}
+                      {this.state.markers_movies.map((movieParkings, idx) => (
+                        <Marker
+                          key={`marker-${idx}`}
+                          position={movieParkings.position}
+                          icon={L.divIcon(movieParkings.icon)}
+                        >
+                          <Popup>
+                            <p>
+                              <b>{"MOVIES PARKINGS"}</b>
+                            </p>
+                            <p>{"Name: " + movieParkings.MovieParkingsName}</p>
+                            <p>
+                              {"Address: " + movieParkings.MovieParkingsAddress}
+                            </p>
+                          </Popup>
+                        </Marker>
+                      ))}
+                      {/** PARKS PARKINGS */}
+                      {this.state.markers_parks.map((parksParkings, idx) => (
+                        <Marker
+                          key={`marker-${idx}`}
+                          position={parksParkings.position}
+                          icon={L.divIcon(parksParkings.icon)}
+                        >
+                          <Popup>
+                            <p>
+                              <b>{"MOVIES PARKINGS"}</b>
+                            </p>
+                            <p>{"Name: " + parksParkings.ParksParkingsName}</p>
+                            <p>
+                              {"Address: " + parksParkings.ParksParkingsAddress}
+                            </p>
+                          </Popup>
+                        </Marker>
+                      ))}
+
+                      {/** BEACHES PARKINGS */}
+                      {this.state.markers_beaches.map((beachesParkings, idx) => (
+                        <Marker
+                          key={`marker-${idx}`}
+                          position={beachesParkings.position}
+                          icon={L.divIcon(beachesParkings.icon)}
+                        >
+                          <Popup>
+                            <p>
+                              <b>{"BEACHES PARKINGS"}</b>
+                            </p>
+                            <p>{"Name: " + beachesParkings.BeachesParkingsName}</p>
+                          </Popup>
+                        </Marker>
+                      ))}
+                      {/**PITCHES PARKINGS */}
+                      {this.state.markers_playingPitches.map((playingPitchesParkings, idx) => (
+                        <Marker
+                          key={`marker-${idx}`}
+                          position={playingPitchesParkings.position}
+                          icon={L.divIcon(playingPitchesParkings.icon)}
+                        >
+                          <Popup>
+                            <p>
+                              <b>{"BEACHES PARKINGS"}</b>
+                            </p>
+                            <p>{"Name:" + playingPitchesParkings.playingPitchesParkingsName}</p>
+                            <p>{"Type:" + playingPitchesParkings.playingPitchesParkingsType}</p>
+                          </Popup>
+                        </Marker>
+                      ))}
                     </MapContainer>
                   </div>
                 </CardBody>
