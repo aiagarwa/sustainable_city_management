@@ -94,7 +94,7 @@ def save_parkings_data_to_database():
     In = "yes"
     store_parkings_data_to_database = StoreParkingsData()
     if In == "yes":
-        store_parkings_data_to_database.get_parkings_spaces_availability_live()
+        store_parkings_data_to_database.store_parking_spaces_availability_live()
     else:
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
@@ -142,7 +142,7 @@ def init():
     # save_processed_and_predicted_bike_data_to_database()
     # save_bus_data_to_database()
     # save_footfall_data_to_database()
-    # save_parkings_data_to_database()
+    save_parkings_data_to_database()
     # save_emergency_services_data_to_database()
     # save_recreational_places_parkings_data_to_database()
     save_population_to_database()

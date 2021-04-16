@@ -12,15 +12,13 @@ const iconDefault = L.divIcon({
   iconAnchor: [0, 24],
   labelAnchor: [-6, 0],
   popupAnchor: [0, -36],
-  html: `<i class="fa fa-map-marker-alt fa-3x" style="color:blue;"></i>`,
+  html: `<i class="fa fa-map-parking-alt fa-2x" style="color:#000000;"></i>`,
 });
 
 L.Marker.prototype.options.icon = iconDefault;
 
 class Parkings extends React.Component {
   setParkingMarkers(parkings_coordinates_dictionary) {
-    let { markers } = this.state;
-
     axios
       .get("/main/parkings_availability/")
       .then(async (res) => {
@@ -46,7 +44,7 @@ class Parkings extends React.Component {
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
-              html: `<i class="fas fa-parking fa-3x" style="color:blue;"></i>`,
+              html: `<i class="fas fa-parking fa-2x" style="color:#000000;"></i>`,
             },
           });
         }
@@ -95,7 +93,7 @@ class Parkings extends React.Component {
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
-              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#ff5100;"></i>`,
+              html: `<i class="fas fa-parking fa-2x" style="color:#ff5100;"></i>`,
             },
           });
         }
@@ -141,7 +139,7 @@ class Parkings extends React.Component {
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
-              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#0073ff;"></i>`,
+              html: `<i class="fas fa-parking fa-2x" style="color:#009dff;"></i>`,
             },
           });
         }
@@ -159,7 +157,7 @@ class Parkings extends React.Component {
         }
       });
 
-      axios
+    axios
       .get("/main/beaches_parkings/")
       .then(async (res) => {
         let results = res.data.DATA.RESULT;
@@ -184,12 +182,15 @@ class Parkings extends React.Component {
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
-              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#00ff51;"></i>`,
+              html: `<i class="fas fa-parking fa-2x" style="color:#00ff51;"></i>`,
             },
           });
         }
 
-        localStorage.setItem("markers_beaches", JSON.stringify(markers_beaches));
+        localStorage.setItem(
+          "markers_beaches",
+          JSON.stringify(markers_beaches)
+        );
         this.setState({ markers_beaches: markers_beaches });
       })
       .catch((err) => {
@@ -200,9 +201,9 @@ class Parkings extends React.Component {
           );
           this.setState({ markers_beaches: markers_beaches });
         }
-      });      
+      });
 
-      axios
+    axios
       .get("/main/playing_pitches_parkings/")
       .then(async (res) => {
         let results = res.data.DATA.RESULT;
@@ -212,15 +213,22 @@ class Parkings extends React.Component {
         const playingPitchesParkings = res.data.DATA.RESULT;
 
         for (const locations of Object.keys(playingPitchesParkings)) {
-          const playingPitches_ParkingsName = playingPitchesParkings[locations].facility_name;
-          const playingPitches_ParkingsType = playingPitchesParkings[locations].facility_type;
+          const playingPitches_ParkingsName =
+            playingPitchesParkings[locations].facility_name;
+          const playingPitches_ParkingsType =
+            playingPitchesParkings[locations].facility_type;
 
-          const playingPitches_Parkings_LAT = playingPitchesParkings[locations].facility_lat;
-          const playingPitches_Parkings_LONG = playingPitchesParkings[locations].facility_lon;
+          const playingPitches_Parkings_LAT =
+            playingPitchesParkings[locations].facility_lat;
+          const playingPitches_Parkings_LONG =
+            playingPitchesParkings[locations].facility_lon;
 
           // Add markers
           markers_playingPitches.push({
-            position: [playingPitches_Parkings_LAT, playingPitches_Parkings_LONG],
+            position: [
+              playingPitches_Parkings_LAT,
+              playingPitches_Parkings_LONG,
+            ],
             playingPitchesParkingsName: playingPitches_ParkingsName,
             playingPitchesParkingsType: playingPitches_ParkingsType,
 
@@ -229,12 +237,15 @@ class Parkings extends React.Component {
               iconAnchor: [0, 24],
               labelAnchor: [-6, 0],
               popupAnchor: [0, -36],
-              html: `<i class="fa fa-map-marker-alt fa-3x" style="color:#d000ff;"></i>`,
+              html: `<i class="fas fa-parking fa-2x" style="color:#d000ff;"></i>`,
             },
           });
         }
 
-        localStorage.setItem("markers_playingPitches", JSON.stringify(markers_playingPitches));
+        localStorage.setItem(
+          "markers_playingPitches",
+          JSON.stringify(markers_playingPitches)
+        );
         this.setState({ markers_playingPitches: markers_playingPitches });
       })
       .catch((err) => {
@@ -245,7 +256,7 @@ class Parkings extends React.Component {
           );
           this.setState({ markers_playingPitches: markers_playingPitches });
         }
-      });          
+      });
   }
 
   getParkingCoordinatesAndSetMarkers() {
@@ -311,9 +322,9 @@ class Parkings extends React.Component {
                   <div className="leaflet-container">
                     <MapContainer
                       style={{ width: "100%", height: "600px" }}
-                      center={[53.345, -6.26]}
-                      zoom={15}
-                      scrollWheelZoom={false}
+                      center={[53.445, -6.28]}
+                      zoom={11}
+                      scrollWheelZoom={true}
                     >
                       <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -339,7 +350,7 @@ class Parkings extends React.Component {
                         </Marker>
                       ))}
 
-                      {/** MOVIES PARKINGS markers_parks*/}
+                      {/** MOVIES PARKINGS */}
                       {this.state.markers_movies.map((movieParkings, idx) => (
                         <Marker
                           key={`marker-${idx}`}
@@ -348,7 +359,7 @@ class Parkings extends React.Component {
                         >
                           <Popup>
                             <p>
-                              <b>{"MOVIES PARKINGS"}</b>
+                              <b>{"PARKINGS near MOVIES"}</b>
                             </p>
                             <p>{"Name: " + movieParkings.MovieParkingsName}</p>
                             <p>
@@ -366,7 +377,7 @@ class Parkings extends React.Component {
                         >
                           <Popup>
                             <p>
-                              <b>{"MOVIES PARKINGS"}</b>
+                              <b>{"PARKINGS near PARKS"}</b>
                             </p>
                             <p>{"Name: " + parksParkings.ParksParkingsName}</p>
                             <p>
@@ -377,36 +388,52 @@ class Parkings extends React.Component {
                       ))}
 
                       {/** BEACHES PARKINGS */}
-                      {this.state.markers_beaches.map((beachesParkings, idx) => (
-                        <Marker
-                          key={`marker-${idx}`}
-                          position={beachesParkings.position}
-                          icon={L.divIcon(beachesParkings.icon)}
-                        >
-                          <Popup>
-                            <p>
-                              <b>{"BEACHES PARKINGS"}</b>
-                            </p>
-                            <p>{"Name: " + beachesParkings.BeachesParkingsName}</p>
-                          </Popup>
-                        </Marker>
-                      ))}
+                      {this.state.markers_beaches.map(
+                        (beachesParkings, idx) => (
+                          <Marker
+                            key={`marker-${idx}`}
+                            position={beachesParkings.position}
+                            icon={L.divIcon(beachesParkings.icon)}
+                          >
+                            <Popup>
+                              <p>
+                                <b>
+                                  {"PARKINGS near " +
+                                    beachesParkings.BeachesParkingsName +
+                                    " BEACH"}
+                                </b>
+                              </p>
+                              <p>
+                                {"Name: " + beachesParkings.BeachesParkingsName}
+                              </p>
+                            </Popup>
+                          </Marker>
+                        )
+                      )}
                       {/**PITCHES PARKINGS */}
-                      {this.state.markers_playingPitches.map((playingPitchesParkings, idx) => (
-                        <Marker
-                          key={`marker-${idx}`}
-                          position={playingPitchesParkings.position}
-                          icon={L.divIcon(playingPitchesParkings.icon)}
-                        >
-                          <Popup>
-                            <p>
-                              <b>{"BEACHES PARKINGS"}</b>
-                            </p>
-                            <p>{"Name:" + playingPitchesParkings.playingPitchesParkingsName}</p>
-                            <p>{"Type:" + playingPitchesParkings.playingPitchesParkingsType}</p>
-                          </Popup>
-                        </Marker>
-                      ))}
+                      {this.state.markers_playingPitches.map(
+                        (playingPitchesParkings, idx) => (
+                          <Marker
+                            key={`marker-${idx}`}
+                            position={playingPitchesParkings.position}
+                            icon={L.divIcon(playingPitchesParkings.icon)}
+                          >
+                            <Popup>
+                              <p>
+                                <b>{"PARKINGS near PLAYING PITCHES"}</b>
+                              </p>
+                              <p>
+                                {"Name:" +
+                                  playingPitchesParkings.playingPitchesParkingsName}
+                              </p>
+                              <p>
+                                {"Type:" +
+                                  playingPitchesParkings.playingPitchesParkingsType}
+                              </p>
+                            </Popup>
+                          </Marker>
+                        )
+                      )}
                     </MapContainer>
                   </div>
                 </CardBody>
