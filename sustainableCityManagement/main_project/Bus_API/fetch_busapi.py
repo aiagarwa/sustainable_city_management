@@ -6,6 +6,7 @@ import json
 
 
 class FetchBusApi:
+    # Structure the bus stops data in required format to send it to frontend
     def bus_stand_locations(self, busRoutesObj=StoreBusRoutesData()):
         result_response = {}
         all_stops = busRoutesObj.fetch_busstops_location()
@@ -20,6 +21,7 @@ class FetchBusApi:
             counter += 1
         return result_response
 
+    # Structure the bus timings data in required format to send it to frontend
     def bus_trips_timings(self, busRoutesObj=StoreBusRoutesData()):
         result_response = {}
         counter = 0
@@ -41,7 +43,3 @@ class FetchBusApi:
             result_response[trip_custom_id]["STOP_INFO"] = trips["stops"]
             counter += 1
         return result_response
-
-# a = FetchBusApi()
-# x = a.bus_trips_timings()
-# print(x)

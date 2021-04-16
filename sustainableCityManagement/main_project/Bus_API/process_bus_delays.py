@@ -1,13 +1,13 @@
 import requests
 import json
 from ..Config.config_handler import read_config
-# from config_handler import read_config
 
 class ProcessBusDelays:
 
     def __init__(self):
         self.config_vals = read_config("Bus_API")
     
+    # Get the live data of Buses(Arrival Time, Departure Time, Delay) from API and returns.
     def get_data_from_bus_api(self):
         url = self.config_vals["api_url"]
         headers = {self.config_vals["api_key_name"]:self.config_vals["api_key_value"]}
@@ -16,6 +16,7 @@ class ProcessBusDelays:
         bus_trip_delays = bus_data["entity"]
         return bus_trip_delays
 
+    # Structure the live data (Delays, Arrival Time, Departure Time) in required format to send the recent stop details to frontend. 
     def get_delay_for_trip_live(self):
         bus_trip_delays=self.get_data_from_bus_api()
         result_response={}
@@ -48,7 +49,3 @@ class ProcessBusDelays:
             else:
                 result_response[trip["id"]] = {"STATUS":"CANCELED"}
         return result_response
-
-
-# a= ProcessBusDelays()
-# a.get_delay_for_trip_live()
