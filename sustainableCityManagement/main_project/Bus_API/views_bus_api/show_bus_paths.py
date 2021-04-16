@@ -14,6 +14,8 @@ from django.shortcuts import render
 from ..fetch_busapi import FetchBusApi
 from ..store_bus_routes_data_in_database import StoreBusRoutesData
 
+# API to fetch bus paths, used by frontend. Result will consist start and stop id of bus stops for different bus trips
+
 class BusPathsAPI(APIView):
     @classmethod
     def get(self, request, store_bus_routes_data = StoreBusRoutesData()):

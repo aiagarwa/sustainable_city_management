@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..fetch_busapi import FetchBusApi
 
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
+# API to fetch locations of bus stops, used by frontend. Result will consist bus stops data -Id, Latitide, longitude.
 
 class BusStopsLocations(APIView):
     @classmethod
@@ -22,7 +22,6 @@ class BusStopsLocations(APIView):
         call_uuid = uuid.uuid4()    
         ID = "BUS_STOPS_INFO"
         result = bus_stops_locations.bus_stand_locations()
-        # If query param doesn't match any condition above.
         return JsonResponse(
             {
                 "API_ID": ID,
