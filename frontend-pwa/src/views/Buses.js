@@ -16,6 +16,7 @@ import {
   FormGroup,
   Label,
   Input,
+  Table
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -251,6 +252,12 @@ class Buses extends React.Component {
       })
       .catch(error => {
         console.error(error);
+        if (localStorage.getItem("buses_trips") != null) {
+          const trips_list = JSON.parse(localStorage.getItem("buses_trips"));
+          this.setState({ busTrips: trips_list });
+          this.setState({ displayMap: 'none' });
+          this.setState({ displayList: 'block' });
+        }
       });
   }
 
@@ -362,7 +369,9 @@ class Buses extends React.Component {
             });
         }
 
+        localStorage.setItem("buses_trips", JSON.stringify(trips_list));
         this.setState({ busTrips: trips_list });
+
         console.log(this.state.busTrips)
         this.drawTrips();
       })
@@ -404,7 +413,9 @@ class Buses extends React.Component {
       bus_paths: {},
       busTripSelected: "",
       busStopsSelected: [],
-      antPathLastLayer: null
+      antPathLastLayer: null,
+      displayMap: 'block',
+      displayList: 'none'
     };
 
     this.mapCreated = this.mapCreated.bind(this);
@@ -471,7 +482,7 @@ class Buses extends React.Component {
     return (
       <>
         <div className="content">
-          <Row>
+          <Row style={{ display: this.state.displayMap }}>
             <Col md="12">
               <Card>
                 <CardHeader>Buses Availability</CardHeader>
@@ -524,6 +535,34 @@ class Buses extends React.Component {
                       )}
                     </MapContainer>
                   </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row style={{ display: this.state.displayList }}>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Buses Trips</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody >
+                      {this.state.busTrips.map(
+                        (
+                          { trip, trip_id, route_id, route_name },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td><b>{trip}</b></td>
+                            <td>{' Route ID: ' + route_id}</td>
+                            <td>{' Route name: ' + route_name}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
                 </CardBody>
               </Card>
             </Col>
