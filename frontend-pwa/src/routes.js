@@ -1,45 +1,11 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Dashboard from "views/Dashboard.js";
-// import Bikes from "views/Bikes.js";
-// import Notifications from "views/Notifications.js";
-import Icons from "views/Icons.js";
 import Bikes from "views/Bikes.js";
-// import Login from "views/Login.js";
 import Buses from "views/Buses.js";
 import Parkings from "views/Parkings";
 import Footfall from "views/Footfall";
 import EmergencyServices from "views/EmergencyServices";
-// import Typography from "views/Typography.js";
-// import TableList from "views/Tables.js";
-// import Maps from "views/Map.js";
-// import UserPage from "views/User.js";
-// import UpgradeToPro from "views/Upgrade.js";
 
 var routes = [
-  // {
-  //   path: "/login",
-  //   name: "Login",
-  //   icon: "fas fa-university",
-  //   component: Login,
-  //   layout: "/admin",
-  // },
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -48,13 +14,6 @@ var routes = [
     layout: "/admin",
     requiresAuth: false,
   },
-  // {
-  //   path: "/bikes",
-  //   name: "Bikes",
-  //   icon: "fas fa-bicycle",
-  //   component: Bikes,
-  //   layout: "/admin",
-  // },
   {
     path: "/bikes",
     name: "Bikes",
@@ -95,47 +54,5 @@ var routes = [
     layout: "/admin",
     requiresAuth: true,
   },
-  // {
-  //   path: "/icons",
-  //   name: "Icons",
-  //   icon: "nc-icon nc-diamond",
-  //   component: Icons,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/maps",
-  //   name: "Maps",
-  //   icon: "nc-icon nc-pin-3",
-  //   component: Maps,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/notifications",
-  //   name: "Notifications",
-  //   icon: "nc-icon nc-bell-55",
-  //   component: Notifications,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/user-page",
-  //   name: "User Profile",
-  //   icon: "nc-icon nc-single-02",
-  //   component: UserPage,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/tables",
-  //   name: "Table List",
-  //   icon: "nc-icon nc-tile-56",
-  //   component: TableList,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/typography",
-  //   name: "Typography",
-  //   icon: "nc-icon nc-caps-small",
-  //   component: Typography,
-  //   layout: "/admin",
-  // },
 ];
 export default routes;

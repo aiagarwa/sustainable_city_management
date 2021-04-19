@@ -15,7 +15,6 @@ import {
   FormGroup,
   Label,
   Input,
-  Table,
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -54,10 +53,7 @@ class Footfall extends React.Component {
 
           // Add markers
           markers.push({
-            position: [
-              areaLocations[location].Lat,
-              areaLocations[location].Lon,
-            ],
+            position: [footfall_LAT, footfall_LON],
             // locations: areaLocation,
             areaName: location,
             FootfallCounts: footfallCounts,
@@ -130,7 +126,7 @@ class Footfall extends React.Component {
     this.setState({ graphLoading: true });
     this.setState({ footfallLocationSelected: location });
 
-    if (location == "Not Selected") {
+    if (location === "Not Selected") {
       const x = [];
       const y = [];
       this.setFootfallGraph(x, y);

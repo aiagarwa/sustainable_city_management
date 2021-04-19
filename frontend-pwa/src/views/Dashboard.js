@@ -1,7 +1,4 @@
 import React from "react";
-// react plugin used to create charts
-// import { Line, Pie } from "react-chartjs-2";
-// reactstrap components
 import {
   Card,
   CardHeader,
@@ -12,7 +9,6 @@ import {
   Col,
 } from "reactstrap";
 import Chart from "react-apexcharts";
-// core components
 import axios from "axios";
 import moment from "moment";
 
@@ -148,16 +144,18 @@ class Dashboard extends React.Component {
   }
 
   populatePopulation(ireland_population, dublin_population) {
-    let x = []
-    let y_ireland = []
-    let y_dublin = []
-    let y_ireland_not_dublin = []
+    let x = [];
+    let y_ireland = [];
+    let y_dublin = [];
+    let y_ireland_not_dublin = [];
 
-    for(let i=0; i<ireland_population.length; i++) {
+    for (let i = 0; i < ireland_population.length; i++) {
       x.push(ireland_population[i].year);
       y_ireland.push(ireland_population[i].population);
       y_dublin.push(dublin_population[i].population);
-      y_ireland_not_dublin.push(ireland_population[i].population - dublin_population[i].population);
+      y_ireland_not_dublin.push(
+        ireland_population[i].population - dublin_population[i].population
+      );
     }
 
     this.setState({
@@ -171,24 +169,24 @@ class Dashboard extends React.Component {
               x: x[x.length - 1],
             },
           ],
-        }
+        },
       },
       series_population: [
         {
           name: "Ireland Population",
           data: y_ireland,
-          color: "blue"
+          color: "blue",
         },
         {
           name: "Ireland Population without Dublin",
           data: y_ireland_not_dublin,
-          color: "orange"
+          color: "orange",
         },
         {
           name: "Dublin Population",
           data: y_dublin,
-          color: "red"
-        }
+          color: "red",
+        },
       ],
 
       graphLoading: false,
@@ -255,18 +253,28 @@ class Dashboard extends React.Component {
           })
           .then((response) => {
             const dublin_population = response.data.DATA.RESULT;
-            console.log(dublin_population)
-            
-            localStorage.setItem("ireland_population", JSON.stringify(ireland_population));
-            localStorage.setItem("dublin_population", JSON.stringify(dublin_population));
+            console.log(dublin_population);
+
+            localStorage.setItem(
+              "ireland_population",
+              JSON.stringify(ireland_population)
+            );
+            localStorage.setItem(
+              "dublin_population",
+              JSON.stringify(dublin_population)
+            );
             this.populatePopulation(ireland_population, dublin_population);
-          })
+          });
       })
       .catch((err) => {
         console.log(err);
         if (localStorage.getItem("dublin_population") != null) {
-          const dublin_population = JSON.parse(localStorage.getItem("dublin_population"));
-          const ireland_population = JSON.parse(localStorage.getItem("ireland_population"));
+          const dublin_population = JSON.parse(
+            localStorage.getItem("dublin_population")
+          );
+          const ireland_population = JSON.parse(
+            localStorage.getItem("ireland_population")
+          );
           this.populatePopulation(ireland_population, dublin_population);
         }
       });
@@ -352,15 +360,6 @@ class Dashboard extends React.Component {
             </Col>
           </Row>
 
-          {/** HISTORICAL - AIR POLLUTION vs POPULATION */}
-          {/**LINKS 
-          https://data.cso.ie/
-          https://www.dublindashboard.ie/themes#environment
-          
-        */}
-
-          <Row></Row>
-
           {/** WEATHER STUFF */}
 
           <Row>
@@ -428,10 +427,6 @@ class Dashboard extends React.Component {
                   </div>
                 </CardBody>
                 <CardFooter>
-                  {/* <div className="chart-legend">
-                      <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                      <i className="fa fa-circle text-warning" /> BMW 5 Series
-                    </div> */}
                   <hr />
                   <div className="card-stats">
                     <i className="fa fa-check" /> Data information certified

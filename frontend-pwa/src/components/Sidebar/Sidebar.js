@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
@@ -23,7 +5,7 @@ import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 
 import logo from "logo.svg";
-import { withAuth0 } from '@auth0/auth0-react';
+import { withAuth0 } from "@auth0/auth0-react";
 
 var ps;
 
@@ -51,60 +33,80 @@ class Sidebar extends React.Component {
     }
   }
   render() {
-    const { isLoading, isAuthenticated, loginWithRedirect, logout } = this.props.auth0;
+    const {
+      isLoading,
+      isAuthenticated,
+      loginWithRedirect,
+      logout,
+    } = this.props.auth0;
 
     let logInOutButton;
     if (isAuthenticated) {
-      logInOutButton = (<li>
-        <a
-          onClick={() => logout()}
-          className="nav-link"
-          activeClassName="active"
-        >
-          <i className="fas fa-user-slash" />
-          <p>Logout</p>
-        </a>
-      </li>)
+      logInOutButton = (
+        <li>
+          <a
+            href
+            onClick={() => logout()}
+            className="nav-link"
+            activeClassName="active"
+          >
+            <i className="fas fa-user-slash" />
+            <p>Logout</p>
+          </a>
+        </li>
+      );
     } else {
-      logInOutButton = (<li>
-        <a
-          onClick={() => loginWithRedirect()}
-          className="nav-link"
-          activeClassName="active"
-        >
-          <i className="fas fa-user-tie" />
-          <p>Login</p>
-        </a>
-      </li>)
+      logInOutButton = (
+        <li>
+          <a
+            href
+            onClick={() => loginWithRedirect()}
+            className="nav-link"
+            activeClassName="active"
+          >
+            <i className="fas fa-user-tie" />
+            <p>Login</p>
+          </a>
+        </li>
+      );
     }
 
-    let nav = <Nav><li><a className="nav-link">Loading...</a></li></Nav>;
+    let nav = (
+      <Nav>
+        <li>
+          <a href className="nav-link">
+            Loading...
+          </a>
+        </li>
+      </Nav>
+    );
     if (!isLoading) {
-      nav = (<Nav>
-        {logInOutButton}
-        {this.props.routes.map((prop, key) => {
-          if (prop.requiresAuth && !isAuthenticated) return;
-  
-          return (
-            <li
-              className={
-                this.activeRoute(prop.path) +
-                (prop.pro ? " active-pro" : "")
-              }
-              key={key}
-            >
-              <NavLink
-                to={prop.layout + prop.path}
-                className="nav-link"
-                activeClassName="active"
+      nav = (
+        <Nav>
+          {logInOutButton}
+          {this.props.routes.map((prop, key) => {
+            if (prop.requiresAuth && !isAuthenticated) return;
+
+            return (
+              <li
+                className={
+                  this.activeRoute(prop.path) + (prop.pro ? " active-pro" : "")
+                }
+                key={key}
               >
-                <i className={prop.icon} />
-                <p>{prop.name}</p>
-              </NavLink>
-            </li>
-          );
-        })}
-      </Nav>);
+                <NavLink
+                  to={prop.layout + prop.path}
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <i className={prop.icon} />
+                  <p>{prop.name}</p>
+                </NavLink>
+              </li>
+            );
+          })}
+        </Nav>
+      );
     }
 
     return (
@@ -114,18 +116,12 @@ class Sidebar extends React.Component {
         data-active-color={this.props.activeColor}
       >
         <div className="logo">
-          <a
-            href="/"
-            className="simple-text logo-mini"
-          >
+          <a href="/" className="simple-text logo-mini">
             <div className="logo-img">
               <img src={logo} alt="react-logo" />
             </div>
           </a>
-          <a
-            href="/"
-            className="simple-text logo-normal"
-          >
+          <a href="/" className="simple-text logo-normal">
             City Manager
           </a>
         </div>
