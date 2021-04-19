@@ -1,40 +1,7 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
-// react plugin used to create google maps
-import Chart from "react-apexcharts";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-// reactstrap components
-import {
-  Card,
-  CardTitle,
-  CardFooter,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Input,
-  Table,
-} from "reactstrap";
+import { Card, CardTitle, CardHeader, CardBody, Row, Col } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -62,7 +29,6 @@ class EmergencyServices extends React.Component {
 
         const markers_health = [];
 
-        // const gardaStations = res.data.DATA.RESULT;
         const healthCentersLocations = res.data.DATA.RESULT;
 
         for (const locations of Object.keys(healthCentersLocations)) {
@@ -93,13 +59,18 @@ class EmergencyServices extends React.Component {
           });
         }
 
-        localStorage.setItem("emergency_services_health", JSON.stringify(markers_health));
+        localStorage.setItem(
+          "emergency_services_health",
+          JSON.stringify(markers_health)
+        );
         this.setState({ markers_health: markers_health });
       })
       .catch((err) => {
         console.log(err);
         if (localStorage.getItem("emergency_services_health") != null) {
-          const markers_health = JSON.parse(localStorage.getItem("emergency_services_health"));
+          const markers_health = JSON.parse(
+            localStorage.getItem("emergency_services_health")
+          );
           this.setState({ markers_health: markers_health });
         }
       });
@@ -140,13 +111,18 @@ class EmergencyServices extends React.Component {
           });
         }
 
-        localStorage.setItem("emergency_services_garda", JSON.stringify(markers_garda));
+        localStorage.setItem(
+          "emergency_services_garda",
+          JSON.stringify(markers_garda)
+        );
         this.setState({ markers_garda: markers_garda });
       })
       .catch((err) => {
         console.log(err);
         if (localStorage.getItem("emergency_services_garda") != null) {
-          const markers_garda = JSON.parse(localStorage.getItem("emergency_services_garda"));
+          const markers_garda = JSON.parse(
+            localStorage.getItem("emergency_services_garda")
+          );
           this.setState({ markers_garda: markers_garda });
         }
       });
@@ -169,13 +145,6 @@ class EmergencyServices extends React.Component {
           const hospitalCenters_ADDRESS =
             hospitalCenters[locations].CENTER_ADDRESS;
 
-          // console.log(gardaStations);
-          // console.log(locations);
-          // console.log(hospitalCentersName);
-          // console.log(hospitalCenters_LAT);
-          // console.log(hospitalCenters_LONG);
-          // console.log(hospitalCenters_ADDRESS);
-
           // Add markers
 
           markers_hospital.push({
@@ -193,68 +162,73 @@ class EmergencyServices extends React.Component {
           });
         }
 
-        localStorage.setItem("emergency_services_hospitals", JSON.stringify(markers_hospital));
+        localStorage.setItem(
+          "emergency_services_hospitals",
+          JSON.stringify(markers_hospital)
+        );
         this.setState({ markers_hospital: markers_hospital });
       })
       .catch((err) => {
         console.log(err);
         if (localStorage.getItem("emergency_services_hospitals") != null) {
-          const markers_hospital = JSON.parse(localStorage.getItem("emergency_services_hospitals"));
+          const markers_hospital = JSON.parse(
+            localStorage.getItem("emergency_services_hospitals")
+          );
           this.setState({ markers_hospital: markers_hospital });
         }
       });
 
-    axios.get("/main/fire_stations/").then(async (res) => {
-      let results = res.data.DATA.RESULT;
-      console.log(results);
+    axios
+      .get("/main/fire_stations/")
+      .then(async (res) => {
+        let results = res.data.DATA.RESULT;
+        console.log(results);
 
-      const markers_fireStations = [];
-      const fireStations = res.data.DATA.RESULT;
+        const markers_fireStations = [];
+        const fireStations = res.data.DATA.RESULT;
 
-      for (const locations of Object.keys(fireStations)) {
-        const fireStationsName = fireStations[locations].STATION_NAME;
+        for (const locations of Object.keys(fireStations)) {
+          const fireStationsName = fireStations[locations].STATION_NAME;
 
-        const fireStations_LAT = fireStations[locations].STATION_LAT;
-        const fireStations_LONG = fireStations[locations].STATION_LON;
+          const fireStations_LAT = fireStations[locations].STATION_LAT;
+          const fireStations_LONG = fireStations[locations].STATION_LON;
 
-        const fireStations_ADDRESS = fireStations[locations].STATION_ADDRESS;
-        const fireStations_PHONE = fireStations[locations].STATION_PHONE;
+          const fireStations_ADDRESS = fireStations[locations].STATION_ADDRESS;
+          const fireStations_PHONE = fireStations[locations].STATION_PHONE;
 
-        // console.log(gardaStations);
-        // console.log(locations);
-        // console.log(hospitalCentersName);
-        // console.log(hospitalCenters_LAT);
-        // console.log(hospitalCenters_LONG);
-        // console.log(hospitalCenters_ADDRESS);
+          // Add markers
 
-        // Add markers
+          markers_fireStations.push({
+            position: [fireStations_LAT, fireStations_LONG],
+            fireStationsName: fireStationsName,
+            fireStationsAddress: fireStations_ADDRESS,
+            fireStationsPhone: fireStations_PHONE,
 
-        markers_fireStations.push({
-          position: [fireStations_LAT, fireStations_LONG],
-          fireStationsName: fireStationsName,
-          fireStationsAddress: fireStations_ADDRESS,
-          fireStationsPhone: fireStations_PHONE,
+            icon: {
+              className: "custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<i class="fas fa-fire-extinguisher fa-2x" style="color:red;"></i>`,
+            },
+          });
+        }
 
-          icon: {
-            className: "custom-pin",
-            iconAnchor: [0, 24],
-            labelAnchor: [-6, 0],
-            popupAnchor: [0, -36],
-            html: `<i class="fas fa-fire-extinguisher fa-2x" style="color:red;"></i>`,
-          },
-        });
-      }
-
-      localStorage.setItem("emergency_services_fire", JSON.stringify(markers_fireStations));
-      this.setState({ markers_fireStations: markers_fireStations });
-    })
-    .catch((err) => {
-      console.log(err);
-      if (localStorage.getItem("emergency_services_fire") != null) {
-        const markers_fireStations = JSON.parse(localStorage.getItem("emergency_services_fire"));
+        localStorage.setItem(
+          "emergency_services_fire",
+          JSON.stringify(markers_fireStations)
+        );
         this.setState({ markers_fireStations: markers_fireStations });
-      }
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("emergency_services_fire") != null) {
+          const markers_fireStations = JSON.parse(
+            localStorage.getItem("emergency_services_fire")
+          );
+          this.setState({ markers_fireStations: markers_fireStations });
+        }
+      });
   }
 
   constructor(props) {

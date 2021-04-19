@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
@@ -37,7 +19,6 @@ import {
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
 
 const iconDefault = L.divIcon({
   className: "custom-pin",
@@ -83,9 +64,7 @@ class Bikes extends React.Component {
 
   async getLiveValues() {
     try {
-      const res = await axios.get(
-        "/main/bikestands_details/?type=live"
-      );
+      const res = await axios.get("/main/bikestands_details/?type=live");
       const bikeStationsLive = res.data.DATA.RESULT;
       return bikeStationsLive;
     } catch (e) {
@@ -120,8 +99,9 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
-              }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${
+              (1 - rgbRatio) * 200 + 50
+            }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
@@ -166,12 +146,15 @@ class Bikes extends React.Component {
         );
         recommendations = recommendations.slice(0, 8);
 
-        localStorage.setItem("bikestands_recommendations", JSON.stringify(recommendations));
+        localStorage.setItem(
+          "bikestands_recommendations",
+          JSON.stringify(recommendations)
+        );
 
         this.setState({ markers });
         this.setState({ recommendations });
-        this.setState({ displayMap: "block" })
-        this.setState({ displayList: "none" })
+        this.setState({ displayMap: "block" });
+        this.setState({ displayList: "none" });
       })
       .catch((err) => {
         console.log(err);
@@ -180,8 +163,8 @@ class Bikes extends React.Component {
             localStorage.getItem("bikestands_stations")
           );
           this.setState({ markers });
-          this.setState({ displayMap: "none" })
-          this.setState({ displayList: "block" })
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
 
         if (localStorage.getItem("bikestands_recommendations") != null) {
@@ -193,9 +176,7 @@ class Bikes extends React.Component {
       });
 
     axios
-      .get(
-        "/main/bikestands_graph/?location_based=no&days_historic=5"
-      )
+      .get("/main/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
         console.log(res.data);
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
@@ -220,9 +201,7 @@ class Bikes extends React.Component {
     this.setState({ graphLoading: true });
     const station = e.target.value;
     axios
-      .get(
-        "/main/bikestands_graph/?location_based=yes&days_historic=5"
-      )
+      .get("/main/bikestands_graph/?location_based=yes&days_historic=5")
       .then((res) => {
         this.setState({ bikeStationSelection: station });
         const x = Object.keys(res.data.DATA.RESULT[station].IN_USE);
@@ -308,10 +287,16 @@ class Bikes extends React.Component {
                 </CardHeader>
                 <CardBody className="card-class">
                   <Table>
-                    <tbody >
+                    <tbody>
                       {this.state.markers.map(
                         (
-                          { position, content, totalStands, inUse, markerColor },
+                          {
+                            position,
+                            content,
+                            totalStands,
+                            inUse,
+                            markerColor,
+                          },
                           idx
                         ) => (
                           <tr key={idx}>
@@ -321,9 +306,11 @@ class Bikes extends React.Component {
                                 style={{ backgroundColor: markerColor }}
                               ></span>
                             </td>
-                            <td><b>{content}</b></td>
-                            <td>{' Bike Stands: ' + totalStands}</td>
-                            <td>{' In use: ' + inUse}</td>
+                            <td>
+                              <b>{content}</b>
+                            </td>
+                            <td>{" Bike Stands: " + totalStands}</td>
+                            <td>{" In use: " + inUse}</td>
                           </tr>
                         )
                       )}
