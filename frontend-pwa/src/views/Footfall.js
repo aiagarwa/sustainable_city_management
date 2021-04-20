@@ -15,6 +15,7 @@ import {
   FormGroup,
   Label,
   Input,
+  Table
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -86,6 +87,8 @@ class Footfall extends React.Component {
             markers: markers,
             locations: locations,
           });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
       });
   }
@@ -173,6 +176,8 @@ class Footfall extends React.Component {
       series: [],
       footfallLocationSelected: "",
       locations: [],
+      displayMap: "block",
+      displayList: "none",
     };
   }
 
@@ -180,7 +185,7 @@ class Footfall extends React.Component {
     return (
       <>
         <div className="content">
-          <Row>
+          <Row style={{ display: this.state.displayMap }}>
             <Col>
               <Card>
                 <CardHeader>
@@ -210,7 +215,7 @@ class Footfall extends React.Component {
                           >
                             <Popup>
                               <p>
-                                <b>{name}</b>
+                                <b>{'FOOTFALLS'}</b>
                               </p>
                               <p>{"Area: " + areaName}</p>
                               <p>{"Footfall Counts: " + FootfallCounts}</p>
@@ -224,6 +229,37 @@ class Footfall extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          <Row style={{ display: this.state.displayList }}>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Footfalls in Dublin</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody>
+                      {this.state.markers.map(
+                        (
+                          { position, name, FootfallCounts, areaName, icon },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td>
+                              <b>{"FOOTFALLS"}</b>
+                            </td>
+                            <td>{"Area: " + areaName}</td>
+                            <td>{"Footfall Counts: " + FootfallCounts}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
           <Row>
             <Col md="12">
               <Card className="card-chart">

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Card, CardTitle, CardHeader, CardBody, Row, Col } from "reactstrap";
+import { Card, CardTitle, CardHeader, CardBody, Row, Col, Table } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -72,6 +72,8 @@ class EmergencyServices extends React.Component {
             localStorage.getItem("emergency_services_health")
           );
           this.setState({ markers_health: markers_health });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
       });
 
@@ -124,6 +126,8 @@ class EmergencyServices extends React.Component {
             localStorage.getItem("emergency_services_garda")
           );
           this.setState({ markers_garda: markers_garda });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
       });
 
@@ -175,6 +179,8 @@ class EmergencyServices extends React.Component {
             localStorage.getItem("emergency_services_hospitals")
           );
           this.setState({ markers_hospital: markers_hospital });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
       });
 
@@ -227,6 +233,8 @@ class EmergencyServices extends React.Component {
             localStorage.getItem("emergency_services_fire")
           );
           this.setState({ markers_fireStations: markers_fireStations });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
       });
   }
@@ -239,6 +247,8 @@ class EmergencyServices extends React.Component {
       markers_hospital: [],
       markers_garda: [],
       markers_fireStations: [],
+      displayMap: "block",
+      displayList: "none",
     };
   }
 
@@ -246,7 +256,7 @@ class EmergencyServices extends React.Component {
     return (
       <>
         <div className="content">
-          <Row>
+          <Row style={{ display: this.state.displayMap }}>
             <Col>
               <Card>
                 <CardHeader>
@@ -357,6 +367,71 @@ class EmergencyServices extends React.Component {
                       )}
                     </MapContainer>
                   </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row style={{ display: this.state.displayList }}>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Emergency Services in Dublin</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody>
+                    {this.state.markers_hospital.map(
+                        (hospitalCenters, idx) => (
+                          <tr key={idx}>
+                          <td>
+                            <b>{'HOSPITALS'}</b>
+                          </td>
+                          <td>{"Name: " + hospitalCenters.hospitalCentersName}</td>
+                          <td>{"Address: " + hospitalCenters.hospitalCentersAddress }</td>
+                        </tr>
+                        )
+                      )}
+
+                      {/** GARDA */}
+                      {this.state.markers_garda.map((gardaStations, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <b>{'Public Protection Service'}</b>
+                          </td>
+                          <td>{"Name: " + gardaStations.GardaStationsName}</td>
+                          <td>{"Address: " + gardaStations.GardaStationsAddress}</td>
+                          <td>{"Contact: " + gardaStations.GardaStationsPhone}</td>
+                        </tr>
+                      ))}
+
+                      {/**HOSPITALS */}
+                      {this.state.markers_health.map((healthCenter, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <b>{'HEALTH CENTERS'}</b>
+                          </td>
+                          <td>{"Name: " + healthCenter.HealthCenterName}</td>
+                          <td>{"Address: " + healthCenter.HealthCenterAddress}</td>
+                          <td>{"Contact: " + healthCenter.HealthCenterPhone}</td>
+                        </tr>
+                      ))}
+
+                      {/** FIRE */}
+                      {this.state.markers_fireStations.map(
+                        (fireStations, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <b>{'FIRE STATIONS'}</b>
+                            </td>
+                            <td>{"Name: " + fireStations.fireStationsName}</td>
+                            <td>{"Address: " + fireStations.fireStationsAddress}</td>
+                            <td>{"Contact: " + fireStations.fireStationsPhone}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
                 </CardBody>
               </Card>
             </Col>
