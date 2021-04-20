@@ -3,7 +3,7 @@ import axios from "axios";
 // react plugin used to create google maps
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 // reactstrap components
-import { Card, CardTitle, CardHeader, CardBody, Row, Col } from "reactstrap";
+import { Card, CardTitle, CardHeader, CardBody, Row, Col, Table } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -287,7 +287,43 @@ class Parkings extends React.Component {
           const parkings_coordinates_dictionary = JSON.parse(
             localStorage.getItem("parkings_locations")
           );
-          this.setParkingMarkers(parkings_coordinates_dictionary);
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
+
+          if (localStorage.getItem("parkings_availability") != null) {
+            const markers_parkings = JSON.parse(
+              localStorage.getItem("parkings_availability")
+            );
+            this.setState({ markers_parkings });
+          }
+
+          if (localStorage.getItem("parkings_movies") != null) {
+            const markers_movies = JSON.parse(
+              localStorage.getItem("parkings_movies")
+            );
+            this.setState({ markers_movies: markers_movies });
+          }
+
+          if (localStorage.getItem("markers_parks") != null) {
+            const markers_parks = JSON.parse(
+              localStorage.getItem("markers_parks")
+            );
+            this.setState({ markers_parks: markers_parks });
+          }
+
+          if (localStorage.getItem("markers_beaches") != null) {
+            const markers_beaches = JSON.parse(
+              localStorage.getItem("markers_beaches")
+            );
+            this.setState({ markers_beaches: markers_beaches });
+          }
+
+          if (localStorage.getItem("markers_playingPitches") != null) {
+            const markers_playingPitches = JSON.parse(
+              localStorage.getItem("markers_playingPitches")
+            );
+            this.setState({ markers_playingPitches: markers_playingPitches });
+          }
         }
       });
   }
@@ -305,6 +341,8 @@ class Parkings extends React.Component {
       markers_parks: [],
       markers_beaches: [],
       markers_playingPitches: [],
+      displayMap: "block",
+      displayList: "none",
     };
   }
 
@@ -312,11 +350,11 @@ class Parkings extends React.Component {
     return (
       <>
         <div className="content">
-          <Row>
+          <Row style={{ display: this.state.displayMap }}>
             <Col>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Parkings Availability</CardTitle>
+                  <CardTitle tag="h5">Parkings</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -330,7 +368,7 @@ class Parkings extends React.Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {/** PARKINGS */}
+                      {/** PARKINGS AVAILABILITY */}
                       {this.state.markers_parkings.map((parking_name, idx) => (
                         <Marker
                           key={`marker-${idx}`}
@@ -339,7 +377,7 @@ class Parkings extends React.Component {
                         >
                           <Popup>
                             <p>
-                              <b>{"PARKINGS"}</b>
+                              <b>{"PARKINGS AVAILABILITY"}</b>
                             </p>
                             <p>{"Area: " + parking_name.area}</p>
                             <p>
@@ -436,6 +474,78 @@ class Parkings extends React.Component {
                       )}
                     </MapContainer>
                   </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row style={{ display: this.state.displayList }}>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Parkings</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody>
+                      {/** PARKINGS AVAILABILITY*/}
+                      {this.state.markers_parkings.map((parking_name, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <b>{'PARKINGS AVAILABILITY'}</b>
+                          </td>
+                          <td>{"Area: " + parking_name.area}</td>
+                          <td>{"Available Spaces: " + (parking_name.availableSpaces === 'undefined' ? 'NA' : 
+                                                                                          parking_name.availableSpaces) }</td>
+                        </tr>
+                      ))}
+
+                      {/** MOVIES PARKINGS */}
+                      {this.state.markers_movies.map((movieParkings, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <b>{'MOVIES PARKINGS'}</b>
+                          </td>
+                          <td>{"Name: " + movieParkings.MovieParkingsName}</td>
+                          <td>{"Address: " + movieParkings.MovieParkingsAddress}</td>
+                        </tr>
+                      ))}
+                      {/** PARKS PARKINGS */}
+                      {this.state.markers_parks.map((parksParkings, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <b>{'PARKS PARKINGS'}</b>
+                          </td>
+                          <td>{"Name: " + parksParkings.ParksParkingsName}</td>
+                          <td>{"Address: " + parksParkings.ParksParkingsAddress}</td>
+                        </tr>
+                      ))}
+
+                      {/** BEACHES PARKINGS */}
+                      {this.state.markers_beaches.map(
+                        (beachesParkings, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <b>{'BEACH PARKINGS'}</b>
+                            </td>
+                            <td>{"Name: " + beachesParkings.BeachesParkingsName}</td>
+                          </tr>
+                        )
+                      )}
+                      {/**PITCHES PARKINGS */}
+                      {this.state.markers_playingPitches.map(
+                        (playingPitchesParkings, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <b>{'PLAYING PITCH PARKINGS'}</b>
+                            </td>
+                            <td>{"Name: " + playingPitchesParkings.playingPitchesParkingsName}</td>
+                            <td>{"Type: " + playingPitchesParkings.playingPitchesParkingsType}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
                 </CardBody>
               </Card>
             </Col>
