@@ -73,6 +73,7 @@ class Footfall extends React.Component {
           this.setState({
             markers: markers,
             locations: locations,
+            footfallLoading: false
           });
         }
       })
@@ -86,6 +87,7 @@ class Footfall extends React.Component {
           this.setState({
             markers: markers,
             locations: locations,
+            footfallLoading: false
           });
           this.setState({ displayMap: "none" });
           this.setState({ displayList: "block" });
@@ -178,6 +180,7 @@ class Footfall extends React.Component {
       locations: [],
       displayMap: "block",
       displayList: "none",
+      footfallLoading: true
     };
   }
 
@@ -189,7 +192,16 @@ class Footfall extends React.Component {
             <Col>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Footfalls in Dublin</CardTitle>
+                  <CardTitle tag="h5">
+                    Footfalls in Dublin{" "}
+                    <i
+                      style={{
+                        display: this.state.footfallLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i></CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">

@@ -251,7 +251,10 @@ class Buses extends React.Component {
             });
           }
         }
-        this.setState({ busStops: busStops_list });
+        this.setState({
+          busStops: busStops_list ,
+          graphLoading: false
+        });
 
         this.populateTrips();
       })
@@ -466,7 +469,10 @@ class Buses extends React.Component {
     this.setState({ busTripSelected: trip_name });
 
     if (trip === "Not Selected") {
-      this.setState({ busStopsSelected: [] });
+      this.setState({
+        busStopsSelected: [],
+        graphLoading: false
+      });
       return;
     }
 
@@ -475,6 +481,8 @@ class Buses extends React.Component {
         this.drawPathForTrip(i);
       }
     }
+
+    this.setState({graphLoading: false});
   };
 
   /**
@@ -497,7 +505,19 @@ class Buses extends React.Component {
           <Row style={{ display: this.state.displayMap }}>
             <Col md="12">
               <Card>
-                <CardHeader>Buses Availability</CardHeader>
+                <CardHeader>
+                <CardTitle tag="h5">
+                    Buses Trips{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
+                </CardHeader>
                 <CardBody>
                   <FormGroup row>
                     <Col sm={12} md={4}>

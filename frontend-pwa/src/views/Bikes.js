@@ -241,7 +241,17 @@ class Bikes extends React.Component {
             <Col md="9" style={{ display: this.state.displayMap }}>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                  <CardTitle tag="h5">
+                    Bikes Usage{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                    </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
