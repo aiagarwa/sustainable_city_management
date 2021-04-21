@@ -53,7 +53,10 @@ class Parkings extends React.Component {
           "parkings_availability",
           JSON.stringify(markers_parkings)
         );
-        this.setState({ markers_parkings });
+        this.setState({
+          markers_parkings,
+          graphLoading: false
+        });
       })
       .catch((err) => {
         console.error(err);
@@ -61,7 +64,10 @@ class Parkings extends React.Component {
           const markers_parkings = JSON.parse(
             localStorage.getItem("parkings_availability")
           );
-          this.setState({ markers_parkings });
+          this.setState({
+            markers_parkings,
+            graphLoading: false
+          });
         }
       });
 
@@ -343,6 +349,7 @@ class Parkings extends React.Component {
       markers_playingPitches: [],
       displayMap: "block",
       displayList: "none",
+      graphLoading: true
     };
   }
 
@@ -354,7 +361,17 @@ class Parkings extends React.Component {
             <Col>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Parkings</CardTitle>
+                  <CardTitle tag="h5">
+                    Parkings{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">

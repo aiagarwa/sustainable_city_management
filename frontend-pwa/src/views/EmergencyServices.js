@@ -16,11 +16,32 @@ const iconDefault = L.divIcon({
 L.Marker.prototype.options.icon = iconDefault;
 
 class EmergencyServices extends React.Component {
-  catch(e) {
-    console.log(e);
-  }
-
   async componentDidMount() {
+    if (localStorage.getItem("emergency_services_health") != null) {
+      const markers_health = JSON.parse(
+        localStorage.getItem("emergency_services_health")
+      );
+      this.setState({ markers_health: markers_health });
+    }
+    if (localStorage.getItem("emergency_services_fire") != null) {
+      const markers_fireStations = JSON.parse(
+        localStorage.getItem("emergency_services_fire")
+      );
+      this.setState({ markers_fireStations: markers_fireStations });
+    }
+    if (localStorage.getItem("emergency_services_garda") != null) {
+      const markers_garda = JSON.parse(
+        localStorage.getItem("emergency_services_garda")
+      );
+      this.setState({ markers_garda: markers_garda });
+    }
+    if (localStorage.getItem("emergency_services_hospitals") != null) {
+      const markers_hospital = JSON.parse(
+        localStorage.getItem("emergency_services_hospitals")
+      );
+      this.setState({ markers_hospital: markers_hospital });
+    }
+
     axios
       .get("/main/health_centers/")
       .then(async (res) => {
@@ -63,7 +84,10 @@ class EmergencyServices extends React.Component {
           "emergency_services_health",
           JSON.stringify(markers_health)
         );
-        this.setState({ markers_health: markers_health });
+        this.setState({
+          markers_health: markers_health ,
+          graphLoading: false
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -73,7 +97,10 @@ class EmergencyServices extends React.Component {
           );
           this.setState({ markers_health: markers_health });
           this.setState({ displayMap: "none" });
-          this.setState({ displayList: "block" });
+          this.setState({
+            displayList: "block",
+            graphLoading: false
+          });
         }
       });
 
@@ -249,6 +276,7 @@ class EmergencyServices extends React.Component {
       markers_fireStations: [],
       displayMap: "block",
       displayList: "none",
+      graphLoading: true
     };
   }
 
@@ -260,7 +288,17 @@ class EmergencyServices extends React.Component {
             <Col>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Emergency Services in Dublin</CardTitle>
+                  <CardTitle tag="h5">
+                    Emergency Services in Dublin{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">

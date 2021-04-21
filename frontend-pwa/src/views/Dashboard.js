@@ -79,7 +79,8 @@ class Dashboard extends React.Component {
         colors: ["#ff7300"],
       },
       series_humidity: [],
-      graphLoading: false,
+      graphLoadingWeather: false,
+      graphLoadingPopulation: false,
     };
   }
 
@@ -139,7 +140,7 @@ class Dashboard extends React.Component {
         },
       ],
 
-      graphLoading: false,
+      graphLoadingWeather: false,
     });
   }
 
@@ -189,13 +190,14 @@ class Dashboard extends React.Component {
         },
       ],
 
-      graphLoading: false,
+      graphLoadingPopulation: false,
     });
   }
 
   componentDidMount() {
     this.setState({
-      graphLoading: true,
+      graphLoadingWeather: true,
+      graphLoadingPopulation: true
     });
 
     axios
@@ -238,6 +240,16 @@ class Dashboard extends React.Component {
         }
       });
 
+    if (localStorage.getItem("dublin_population") != null) {
+      const dublin_population = JSON.parse(
+        localStorage.getItem("dublin_population")
+      );
+      const ireland_population = JSON.parse(
+        localStorage.getItem("ireland_population")
+      );
+      this.populatePopulation(ireland_population, dublin_population);
+      return;
+    }
     axios
       .request({
         method: "GET",
@@ -268,15 +280,6 @@ class Dashboard extends React.Component {
       })
       .catch((err) => {
         console.log(err);
-        if (localStorage.getItem("dublin_population") != null) {
-          const dublin_population = JSON.parse(
-            localStorage.getItem("dublin_population")
-          );
-          const ireland_population = JSON.parse(
-            localStorage.getItem("ireland_population")
-          );
-          this.populatePopulation(ireland_population, dublin_population);
-        }
       });
   }
 
@@ -313,7 +316,7 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i>{" "}
+                    {/*<i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw"></i>{" "}*/}
                     Updated
                     <p>
                       {this.state.weatherInfo &&
@@ -348,7 +351,7 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}
+                    {/*<i className="fas fa-sync-alt fa-spin fa-1.5x fa-fw" />{" "}*/}
                     Updated
                     <p>
                       {this.state.weatherInfo &&
@@ -370,7 +373,7 @@ class Dashboard extends React.Component {
                     Temperature Forecast{" "}
                     <i
                       style={{
-                        display: this.state.graphLoading
+                        display: this.state.graphLoadingWeather
                           ? "inline-block"
                           : "none",
                       }}
@@ -407,7 +410,7 @@ class Dashboard extends React.Component {
                     Humidity Forecast{" "}
                     <i
                       style={{
-                        display: this.state.graphLoading
+                        display: this.state.graphLoadingWeather
                           ? "inline-block"
                           : "none",
                       }}
@@ -446,7 +449,7 @@ class Dashboard extends React.Component {
                     Population Correlation{" "}
                     <i
                       style={{
-                        display: this.state.graphLoading
+                        display: this.state.graphLoadingPopulation
                           ? "inline-block"
                           : "none",
                       }}
