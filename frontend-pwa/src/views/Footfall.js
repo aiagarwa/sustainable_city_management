@@ -15,7 +15,7 @@ import {
   FormGroup,
   Label,
   Input,
-  Table
+  Table,
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -73,7 +73,7 @@ class Footfall extends React.Component {
           this.setState({
             markers: markers,
             locations: locations,
-            footfallLoading: false
+            footfallLoading: false,
           });
         }
       })
@@ -87,7 +87,7 @@ class Footfall extends React.Component {
           this.setState({
             markers: markers,
             locations: locations,
-            footfallLoading: false
+            footfallLoading: false,
           });
           this.setState({ displayMap: "none" });
           this.setState({ displayList: "block" });
@@ -180,7 +180,7 @@ class Footfall extends React.Component {
       locations: [],
       displayMap: "block",
       displayList: "none",
-      footfallLoading: true
+      footfallLoading: true,
     };
   }
 
@@ -201,7 +201,8 @@ class Footfall extends React.Component {
                           : "none",
                       }}
                       className="fas fa-sync-alt fa-spin fa-1x fa-fw"
-                    ></i></CardTitle>
+                    ></i>
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -227,10 +228,16 @@ class Footfall extends React.Component {
                           >
                             <Popup>
                               <p>
-                                <b>{'FOOTFALLS'}</b>
+                                <b>{"FOOTFALLS"}</b>
                               </p>
                               <p>{"Area: " + areaName}</p>
-                              <p>{"Footfall Counts: " + FootfallCounts}</p>
+                              <p>
+                                {
+                                  "Average hourly Footfall counts in the last 24 hrs: "
+                                }
+                                <br />
+                                <strong>{FootfallCounts + " Counts"}</strong>
+                              </p>
                             </Popup>
                           </Marker>
                         )
@@ -261,7 +268,11 @@ class Footfall extends React.Component {
                               <b>{"FOOTFALLS"}</b>
                             </td>
                             <td>{"Area: " + areaName}</td>
-                            <td>{"Average Hourly Footfall count Today: " + FootfallCounts}</td>
+                            <td>
+                              {"Average hourly Footfall counts in the last 24 hrs: " +
+                                FootfallCounts +
+                                " Counts"}
+                            </td>
                           </tr>
                         )
                       )}
