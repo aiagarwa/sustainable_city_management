@@ -261,7 +261,7 @@ class Footfall extends React.Component {
                               <b>{"FOOTFALLS"}</b>
                             </td>
                             <td>{"Area: " + areaName}</td>
-                            <td>{"Footfall Counts: " + FootfallCounts}</td>
+                            <td>{"Average Hourly Footfall count Today: " + FootfallCounts}</td>
                           </tr>
                         )
                       )}
