@@ -197,7 +197,7 @@ class Dashboard extends React.Component {
   componentDidMount() {
     this.setState({
       graphLoadingWeather: true,
-      graphLoadingPopulation: true
+      graphLoadingPopulation: true,
     });
 
     axios
@@ -218,6 +218,20 @@ class Dashboard extends React.Component {
         this.setState({ weatherInfoExtraTemp_max: weatherInfoExtraTemp_max });
         this.setState({ weatherTimeStamp: weatherTimeStamp });
         this.setState({ windSpeedInfo: windSpeedInfo });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+
+    axios
+      .request({
+        method: "GET",
+        url:
+          "https://api.openweathermap.org/data/2.5/air_pollution?lat=53.3498&lon=-6.2603&appid=d50542e129f589c12a362e67f91906fe",
+      })
+      .then((response) => {
+        const AqiInfo = response.data.list[0].main.aqi;
+        this.setState({ AqiInfo: AqiInfo });
       })
       .catch((error) => {
         alert(error.message);
