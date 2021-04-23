@@ -7,6 +7,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import {
   Card,
   CardTitle,
+  CardSubtitle,
   CardFooter,
   CardHeader,
   CardBody,
@@ -127,9 +128,8 @@ class Bikes extends React.Component {
           if (ratioInUse >= 0.9) {
             recommendations.push({
               color: ratioInUse >= 0.95 ? "red" : "orange",
-              text: `${Math.trunc(
-                ratioInUse * 100
-              )}% of bikes are used at ${station}`,
+              percentageInUse: Math.trunc(ratioInUse * 100),
+              station: station
             });
           }
         }
@@ -198,8 +198,18 @@ class Bikes extends React.Component {
   }
 
   onChangeBikeStation = (e) => {
+    this.selectBikeStation(e.target.value);
+  };
+
+  onClickBikeStation = (e) => {
+    e.preventDefault();
+    console.log(e.target.innerText);
+    this.selectBikeStation(e.target.innerText);
+    document.getElementById("chart-bikes-usage").scrollIntoView({behavior: "smooth", block: "end"});
+  }
+  
+  selectBikeStation = (station) => {
     this.setState({ graphLoading: true });
-    const station = e.target.value;
     axios
       .get("/main/bikestands_graph/?location_based=yes&days_historic=5")
       .then((res) => {
@@ -212,7 +222,7 @@ class Bikes extends React.Component {
         console.log(err);
         this.setState({ graphLoading: false });
       });
-  };
+  }
 
   constructor(props) {
     super(props);
@@ -252,6 +262,7 @@ class Bikes extends React.Component {
                       className="fas fa-sync-alt fa-spin fa-1x fa-fw"
                     ></i>
                     </CardTitle>
+                  <CardSubtitle>Real-time</CardSubtitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -271,6 +282,7 @@ class Bikes extends React.Component {
                           idx
                         ) => (
                           <Marker
+                            id={`marker-bike-station-${content}`}
                             key={`marker-${idx}`}
                             position={position}
                             icon={L.divIcon(icon)}
@@ -333,13 +345,14 @@ class Bikes extends React.Component {
               <Card id="recommendations">
                 <CardHeader>
                   <CardTitle tag="h5">Recommendations</CardTitle>
+                  <CardSubtitle>Real-time</CardSubtitle>
                   <div style={{ opacity: 0.6 }}>
                     <p className="mb-0">
                       <span
                         className="dot mr-2"
                         style={{ backgroundColor: "red" }}
                       ></span>
-                      Consider adding new stands
+                      Consider adding bikes
                     </p>
                     <p>
                       <span
@@ -354,7 +367,7 @@ class Bikes extends React.Component {
                   <Table>
                     <tbody>
                       {this.state.recommendations.map(
-                        ({ color, text }, key) => (
+                        ({ color, percentageInUse, station }, key) => (
                           <tr key={key}>
                             <td>
                               <span
@@ -362,7 +375,7 @@ class Bikes extends React.Component {
                                 style={{ backgroundColor: color }}
                               ></span>
                             </td>
-                            <td>{text}</td>
+                            <td>{percentageInUse}% of bikes are used at <a href="#" onClick={this.onClickBikeStation}>{station}</a></td>
                           </tr>
                         )
                       )}
@@ -373,7 +386,7 @@ class Bikes extends React.Component {
             </Col>
           </Row>
 
-          <Row>
+          <Row id="chart-bikes-usage">
             <Col md="12">
               <Card className="card-chart">
                 <CardHeader>
@@ -389,7 +402,7 @@ class Bikes extends React.Component {
                     ></i>
                   </CardTitle>
                   <p className="card-category">
-                    Evolution of bikes usage over time
+                    Evolution of bikes usage over time and future predictions
                   </p>
                 </CardHeader>
                 <CardBody>
