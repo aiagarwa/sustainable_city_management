@@ -385,8 +385,19 @@ class Buses extends React.Component {
           });
         }
 
-        localStorage.setItem("buses_trips", JSON.stringify(trips_list));
-        this.setState({ busTrips: trips_list });
+        let uniqueRoutes = new Set();
+        let trips_list_filtered = []
+        for(let i=0; i<trips_list.length; i++) {
+          let route_id = trips_list[i].route_id;
+          if(!uniqueRoutes.has(route_id)) {
+            uniqueRoutes.add(route_id);
+            trips_list[i].trip = 'trip_' + uniqueRoutes.size;
+            trips_list_filtered.push(trips_list[i]);
+          }
+        }
+
+        localStorage.setItem("buses_trips", JSON.stringify(trips_list_filtered));
+        this.setState({ busTrips: trips_list_filtered });
 
         console.log(this.state.busTrips);
         this.drawTrips();
