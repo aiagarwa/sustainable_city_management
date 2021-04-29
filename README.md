@@ -6,13 +6,11 @@ This is an interesting project that we assigned to complete as a part of course 
 
 # Pre-requisite Steps:
 
-Make a directory, say sustainable_city_managment.
+Clone the Gitlab repository:
 ```
-mkdir sustainable_city_managment
 git clone https://gitlab.scss.tcd.ie/fleschb/sustainable-city-management.git
-virtualenv -p python .
-source bin/activate
 ```
+The project has been tested with Python >= 3.6.
 # [Sustainable City Management - Front End](https://demos.creative-tim.com/paper-dashboard-react/#/dashboard) 
 
 # Important notes
