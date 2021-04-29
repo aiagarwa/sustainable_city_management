@@ -22,7 +22,7 @@ source bin/activate
     - `$> yarn install`
     - `$> yarn start`
 
-![Dashboard Video](.frontend-pwa/src/assets/github/Media1.mp4)
+![Dashboard Video](./frontend-pwa/src/assets/github/Media1.mp4)
 
 The above inserted video gives a glimpse of our user interface dashboard developed for the completeion of Sustainable City Management Project. We made use of Paper Dashboard React which is a Bootstrap Admin Panel which combines soft colours with beautiful typography and spacious cards and graphics.
 
@@ -51,7 +51,7 @@ These functionality include,
 ## Versions
 
 |Application Version | 
-[<img src="./frontend-pwa/SCM_logo.png" width="60" height="60" />]Version :1.0[Final]
+| [<img src="./frontend-pwa/SCM_logo.png" width="60" height="60" />]Version :1.0 |
 
 | HTML Used Version | React Used Version |
 | --- | --- |
@@ -61,7 +61,7 @@ These functionality include,
 
 | Dashboard | Bikes | Buses  | Parkings | Emergency Services | Footfalls |
 | --- | --- | --- | --- | --- |
-| [![Dashboard page](.frontend-pwa/src/assets/github/pic1.PNG)] | [![Bikes page](.frontend-pwa/src/assets/github/pic2.png)] | [![Buses page ](.frontend-pwa/src/assets/github/pic3.png)] | [![Parkings Page](.frontend-pwa/src/assets/github/pic4.png)] | [![Emergency Services page](.frontend-pwa/src/assets/github/pic5.png)] |  [![Footfalls Page](.frontend-pwa/src/assets/github/pic6.png)]
+| [![Dashboard page](./frontend-pwa/src/assets/github/pic1.PNG)] | [![Bikes page](./frontend-pwa/src/assets/github/pic2.png)] | [![Buses page ](./frontend-pwa/src/assets/github/pic3.png)] | [![Parkings Page](./frontend-pwa/src/assets/github/pic4.png)] | [![Emergency Services page](./frontend-pwa/src/assets/github/pic5.png)] |  [![Footfalls Page](./frontend-pwa/src/assets/github/pic6.png)]
 
 [View More(Live Demo)](https://)
 
