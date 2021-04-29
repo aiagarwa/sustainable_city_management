@@ -42,16 +42,17 @@ These functionality include,
 * [Versions](#versions)
 * [Demo](#demo)
 * [Quick Start](#quick-start)
-* [Documentation [Fronten-end]](#documentation-frontend)
-* [File Structure[Front-end]](#file-structure-frontend)
+* [Documentation Front_End](#documentation-frontend)
+* [File Structure Front_End](#file-structure-frontend)
 * [Browser Support](#browser-support)
-* [Useful Links [Frontend]](#useful-links-frontend)
+* [Useful Links Front_End](#useful-links-frontend)
 
 
 ## Versions
 
 |Application Version | 
-| [<img src="./frontend-pwa/SCM_logo.png" width="60" height="60" />]Version :1.0 |
+| --- |
+| [<img src="./frontend-pwa/SCM_logo.png" width="60" height="60" />] Version :1.0 |
 
 | HTML Used Version | React Used Version |
 | --- | --- |
@@ -60,8 +61,8 @@ These functionality include,
 ## Demo
 
 | Dashboard | Bikes | Buses  | Parkings | Emergency Services | Footfalls |
-| --- | --- | --- | --- | --- |
-| [![Dashboard page](./frontend-pwa/src/assets/github/pic1.PNG)] | [![Bikes page](./frontend-pwa/src/assets/github/pic2.png)] | [![Buses page ](./frontend-pwa/src/assets/github/pic3.png)] | [![Parkings Page](./frontend-pwa/src/assets/github/pic4.png)] | [![Emergency Services page](./frontend-pwa/src/assets/github/pic5.png)] |  [![Footfalls Page](./frontend-pwa/src/assets/github/pic6.png)]
+| --- | --- | --- | --- | --- | --- |
+| [![Dashboard page](./frontend-pwa/src/assets/github/pic1.PNG)]() | [![Bikes page](./frontend-pwa/src/assets/github/pic2.PNG)]() | [![Buses page ](./frontend-pwa/src/assets/github/pic3.PNG)]() | [![Parkings Page](./frontend-pwa/src/assets/github/pic4.PNG)]() | [![Emergency Services page](./frontend-pwa/src/assets/github/pic5.PNG)]() |  [![Footfalls Page](./frontend-pwa/src/assets/github/pic6.PNG)]() |
 
 [View More(Live Demo)](https://)
 
@@ -81,11 +82,11 @@ Quick start options:
 - On succesfully signed in, the main dashboard will be displayed.  
 
 
-## Documentation [Fronten-end]
+## Documentation Fronten-end
 The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/folders/1I2l6W3_I7wzpv2OcQOL-1KvZzZpxgOUw?usp=sharing).
 
 
-## File Structure[Front-end]
+## File Structure Front-end
 
 Within the download you'll find the following directories and files with frontend-pwa folder:
 
@@ -165,7 +166,7 @@ Within the download you'll find the following directories and files with fronten
 
 At present, we officially aim to support the last two versions of the following browsers:
 
-<img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/chrome.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/firefox.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/edge.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/safari.png" width="64" height="64"> <img src="https://s3.
+<img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/chrome.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/firefox.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/edge.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/safari.png" width="64" height="64">
 
 ## Useful Links [Frontend]
 
@@ -183,10 +184,10 @@ Tutorials: <https://reactjs.org/>
 
 * [Storage](#storage)
 * [Restfull API Links and its usage](#API_Links)
-* [Documentation[Backend]](#documentation-backend)
-* [File Structure[Backend]](#file-structure-backend)
+* [Documentation Backend](#documentation-backend)
+* [File Structure Backend](#file-structure-backend)
 * [Test](#test)
-* [Run Server](#steps)
+* [Run Server](#server)
 * [Useful Links Backend](#useful-links-backend)
 
 ## Storage
@@ -244,11 +245,11 @@ Tutorials: <https://reactjs.org/>
         - Use  http://127.0.0.1:8000/main/footfall_overall/ for collecting live footfalls around major streets in dublin.
         - Use  http://127.0.0.1:8000footfall_datebased/?days_interval=6&location="name" for collecting predicted footfall for next six days.
 
-## Documentation[Backend]
+## Documentation Backend
 
 - The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/folders/1I2l6W3_I7wzpv2OcQOL-1KvZzZpxgOUw?usp=sharing).
 
-## File Structure[Backend]
+## File Structure Backend
 
 - Within the download you'll find the following directories and files with frontend-pwa folder:
 
