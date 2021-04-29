@@ -9,16 +9,23 @@ This is an interesting project that we assigned to complete as a part of course 
 Clone the Gitlab repository:
 ```
 git clone https://gitlab.scss.tcd.ie/fleschb/sustainable-city-management.git
+cd sustainable-city-management/sustainableCityManagement
+pip install -r requirements.txt
 ```
 The project has been tested with Python >= 3.6.
-# [Sustainable City Management - Front End](https://demos.creative-tim.com/paper-dashboard-react/#/dashboard) 
+Requires Node minimum version of 14.15.4 (LTS).
 
-# Important notes
-- For frontend we made use of standalone React frame work, instead of django environment because to avoid dependency issue between frontend and backend.
-- Requires Node minimum version of 14.15.4 (LTS)
-- Launch React:
-    - `$> yarn install`
-    - `$> yarn start`
+## Quick start
+
+Quick start options:
+
+- From the project folder, navigate to folder sustainableCityManagement.
+- run `python manage.py runserver --noreload` [To run the backend server]
+- From the project folder, navigate to folder frontend-pwa.
+- run `yarn install`
+- run `yarn start` [To run the frontend development server]
+
+# Sustainable City Management - Front End
 
 ![Dashboard Video](./frontend-pwa/src/assets/github/Media1.mp4)
 
@@ -39,7 +46,6 @@ These functionality include,
 
 * [Versions](#versions)
 * [Demo](#demo)
-* [Quick Start](#quick-start)
 * [Documentation Front_End](#documentation-frontend)
 * [File Structure Front_End](#file-structure-frontend)
 * [Browser Support](#browser-support)
@@ -65,22 +71,7 @@ These functionality include,
 [View More(Live Demo)](https://)
 
 
-## Quick start
-
-Quick start options:
-
-- `npm i paper-dashboard-react`
-- Clone the repo: `git clone git@gitlab.scss.tcd.ie:fleschb/sustainable-city-management.git`.
-- [Download from Github](https://gitlab.scss.tcd.ie/fleschb/sustainable-city-management/-/tree/dev/).
-- Navigate to folder frontend-pwa.
-- run yarn/npm install
-- run yarn/npm start [To run the frontend server]
-- The above command will open the website on local server port:3000. 
-- Next click the login button and register if you are a new user/ sig in as existing user.
-- On succesfully signed in, the main dashboard will be displayed.  
-
-
-## Documentation Fronten-end
+## Documentation Front-end
 The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/folders/1I2l6W3_I7wzpv2OcQOL-1KvZzZpxgOUw?usp=sharing).
 
 
@@ -296,7 +287,7 @@ Tutorials: <https://reactjs.org/>
 ```
 ## Test
 - To test the code and its functionality
-    - run  python manage.py tests test
+    - run `python manage.py tests test`
     - It will run all the test cases created and output the results.
 
 ## Run Server
