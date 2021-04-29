@@ -9,21 +9,23 @@ This is an interesting project that we assigned to complete as a part of course 
 Clone the Gitlab repository:
 ```
 git clone https://gitlab.scss.tcd.ie/fleschb/sustainable-city-management.git
-cd sustainable-city-management/sustainableCityManagement
-pip install -r requirements.txt
 ```
 The project has been tested with Python >= 3.6.
 Requires Node minimum version of 14.15.4 (LTS).
 
 ## Quick start
 
-Quick start options:
+Quick start local:
 
 - From the project folder, navigate to folder sustainableCityManagement.
+- run `pip install -r requirements.txt`
 - run `python manage.py runserver --noreload` [To run the backend server]
 - From the project folder, navigate to folder frontend-pwa.
 - run `yarn install`
 - run `yarn start` [To run the frontend development server]
+
+or you can access the online version here:
+[Online Version](https://ase.bfles.ch/)
 
 # Sustainable City Management - Front End
 
