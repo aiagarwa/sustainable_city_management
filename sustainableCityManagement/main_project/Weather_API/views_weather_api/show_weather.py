@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..weather_call import FetchWeatherApi
 
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
+# API to fetch weather information used by frontend. The result consist of weather information of past few days and prediction for next few days
 
 class ShowWeatherApi(APIView):
     @classmethod

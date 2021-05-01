@@ -16,14 +16,14 @@ config_vals = read_config("Parkings_API")
 
 
 class StoreParkingsData:
-
+# Method gets the live parking data from from parkings spaces API (default timespan: ~5 minutes)
     def get_parkings_spaces_availability_live(self):
         url = config_vals["api_url"]
         response = requests.request("GET", url)
         parkingSpaces = ET.fromstring(response.text)
         return parkingSpaces
 
-    # This method fetch the live data from parkings spaces API (default timespan: ~5 minutes)
+    # This method srores the relevant parking data in DB
     def store_parking_spaces_availability_live(self):
         try:
             parkingSpaces = self.get_parkings_spaces_availability_live()
@@ -67,6 +67,7 @@ class StoreParkingsData:
 
         return ParkingsAvailability.objects(updateTimestamp__gte=start_date, updateTimestamp__lte=end_date)
 
+ # Fetch historical data of parkings availaility from db
     def fetch_data_from_db_historical(self, dateFrom, dateTo):
         # For each day between dateFrom and dateTo, fetch "fetch_data_from_db_for_day"
         res = []
@@ -107,6 +108,7 @@ class StoreParkingsData:
 
         return res
 
+#  Set data range
     def daterange(self, start_date, end_date):
         for n in range(int((end_date - start_date).days) + 1):
             yield start_date + timedelta(n)

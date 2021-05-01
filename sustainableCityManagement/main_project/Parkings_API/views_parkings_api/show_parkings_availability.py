@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..fetch_parkingsapi import FetchParkingsApi
 
+# API to fetch parkings availability used by frontend. The result consist of parkings availability count and parking name
 class ParkingsAvailability(APIView):
     @classmethod
     def get(self, request, parkings = FetchParkingsApi()):

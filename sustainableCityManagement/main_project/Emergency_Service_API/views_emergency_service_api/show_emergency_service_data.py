@@ -13,9 +13,8 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..fetch_emergency_service import FetchEmergencyServiceApi
 
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
 
-
+# API to fetch fires stations used by frontend. The result consist of name, address, phone, email, service type, latitide and longitude.
 class FireStations(APIView):
     @classmethod
     def get(self, request, fire_stations=FetchEmergencyServiceApi()):
@@ -34,7 +33,7 @@ class FireStations(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
-
+# API to fetch health centers used by frontend. The result consist of name, address, phone, latitude and longitude
 class HealthCenters(APIView):
     @classmethod
     def get(self, request, health_centers=FetchEmergencyServiceApi()):
@@ -54,6 +53,7 @@ class HealthCenters(APIView):
         )
 
 
+# API to fetch fires stations used by frontend. The result consist of name, address, phone, division of stations, latitide and longitude.
 class GardaStations(APIView):
     @classmethod
     def get(self, request, garda_stations=FetchEmergencyServiceApi()):
@@ -72,7 +72,7 @@ class GardaStations(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
-
+# API to fetch health centers used by frontend. The result consist of name, address, latitude and longitude
 class Hospitals(APIView):
     @classmethod
     def get(self, request, hospitals=FetchEmergencyServiceApi()):

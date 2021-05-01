@@ -9,10 +9,7 @@ import time as time
 import pandas as pd
 from main_project.Logs.service_logs import emergency_service_log
 
-# connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest",
-#         alias="default")
-
-
+# Structure of collection storing Firestations details
 class FireStations(Document):
     station_name = StringField(max_length=200, unique=True)
     station_address = StringField(max_length=200)
@@ -24,7 +21,7 @@ class FireStations(Document):
     meta = {'collection': 'Fire_Service'
             }
 
-
+# Structure of collection storing Health Centers details
 class HealthCenters(Document):
     center_name = StringField(max_length=200, unique=True)
     center_address = StringField(max_length=200)
@@ -35,7 +32,7 @@ class HealthCenters(Document):
     meta = {'collection': 'Health_Centers'
             }
 
-
+# Structure of collection storing Garda Stations details
 class GardaStations(Document):
     station = StringField(max_length=200)
     station_address = StringField(max_length=200)
@@ -47,7 +44,7 @@ class GardaStations(Document):
     meta = {'collection': 'Garda_Station'
             }
 
-
+# Structure of collection storing Hospitals details
 class Hospitals(Document):
     center_name = StringField(max_length=200, unique=True)
     center_address = StringField(max_length=200)
@@ -62,14 +59,15 @@ class StoreServiceData:
         self.logger = emergency_service_log()
         self.pd = pd
 
+# Method reads the csv file containing the information of fire stations and return the list of details of fire stations
     def read_fire_stations(self):
         readfile = []
         self.logger.info("Reading fire stations file")
         with open("../sustainableCityManagement/main_project/Emergency_Service_API/resources/fcc_fire_stations_dublin.csv", "r", encoding="utf8") as f:
-            # with open("./resources/fcc_fire_stations_dublin.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
+# Method stores the relevant fire stations information in Database
     def store_fire_stations(self):
         readfile = self.read_fire_stations()
         self.logger.info("Storing fire stations Data in DB")
@@ -86,9 +84,10 @@ class StoreServiceData:
             except:
                 pass
 
+# Method fetches the fire stations information from Database and returns list of fire stations details
     def fetch_fire_station_informations(self, locationName="all"):
         q_set = FireStations.objects()  # Fetch Data from DB
-        # Converts the Processed Bus Data from DB into JSON format
+        # Converts the Fire stations Data from DB into JSON format
         json_data = q_set.to_json()
         fire_stations = json.loads(json_data)
         if fire_stations is None:
@@ -97,14 +96,16 @@ class StoreServiceData:
             self.logger.info("Retrieved fire stations from DB")
         return fire_stations
 
+
+# Method reads the csv file containing the information of health centers and return the list of details of health centers
     def read_health_centers(self):
         readfile = []
         self.logger.info("Reading health centers file")
         with open("../sustainableCityManagement/main_project/Emergency_Service_API/resources/fcc_health_centers_dublin.csv", "r", encoding="utf8") as f:
-            # with open("./resources/fcc_health_centers_dublin.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
+# Method stores the relevant health centers information in Database
     def store_health_centers(self):
         readfile = self.read_health_centers()
         self.logger.info("Storing health centers Data in DB")
@@ -120,9 +121,10 @@ class StoreServiceData:
             except:
                 pass
 
+# Method fetches the health centers information from Database and returns list of health centers details
     def fetch_health_center_informations(self, locationName="all"):
         q_set = HealthCenters.objects()  # Fetch Data from DB
-        # Converts the Processed Bus Data from DB into JSON format
+        # Converts the Health Centers Data from DB into JSON format
         json_data = q_set.to_json()
         health_centers = json.loads(json_data)
         if health_centers is None:
@@ -131,14 +133,16 @@ class StoreServiceData:
             self.logger.info("Retrieved health centers from DB")
         return health_centers
 
+
+# Method reads the csv file containing the information of garda stations and return the list of details of garda stations
     def read_garda_stations(self):
         readfile = []
         self.logger.info("Reading Garda Stations file")
         with open("../sustainableCityManagement/main_project/Emergency_Service_API/resources/garda_stations_dublin.csv", "r", encoding="utf8") as f:
-            # with open("./resources/garda_stations_dublin.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
+# Method stores the relevant garda stations information in Database
     def store_garda_stations(self):
         readfile = self.read_garda_stations()
         self.logger.info("Storing Garda stations Data in DB")
@@ -148,6 +152,7 @@ class StoreServiceData:
             garda_stations.save()
         return garda_stations
 
+# Method fetches the garda stations information from Database and returns list of garda stations details
     def fetch_garda_station_informations(self):
         q_set = GardaStations.objects()  # Fetch Data from DB
         # Converts the Processed Bus Data from DB into JSON format
@@ -159,17 +164,18 @@ class StoreServiceData:
             self.logger.info("Retrieved Bus Trips from DB")
         return garda_stations
 
+# Method reads the csv file containing the information of hospitals and return the list of details of hospitals
     def read_hospitals(self):
         readfile = []
-        self.logger.info("Reading Garda Stations file")
+        self.logger.info("Reading Hospitals file")
         with open("../sustainableCityManagement/main_project/Emergency_Service_API/resources/list_of_hospitals_in_ireland.csv", "r", encoding="utf8") as f:
-            # with open("./resources//list_of_hospitals_in_ireland.csv", "r", encoding="utf8") as f:
             readfile = list(csv.reader(f))
         return readfile
 
+# Method stores the relevant hospitals information in Database
     def store_hospitals(self):
         readfile = self.read_hospitals()
-        self.logger.info("Storing Garda stations Data in DB")
+        self.logger.info("Storing Hospitals Data in DB")
         for i in range(1, len(readfile)):
             if "Dublin" in readfile[i][1]:
                 hospitals_data = Hospitals(center_name=readfile[i][0],
@@ -181,13 +187,14 @@ class StoreServiceData:
                 except:
                     pass
 
+# Method fetches the hospitals information from Database and returns list of garda stations details
     def fetch_hospital_informations(self):
         q_set = Hospitals.objects()  # Fetch Data from DB
-        # Converts the Processed Bus Data from DB into JSON format
+        # Converts the Processed Hospitals Data from DB into JSON format
         json_data = q_set.to_json()
         hospitals_data = json.loads(json_data)
         if hospitals_data is None:
-            self.logger.error('Bus Trips data is not retrieved from DB')
+            self.logger.error('Hospitals data is not retrieved from DB')
         else:
-            self.logger.info("Retrieved Bus Trips from DB")
+            self.logger.info("Retrieved Hospitals Data from DB")
         return hospitals_data

@@ -9,7 +9,7 @@ from ..Config.config_handler import read_config
 
 config_vals = read_config("Bike_API")
 
-
+# Time Series Prediction algorithm to predict the bike usage for days ahead
 def predict_bikes_usage(arrayOfUsagePerDay, predictDays=1, previous_days_to_consider=config_vals["days_to_consider_for_prediction"]):
     X = []
     y = []

@@ -9,7 +9,7 @@ from ..Config.config_handler import read_config
 
 config_vals = read_config("Footfall_API")
 
-
+# Time Series Prediction algorithm to predict the avaerage footfall count for days ahead
 def predict_footfall(arrayOfFootfallData, predictDays=1, previous_days_to_consider=config_vals["days_to_consider_for_prediction"]):
     X = []
     y = []

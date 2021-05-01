@@ -13,8 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..store_recreational_locations_in_db import StoreRecreationalPlacesParkingsData
 
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
-
+# API to fetch parkings near cinemas used by frontend. The result consist of cinema name, latitude and longitude, list of 5 nearby parkings with latitude and longitudes.
 
 class CinemasParkings(APIView):
     @classmethod
@@ -34,6 +33,7 @@ class CinemasParkings(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
+# API to fetch parkings near beaches used by frontend. The result consist of beaches name, latitude and longitude, list of 5 nearby parkings with latitude and longitudes.
 class BeachesParkings(APIView):
     @classmethod
     def get(self, request, beaches_parkings=StoreRecreationalPlacesParkingsData()):
@@ -52,6 +52,7 @@ class BeachesParkings(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
+# API to fetch parkings near parks used by frontend. The result consist of park name, latitude and longitude, list of 5 nearby parkings with latitude and longitudes.
 class ParksParkings(APIView):
     @classmethod
     def get(self, request, parks_parkings=StoreRecreationalPlacesParkingsData()):
@@ -70,6 +71,7 @@ class ParksParkings(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
+# API to fetch parkings near playing pitches used by frontend. The result consist of playing pitches name, latitude and longitude, list of 5 nearby parkings with latitude and longitudes.
 class PlayingPitchesParkings(APIView):
     @classmethod
     def get(self, request, playing_pitches_parkings=StoreRecreationalPlacesParkingsData()):
