@@ -5,6 +5,7 @@ from .store_population import StorePopulation
 import time as processTiming
 import uuid
 
+# API to fetch Ireland population used by frontend. The result consist of population estimate and year.
 class IrelandPopulationView(APIView):
     @classmethod
     def get(self, request, fetch_population=StorePopulation()):
@@ -23,6 +24,7 @@ class IrelandPopulationView(APIView):
                 "TIMESTAMP": "{} seconds".format(float(round(processTiming.time() - startTime, 2)))}
         )
 
+# API to fetch Dublin population used by frontend. The result consist of population estimate and year.
 class DublinPopulationView(APIView):
     @classmethod
     def get(self, request, fetch_population=StorePopulation()):

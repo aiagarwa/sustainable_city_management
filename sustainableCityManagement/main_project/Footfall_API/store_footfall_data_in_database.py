@@ -12,8 +12,6 @@ from ..Config.config_handler import read_config
 
 config_vals = read_config("Footfall_API")
 
-# connect(host="mongodb://127.0.0.1:27017/sustainableCityManagementTest", alias="default")
-
 
 class StoreFootfallData:
     def __init__(self):
@@ -21,12 +19,12 @@ class StoreFootfallData:
         self.df = None
         self.end_date = None
 
+# Method reads the csv file containing the information of footfalls and return the list of details of footfalls
     def read_footfall(self):
         readfile = []
         not_reqd_columns = []
         self.df = pd.read_csv(
             "../sustainableCityManagement/main_project/Footfall_API/resources/pedestrian_footfall.csv")
-        # self.df = pd.read_csv("./resources/pedestrian_footfall.csv")
         columns = list(self.df.columns)
         for item in columns:
             if " IN" in item or " OUT" in item:
@@ -34,6 +32,7 @@ class StoreFootfallData:
         self.df = self.df.drop(not_reqd_columns, axis=1)
         return self.df
 
+# Method calculates the average number of footfalls 
     def calculate_average_footfall_overall(self):
         df_temp = self.read_footfall()
         mean_dict = {}
@@ -45,6 +44,7 @@ class StoreFootfallData:
             mean_dict[columns[i]] = int(meanVals[i])
         return mean_dict
 
+# Method calculates the average number of footfalls per day 
     def calculate_average_footfall_date_based(self):
         df_temp = self.read_footfall()
         mean_dict = {}
@@ -65,6 +65,7 @@ class StoreFootfallData:
                     date, "%Y-%m-%d")] = int(df.loc[df.Time == str(date), location])
         return(mean_dict)
 
+# Method stores the average number of footfalls in DB
     def store_footfall_overall(self):
         footfall_overall_data = self.calculate_average_footfall_overall()
 
@@ -76,8 +77,7 @@ class StoreFootfallData:
             except:
                 pass
 
-# This method gets the data from API for a single day and store in DB.
-
+# Method stores the locations where footfall sensors are installed in DB
     def store_footfall_locations(self):
         footfall_overall_data = self.calculate_average_footfall_overall()
         # try:
@@ -87,13 +87,8 @@ class StoreFootfallData:
                 location.save()
             except:
                 pass
-        #     # logger.info(
-        #     #     'Bike stand locations for Bike Usage stored into DB successfully.')
-        # except:
-        #     logger.exception(
-        #         'Storing bike stand location for Bike Usage into DB failed!')
-        #     raise
 
+# Method stores the average number of footfalls per day in DB
     def store_footfall_data_datebased(self):
         fetched_footfall_data = self.calculate_average_footfall_date_based()
         for location in fetched_footfall_data:
@@ -106,9 +101,8 @@ class StoreFootfallData:
                     footfall_locations.footfall_data.append(reqd_data)
                 footfall_locations.save()  # Saves Footfall Availability Data
 
+# Method fetches the footfall information for a single day from Database and returns it as list
     def fetch_data_from_db_for_day(self, startDate, endDate):
-        # start_date_str = startDate.strftime("%Y-%m-%dT00:00:00Z")
-        # end_date_str = endDate.strftime("%Y-%m-%dT00:00:00Z")
         start_date = datetime.strptime(startDate, "%Y-%m-%d")
         end_date = datetime.strptime(endDate, "%Y-%m-%d")
         pipeline = [
@@ -130,12 +124,14 @@ class StoreFootfallData:
         list_q_set = list(q_set)
         return list_q_set
 
+# Method fetches overall footfall information from Database and returns it as list
     def fetch_footfall_overall(self):
         q_set = FootfallOverall.objects()  # Fetch Data from DB
         json_data = q_set.to_json()
         locations = json.loads(json_data)
         return locations
 
+# Method fetches the footfall information for the latest day from Database and returns it as list
     def get_last_date(self, reqd_location):
         pipeline = [
             {
@@ -155,6 +151,7 @@ class StoreFootfallData:
             "%Y-%m-%d")
         return(self.end_date)
 
+# Method fetches the footfall predictions for the next day from Database and returns it as list
     def fetch_data_from_db_with_prediction(self, days_interval, reqd_location):
         end_date = self.get_last_date(reqd_location)
         start_date = datetime.strftime(datetime.strptime(
@@ -180,13 +177,3 @@ class StoreFootfallData:
             *pipeline)  # Fetch Data from DB
         list_q_set = list(q_set)
         return list_q_set, end_date
-
-
-# a = StoreFootfallData()
-# print(a.fetch_data_from_db_with_prediction())
-# a.store_footfall_locations()
-# a.store_footfall_overall()
-# a.store_footfall_data_datebased()
-
-# print(a.fetch_data_from_db_for_day("2021-03-03","2021-03-04"))
-# print(a.fetch_footfall_overall())

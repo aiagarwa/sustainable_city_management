@@ -3,11 +3,13 @@ from main_project.Logs.service_logs import population_log
 import csv
 import json
 
+# Structure of collection storing Ireland Population data
 class IrelandPopulation(Document):
     year = IntField(unique=True)
     population = IntField()
     meta = {'collection': 'Population_Ireland'}
 
+# Structure of collection storing Dublin Population data
 class DublinPopulation(Document):
     year = IntField(unique=True)
     population = IntField()
@@ -17,6 +19,7 @@ class StorePopulation():
     def __init__(self):
         self.logger = population_log()
 
+# Method reads the population information from csv and returns it as list
     def read_population(self):
         readfile_dublin = []
         readfile_ireland = []
@@ -27,6 +30,7 @@ class StorePopulation():
             readfile_ireland = list(csv.reader(f))
         return readfile_dublin, readfile_ireland
 
+# Method stores the population information in Database
     def store_population(self):
         readfile_dublin, readfile_ireland = self.read_population()
         self.logger.info("Storing population Data in DB")
@@ -43,6 +47,7 @@ class StorePopulation():
             except:
                 pass
 
+# Method fetches and returns the Irish Population from Database
     def fetch_irish_population(self):
         q_set = IrelandPopulation.objects()  # Fetch Data from DB
         # Converts the Processed Population Data from DB into JSON format
@@ -54,6 +59,7 @@ class StorePopulation():
             self.logger.info("Retrieved population from DB")
         return population
 
+# Method fetches and returns the Dublin population information from Database
     def fetch_dublin_population(self):
         q_set = DublinPopulation.objects()  # Fetch Data from DB
         # Converts the Processed Population Data from DB into JSON format

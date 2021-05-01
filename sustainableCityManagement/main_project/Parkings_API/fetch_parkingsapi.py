@@ -1,27 +1,17 @@
 import sys
-# from ..Logs.service_logs import bus_log
 from .store_parkingsdata_to_database import StoreParkingsData
-# from ..Config.config_handler import read_config
 from datetime import datetime, timedelta
 import copy
-# from collections import Counter
-# import collections
 import json
 
-# Calling logging function for bike _API
-# logger = bike_log()
-
-# Calling Config values for processing api.
-# config_vals = read_config("Bus_API")
-# if config_vals is None:
-#     logger.error('No data retrieved from config files.')
 
 # Function for fetching the data from the URL (Change delay to adjust the duration to fetch data).
 
 class FetchParkingsApi:
     def __init__(self):
         self.parkingsApiObj = StoreParkingsData()
-    
+
+     # Structure the parkings availability data in required format to send it to frontend   
     def parkings_availability(self, startdate, enddate):
         # Parse datetime
         if startdate:
@@ -45,6 +35,7 @@ class FetchParkingsApi:
         else:
             return []
 
+# This method returns the Parking name, area and latitude and longitude
     def parkings_locations(self):
         return [
             {

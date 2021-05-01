@@ -69,7 +69,7 @@ class StoreBusRoutesData:
             except:
                 pass
 
-# Method fetcges the bus routes information from Database and returns it
+# Method fetches the bus routes information from Database and returns it
     def fetch_busroutes(self):
         q_set = BusRoutes.objects()  # Fetch Data from DB
         json_data = q_set.to_json()
@@ -150,7 +150,8 @@ class StoreBusRoutesData:
                 coordinate_obj = Coordinate(lat = coordinate[0], lon = coordinate[1])
                 bus_path.coordinates.append(coordinate_obj)
             bus_path.save()
-    
+
+  # Methods fetches bus path details from db and return as list  
     def fetch_bus_paths(self):
         q_set = BusPath.objects()  # Fetch Data from DB
         # Converts the Processed Bus Data from DB into JSON format
