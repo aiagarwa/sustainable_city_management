@@ -16,7 +16,7 @@ class FetchWeatherApi:
         now_date = str(datetime.today()).split(" ")[0]
         current_time = datetime.now()
         current_time = str(current_time.strftime("%Y-%m-%dT%H:%M:%SZ"))
-        url = "%s?location=53.42952351654325,-6.248555851275721&fields=temperature&startTime=%s&fields=humidity&fields=weatherCode&units=metric&timesteps=1d&apikey=%s"%(url,current_time,apiKey)
+        url = "%s?location=53.42952351654325,-6.248555851275721&fields=temperature&startTime=%s&fields=humidity&fields=weatherCode&units=metric&timesteps=1d&apikey=%s"%(api_url,current_time,apiKey)
         tmp_result = []
         fetched_data = {}
         weatherCodes = {0: "Unknown",1000: "Clear",1001: "Cloudy",1100: "Mostly Clear",1101: "Partly Cloudy",
