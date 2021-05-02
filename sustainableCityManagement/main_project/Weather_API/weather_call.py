@@ -8,7 +8,7 @@ from collections import Counter
 import collections
 import json
 
-config_vals = read_config("Footfall_API")
+config_vals = read_config("Weather_API")
 api_url = config_vals["api_url"]
 apiKey = config_vals["api_key_value"]
 class FetchWeatherApi:
