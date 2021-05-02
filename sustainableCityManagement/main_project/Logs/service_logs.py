@@ -6,6 +6,7 @@ logger_bus = None
 logger_app = None
 logger_emergency = None
 logger_parkings = None
+logger_population = None
 
 
 def bike_log():  # Creating custom logger to store logging information.
@@ -39,6 +40,12 @@ def parkings_log():  # Creating custom logger to store logging information.
     if logger_parkings is None:
         logger_parkings = create_logger('parkings')
     return logger_parkings
+
+def population_log():  # Creating custom logger to store logging information.
+    global logger_population
+    if logger_population is None:
+        logger_population = create_logger('population_api')
+    return logger_population
 
 def create_logger(file_name):
     logger = logging.getLogger(file_name)

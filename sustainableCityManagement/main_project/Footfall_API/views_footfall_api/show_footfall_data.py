@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..fetch_footfallapi import FootfallApi
 
-# API to fetch bike data -> Historical, live and locations are fetched through this API.
+# API to fetch footfall data per day used by frontend. The result consist of location, average footfall count for a day.
 
 class FootfallDatebasedData(APIView):
     @classmethod
@@ -35,7 +35,7 @@ class FootfallDatebasedData(APIView):
         )
 
 
-
+# API to fetch footfall data per day used by frontend. The result consist of location, average footfall overall for a location.
 class FootfallOverallData(APIView):
     @classmethod
     def get(self, request, footfall_overall_data = FootfallApi()):

@@ -1,5 +1,6 @@
 from mongoengine import *
 
+# Structure of collection storing Parks data
 class Parks(Document):
     park_name = StringField(max_length=200, unique=True)
     park_address = StringField(max_length=200)
@@ -10,6 +11,7 @@ class Parks(Document):
     meta = {'collection': 'Parks_Locations'
             }
 
+# Structure of collection storing Beaches data
 class Beaches(Document):
     beach_name = StringField(max_length=200, unique=True)
     beach_id = IntField()
@@ -19,6 +21,7 @@ class Beaches(Document):
     meta = {'collection': 'Beach_Locations'
             }
 
+# Structure of collection storing Cinemas data
 class Cinemas(Document):
     cinema_name = StringField(max_length=200, unique=True)
     cinema_address = StringField(max_length=200)
@@ -28,6 +31,7 @@ class Cinemas(Document):
     meta = {'collection': 'Cinemas_Locations'
             }
 
+# Structure of collection storing Playing Pitches data
 class PlayingPitches(Document):
     facility_name = StringField(max_length=200, unique=True)
     facility_type = StringField(max_length=200)

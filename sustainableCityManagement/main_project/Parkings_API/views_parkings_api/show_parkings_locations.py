@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import render
 from ..fetch_parkingsapi import FetchParkingsApi
 
+# API to fetch parkings locations used by frontend. The result consist of parking name, latitude and longitude.
 class ParkingsLocations(APIView):
     @classmethod
     def get(self, request, parkings = FetchParkingsApi()):

@@ -1,40 +1,5 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
-import { Link } from "react-router-dom";
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Container,
-  InputGroup,
-  InputGroupText,
-  InputGroupAddon,
-  Input,
-} from "reactstrap";
+import { Navbar, NavbarBrand, Container } from "reactstrap";
 import { Offline, Online } from "react-detect-offline";
 import routes from "routes.js";
 
@@ -143,69 +108,13 @@ class Header extends React.Component {
               {this.getBrand()}
               &nbsp;
               <Online>
-                <i class="fas fa-wifi" style={{color: "green"}}></i>
+                <i class="fas fa-wifi" style={{ color: "green" }}></i>
               </Online>
               <Offline>
-                <i class="fas fa-wifi" style={{color: "red"}}></i>
+                <i class="fas fa-wifi" style={{ color: "red" }}></i>
               </Offline>
             </NavbarBrand>
           </div>
-          <NavbarToggler onClick={this.toggle}>
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-          </NavbarToggler>
-          <Collapse
-            isOpen={this.state.isOpen}
-            navbar
-            className="justify-content-end"
-          >
-            <form>
-              <InputGroup className="no-border">
-                <Input placeholder="Search..." />
-                <InputGroupAddon addonType="append">
-                  <InputGroupText>
-                    <i className="nc-icon nc-zoom-split" />
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-            </form>
-            <Nav navbar>
-              <NavItem>
-                <Link to="#pablo" className="nav-link btn-magnify">
-                  <i className="nc-icon nc-layout-11" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Stats</span>
-                  </p>
-                </Link>
-              </NavItem>
-              <Dropdown
-                nav
-                isOpen={this.state.dropdownOpen}
-                toggle={(e) => this.dropdownToggle(e)}
-              >
-                <DropdownToggle caret nav>
-                  <i className="nc-icon nc-bell-55" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Some Actions</span>
-                  </p>
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem tag="a">Action</DropdownItem>
-                  <DropdownItem tag="a">Another Action</DropdownItem>
-                  <DropdownItem tag="a">Something else here</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-              <NavItem>
-                <Link to="#pablo" className="nav-link btn-rotate">
-                  <i className="nc-icon nc-settings-gear-65" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Account</span>
-                  </p>
-                </Link>
-              </NavItem>
-            </Nav>
-          </Collapse>
         </Container>
       </Navbar>
     );

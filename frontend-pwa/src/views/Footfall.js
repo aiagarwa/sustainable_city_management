@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
@@ -55,26 +37,24 @@ class Footfall extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("/main/footfall_overall/").then(
-      async (res) => {
+    axios
+      .get("/main/footfall_overall/")
+      .then(async (res) => {
         console.log(res.data);
         let { markers } = this.state;
 
         const areaLocations = res.data.DATA.RESULT;
 
-        let locations = []
+        let locations = [];
         for (const location of Object.keys(areaLocations)) {
-          locations.push(location)
+          locations.push(location);
           const footfallCounts = areaLocations[location].Footfall;
           const footfall_LAT = areaLocations[location].Lat;
           const footfall_LON = areaLocations[location].Lon;
 
           // Add markers
           markers.push({
-            position: [
-              areaLocations[location].Lat,
-              areaLocations[location].Lon,
-            ],
+            position: [footfall_LAT, footfall_LON],
             // locations: areaLocation,
             areaName: location,
             FootfallCounts: footfallCounts,
@@ -92,22 +72,27 @@ class Footfall extends React.Component {
           localStorage.setItem("footfall_locations", JSON.stringify(locations));
           this.setState({
             markers: markers,
-            locations: locations
+            locations: locations,
+            footfallLoading: false,
           });
         }
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-      if (localStorage.getItem("footfall_locations") != null) {
-        const markers = JSON.parse(localStorage.getItem("footfall_markers"));
-        const locations = JSON.parse(localStorage.getItem("footfall_locations"));
-        this.setState({
-          markers: markers,
-          locations: locations
-        });
-      }
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (localStorage.getItem("footfall_locations") != null) {
+          const markers = JSON.parse(localStorage.getItem("footfall_markers"));
+          const locations = JSON.parse(
+            localStorage.getItem("footfall_locations")
+          );
+          this.setState({
+            markers: markers,
+            locations: locations,
+            footfallLoading: false,
+          });
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
+        }
+      });
   }
 
   setFootfallGraph(x, y) {
@@ -146,32 +131,35 @@ class Footfall extends React.Component {
     this.setState({ graphLoading: true });
     this.setState({ footfallLocationSelected: location });
 
-    if(location == "Not Selected") {
+    if (location === "Not Selected") {
       const x = [];
       const y = [];
       this.setFootfallGraph(x, y);
       return;
     }
 
-    axios.get(
-        "/main/footfall_datebased/?days_interval=6&location=" + location
-      )
+    axios
+      .get("/main/footfall_datebased/?days_interval=6&location=" + location)
       .then((res) => {
-        let result = res.data.DATA.RESULT
+        let result = res.data.DATA.RESULT;
         const x = Object.keys(result[location]);
         const y = Object.values(result[location]);
 
-        localStorage.setItem("footfall_graph_x"+location, JSON.stringify(x));
-        localStorage.setItem("footfall_graph_y"+location, JSON.stringify(y));
+        localStorage.setItem("footfall_graph_x" + location, JSON.stringify(x));
+        localStorage.setItem("footfall_graph_y" + location, JSON.stringify(y));
         this.setFootfallGraph(x, y);
       })
       .catch((err) => {
         console.log(err);
         this.setState({ graphLoading: false });
 
-        if (localStorage.getItem("footfall_graph_y"+location) != null) {
-          const x = JSON.parse(localStorage.getItem("footfall_graph_x"+location));
-          const y = JSON.parse(localStorage.getItem("footfall_graph_y"+location));
+        if (localStorage.getItem("footfall_graph_y" + location) != null) {
+          const x = JSON.parse(
+            localStorage.getItem("footfall_graph_x" + location)
+          );
+          const y = JSON.parse(
+            localStorage.getItem("footfall_graph_y" + location)
+          );
           this.setFootfallGraph(x, y);
         }
       });
@@ -189,7 +177,10 @@ class Footfall extends React.Component {
       },
       series: [],
       footfallLocationSelected: "",
-      locations: []
+      locations: [],
+      displayMap: "block",
+      displayList: "none",
+      footfallLoading: true,
     };
   }
 
@@ -197,11 +188,21 @@ class Footfall extends React.Component {
     return (
       <>
         <div className="content">
-          <Row>
+          <Row style={{ display: this.state.displayMap }}>
             <Col>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Footfalls in Dublin</CardTitle>
+                  <CardTitle tag="h5">
+                    Footfalls in Dublin{" "}
+                    <i
+                      style={{
+                        display: this.state.footfallLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -227,10 +228,16 @@ class Footfall extends React.Component {
                           >
                             <Popup>
                               <p>
-                                <b>{name}</b>
+                                <b>{"FOOTFALLS"}</b>
                               </p>
                               <p>{"Area: " + areaName}</p>
-                              <p>{"Footfall Counts: " + FootfallCounts}</p>
+                              <p>
+                                {
+                                  "Average hourly Footfall counts in the last 24 hrs: "
+                                }
+                                <br />
+                                <strong>{FootfallCounts + " Counts"}</strong>
+                              </p>
                             </Popup>
                           </Marker>
                         )
@@ -241,6 +248,41 @@ class Footfall extends React.Component {
               </Card>
             </Col>
           </Row>
+
+          <Row style={{ display: this.state.displayList }}>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Footfalls in Dublin</CardTitle>
+                </CardHeader>
+                <CardBody className="card-class">
+                  <Table>
+                    <tbody>
+                      {this.state.markers.map(
+                        (
+                          { position, name, FootfallCounts, areaName, icon },
+                          idx
+                        ) => (
+                          <tr key={idx}>
+                            <td>
+                              <b>{"FOOTFALLS"}</b>
+                            </td>
+                            <td>{"Area: " + areaName}</td>
+                            <td>
+                              {"Average hourly Footfall counts in the last 24 hrs: " +
+                                FootfallCounts +
+                                " Counts"}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
           <Row>
             <Col md="12">
               <Card className="card-chart">
@@ -271,10 +313,8 @@ class Footfall extends React.Component {
                         value={this.state.footfallLocationSelected}
                       >
                         <option>Not Selected</option>
-                        {this.state.locations.map(
-                          ((location, index) => (
-                            <option key={index}>{location}</option>
-                          )
+                        {this.state.locations.map((location, index) => (
+                          <option key={index}>{location}</option>
                         ))}
                       </Input>
                     </Col>

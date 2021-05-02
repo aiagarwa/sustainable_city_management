@@ -5,6 +5,7 @@ from main_project.Bus_API.store_bus_routes_data_in_database import StoreBusRoute
 from main_project.Footfall_API.store_footfall_data_in_database import StoreFootfallData
 from main_project.Parkings_API.store_parkingsdata_to_database import StoreParkingsData
 from main_project.Emergency_Service_API.store_emergency_service_data_in_database import StoreServiceData
+from main_project.Population_API.store_population import StorePopulation
 from main_project.Parkings_Recreational_Places_API.store_recreational_locations_in_db import StoreRecreationalPlacesParkingsData
 from main_project.Logs.service_logs import app_log
 from mongoengine import *
@@ -15,8 +16,8 @@ import environ
 
 # Initialise environment variables
 env = environ.Env()
-# environ.Env.read_env(env_file="config/dev.env")
-environ.Env.read_env(env_file="config/prod.env")
+environ.Env.read_env(env_file="config/dev.env")
+# environ.Env.read_env(env_file="config/prod.env")
 
 
 def save_raw_bikedata_to_database():
@@ -93,7 +94,7 @@ def save_parkings_data_to_database():
     In = "yes"
     store_parkings_data_to_database = StoreParkingsData()
     if In == "yes":
-        store_parkings_data_to_database.get_parkings_spaces_availability_live()
+        store_parkings_data_to_database.store_parking_spaces_availability_live()
     else:
         logger.error('Storing raw data in DB failed because of key(yes) error')
         pass
@@ -129,6 +130,10 @@ def save_emergency_services_data_to_database():
     store_emergency_services.store_health_centers()
     store_emergency_services.store_hospitals()
 
+def save_population_to_database():
+    store_population = StorePopulation()
+    store_population.store_population()
+
 def init():
     connect(
         host=env('DATABASE_URI'), alias=env('DATABASE_ALIAS'))
@@ -140,3 +145,4 @@ def init():
     # save_parkings_data_to_database()
     # save_emergency_services_data_to_database()
     # save_recreational_places_parkings_data_to_database()
+    # save_population_to_database()

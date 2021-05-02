@@ -11,6 +11,7 @@ class FetchEmergencyServiceApi:
         self.logger = emergency_service_log()
         self.pd = pd
 
+    # Structure the fire stations data in required format to send it to frontend
     def fire_stations_data(self, fireStationObj=StoreServiceData()):
         result_response = {}
         all_stations = fireStationObj.fetch_fire_station_informations(self)
@@ -28,6 +29,7 @@ class FetchEmergencyServiceApi:
             counter += 1
         return result_response
 
+ # Structure the health centers data in required format to send it to frontend
     def health_centers_data(self, healthCentersObj=StoreServiceData()):
         result_response = {}
         counter = 0
@@ -43,6 +45,7 @@ class FetchEmergencyServiceApi:
             counter += 1
         return result_response
 
+ # Structure the garda stations data in required format to send it to frontend
     def garda_stations_data(self, gardaStationsObj=StoreServiceData()):
         result_response = {}
         counter = 0
@@ -60,6 +63,7 @@ class FetchEmergencyServiceApi:
             counter += 1
         return result_response
 
+ # Structure the hospitals data in required format to send it to frontend
     def hospitals_data(self, hospitalsObj=StoreServiceData()):
         result_response = {}
         counter = 0

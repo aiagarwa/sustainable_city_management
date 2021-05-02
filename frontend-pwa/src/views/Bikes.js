@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import axios from "axios";
 // react plugin used to create google maps
@@ -25,6 +7,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import {
   Card,
   CardTitle,
+  CardSubtitle,
   CardFooter,
   CardHeader,
   CardBody,
@@ -37,7 +20,6 @@ import {
 } from "reactstrap";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
 
 const iconDefault = L.divIcon({
   className: "custom-pin",
@@ -83,9 +65,7 @@ class Bikes extends React.Component {
 
   async getLiveValues() {
     try {
-      const res = await axios.get(
-        "/main/bikestands_details/?type=live"
-      );
+      const res = await axios.get("/main/bikestands_details/?type=live");
       const bikeStationsLive = res.data.DATA.RESULT;
       return bikeStationsLive;
     } catch (e) {
@@ -120,8 +100,9 @@ class Bikes extends React.Component {
             typeof bikesInUse === "number"
           ) {
             const rgbRatio = Math.ceil((bikesInUse / totalStands) * 4) / 4;
-            markerColor = `rgb(${rgbRatio * 255}, ${(1 - rgbRatio) * 200 + 50
-              }, ${(1 - rgbRatio) * 80})`;
+            markerColor = `rgb(${rgbRatio * 255}, ${
+              (1 - rgbRatio) * 200 + 50
+            }, ${(1 - rgbRatio) * 80})`;
           }
 
           // Add markers
@@ -147,9 +128,8 @@ class Bikes extends React.Component {
           if (ratioInUse >= 0.9) {
             recommendations.push({
               color: ratioInUse >= 0.95 ? "red" : "orange",
-              text: `${Math.trunc(
-                ratioInUse * 100
-              )}% of bikes are used at ${station}`,
+              percentageInUse: Math.trunc(ratioInUse * 100),
+              station: station
             });
           }
         }
@@ -166,12 +146,15 @@ class Bikes extends React.Component {
         );
         recommendations = recommendations.slice(0, 8);
 
-        localStorage.setItem("bikestands_recommendations", JSON.stringify(recommendations));
+        localStorage.setItem(
+          "bikestands_recommendations",
+          JSON.stringify(recommendations)
+        );
 
         this.setState({ markers });
         this.setState({ recommendations });
-        this.setState({ displayMap: "block" })
-        this.setState({ displayList: "none" })
+        this.setState({ displayMap: "block" });
+        this.setState({ displayList: "none" });
       })
       .catch((err) => {
         console.log(err);
@@ -180,8 +163,8 @@ class Bikes extends React.Component {
             localStorage.getItem("bikestands_stations")
           );
           this.setState({ markers });
-          this.setState({ displayMap: "none" })
-          this.setState({ displayList: "block" })
+          this.setState({ displayMap: "none" });
+          this.setState({ displayList: "block" });
         }
 
         if (localStorage.getItem("bikestands_recommendations") != null) {
@@ -193,9 +176,7 @@ class Bikes extends React.Component {
       });
 
     axios
-      .get(
-        "/main/bikestands_graph/?location_based=no&days_historic=5"
-      )
+      .get("/main/bikestands_graph/?location_based=no&days_historic=5")
       .then((res) => {
         console.log(res.data);
         const x = Object.keys(res.data.DATA.RESULT.ALL_LOCATIONS.IN_USE);
@@ -217,12 +198,20 @@ class Bikes extends React.Component {
   }
 
   onChangeBikeStation = (e) => {
+    this.selectBikeStation(e.target.value);
+  };
+
+  onClickBikeStation = (e) => {
+    e.preventDefault();
+    console.log(e.target.innerText);
+    this.selectBikeStation(e.target.innerText);
+    document.getElementById("chart-bikes-usage").scrollIntoView({behavior: "smooth", block: "end"});
+  }
+  
+  selectBikeStation = (station) => {
     this.setState({ graphLoading: true });
-    const station = e.target.value;
     axios
-      .get(
-        "/main/bikestands_graph/?location_based=yes&days_historic=5"
-      )
+      .get("/main/bikestands_graph/?location_based=yes&days_historic=5")
       .then((res) => {
         this.setState({ bikeStationSelection: station });
         const x = Object.keys(res.data.DATA.RESULT[station].IN_USE);
@@ -233,7 +222,7 @@ class Bikes extends React.Component {
         console.log(err);
         this.setState({ graphLoading: false });
       });
-  };
+  }
 
   constructor(props) {
     super(props);
@@ -262,7 +251,18 @@ class Bikes extends React.Component {
             <Col md="9" style={{ display: this.state.displayMap }}>
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h5">Bikes Usage</CardTitle>
+                  <CardTitle tag="h5">
+                    Bikes Usage{" "}
+                    <i
+                      style={{
+                        display: this.state.graphLoading
+                          ? "inline-block"
+                          : "none",
+                      }}
+                      className="fas fa-sync-alt fa-spin fa-1x fa-fw"
+                    ></i>
+                    </CardTitle>
+                  <CardSubtitle>Real-time</CardSubtitle>
                 </CardHeader>
                 <CardBody>
                   <div className="leaflet-container">
@@ -282,6 +282,7 @@ class Bikes extends React.Component {
                           idx
                         ) => (
                           <Marker
+                            id={`marker-bike-station-${content}`}
                             key={`marker-${idx}`}
                             position={position}
                             icon={L.divIcon(icon)}
@@ -308,10 +309,16 @@ class Bikes extends React.Component {
                 </CardHeader>
                 <CardBody className="card-class">
                   <Table>
-                    <tbody >
+                    <tbody>
                       {this.state.markers.map(
                         (
-                          { position, content, totalStands, inUse, markerColor },
+                          {
+                            position,
+                            content,
+                            totalStands,
+                            inUse,
+                            markerColor,
+                          },
                           idx
                         ) => (
                           <tr key={idx}>
@@ -321,9 +328,11 @@ class Bikes extends React.Component {
                                 style={{ backgroundColor: markerColor }}
                               ></span>
                             </td>
-                            <td><b>{content}</b></td>
-                            <td>{' Bike Stands: ' + totalStands}</td>
-                            <td>{' In use: ' + inUse}</td>
+                            <td>
+                              <b>{content}</b>
+                            </td>
+                            <td>{" Bike Stands: " + totalStands}</td>
+                            <td>{" In use: " + inUse}</td>
                           </tr>
                         )
                       )}
@@ -336,13 +345,14 @@ class Bikes extends React.Component {
               <Card id="recommendations">
                 <CardHeader>
                   <CardTitle tag="h5">Recommendations</CardTitle>
+                  <CardSubtitle>Real-time</CardSubtitle>
                   <div style={{ opacity: 0.6 }}>
                     <p className="mb-0">
                       <span
                         className="dot mr-2"
                         style={{ backgroundColor: "red" }}
                       ></span>
-                      Consider adding new stands
+                      Consider adding bikes
                     </p>
                     <p>
                       <span
@@ -357,7 +367,7 @@ class Bikes extends React.Component {
                   <Table>
                     <tbody>
                       {this.state.recommendations.map(
-                        ({ color, text }, key) => (
+                        ({ color, percentageInUse, station }, key) => (
                           <tr key={key}>
                             <td>
                               <span
@@ -365,7 +375,7 @@ class Bikes extends React.Component {
                                 style={{ backgroundColor: color }}
                               ></span>
                             </td>
-                            <td>{text}</td>
+                            <td>{percentageInUse}% of bikes are used at <a href="#" onClick={this.onClickBikeStation}>{station}</a></td>
                           </tr>
                         )
                       )}
@@ -376,7 +386,7 @@ class Bikes extends React.Component {
             </Col>
           </Row>
 
-          <Row>
+          <Row id="chart-bikes-usage">
             <Col md="12">
               <Card className="card-chart">
                 <CardHeader>
@@ -392,7 +402,7 @@ class Bikes extends React.Component {
                     ></i>
                   </CardTitle>
                   <p className="card-category">
-                    Evolution of bikes usage over time
+                    Evolution of bikes usage over time and future predictions
                   </p>
                 </CardHeader>
                 <CardBody>

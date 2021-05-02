@@ -22,6 +22,7 @@ from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_park
 from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import ParksParkings
 from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import BeachesParkings
 from .Parkings_Recreational_Places_API.views_rec_places_api.show_rec_places_parkings import PlayingPitchesParkings
+from .Population_API.views_population import IrelandPopulationView, DublinPopulationView
 
 # Building URL endpoints for API calls.
 urlpatterns = [
@@ -67,5 +68,9 @@ urlpatterns = [
     url(r'^beaches_parkings/$', BeachesParkings.as_view(),
         name='beaches_parkings_data'),
     url(r'^playing_pitches_parkings/$', PlayingPitchesParkings.as_view(),
-        name='playing_pitches_parkings_data')
+        name='playing_pitches_parkings_data'),
+    url(r'^ireland_population/$', IrelandPopulationView.as_view(),
+        name='ireland_population'),
+    url(r'^dublin_population/$', DublinPopulationView.as_view(),
+        name='dublin_population')
 ]
