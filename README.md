@@ -235,11 +235,11 @@ Tutorials: <https://reactjs.org/>
 - run 'pip install -r requirements.txt' to download all the required dependencies for backend'
 ## Table of Contents
 * [Storage](#storage)
-* [Restfull API Links and its usage](#API_Links)
+* [RESTful API Links and its usage](#restful-api-links-and-its-usage)
 * [Documentation Backend](#documentation-backend)
 * [File Structure Backend](#file-structure-backend)
 * [Test](#test)
-* [Run Server](#server)
+* [Run Server](#run-server)
 * [Useful Links Backend](#useful-links-backend)
 ## Storage
 - To store the data one time on to the database server:
@@ -293,159 +293,153 @@ Tutorials: <https://reactjs.org/>
 ## File Structure Backend
 Within the repository, you'll find the following directories and files under sustainableCityManagement folder:
 ```
-📦sustainableCityManagement  
- ┣ 📂config  
- ┃ ┣ 📜dev.env  
- ┃ ┗ 📜prod.env  
- ┣ 📂main_project  
- ┃ ┣ 📂Bike_API  
- ┃ ┃ ┣ 📂views_bike_api  
- ┃ ┃ ┃ ┣ 📜graph_bike_data.py  
- ┃ ┃ ┃ ┗ 📜show_bike_data.py  
- ┃ ┃ ┣ 📜bike_collections_db.py  
- ┃ ┃ ┣ 📜fetch_bikeapi.py  
- ┃ ┃ ┣ 📜graphvalues_bike.py  
- ┃ ┃ ┣ 📜store_bikedata_to_database.py  
- ┃ ┃ ┗ 📜store_processed_bikedata_to_db.py  
- ┃ ┣ 📂Bus_API  
- ┃ ┃ ┣ 📂resources  
- ┃ ┃ ┃ ┣ 📜routes.csv  
- ┃ ┃ ┃ ┣ 📜stop_times.csv  
- ┃ ┃ ┃ ┣ 📜stop_times_test.csv  
- ┃ ┃ ┃ ┣ 📜stops.csv  
- ┃ ┃ ┃ ┣ 📜trips.csv  
- ┃ ┃ ┃ ┣ 📜trips_paths.json  
- ┃ ┃ ┃ ┗ 📜trips_test.csv  
- ┃ ┃ ┣ 📂views_bus_api  
- ┃ ┃ ┃ ┣ 📜show_bus_delays.py  
- ┃ ┃ ┃ ┣ 📜show_bus_info.py  
- ┃ ┃ ┃ ┣ 📜show_bus_paths.py  
- ┃ ┃ ┃ ┗ 📜show_bus_stops.py  
- ┃ ┃ ┣ 📜bus_collections_db.py  
- ┃ ┃ ┣ 📜fetch_busapi.py  
- ┃ ┃ ┣ 📜process_bus_delays.py  
- ┃ ┃ ┗ 📜store_bus_routes_data_in_database.py  
- ┃ ┣ 📂Config  
- ┃ ┃ ┣ 📜config.yaml  
- ┃ ┃ ┗ 📜config_handler.py  
- ┃ ┣ 📂Emergency_Service_API  
- ┃ ┃ ┣ 📂resources  
- ┃ ┃ ┃ ┣ 📜fcc_fire_stations_dublin.csv  
- ┃ ┃ ┃ ┣ 📜fcc_health_centers_dublin.csv  
- ┃ ┃ ┃ ┣ 📜garda_stations_dublin.csv  
- ┃ ┃ ┃ ┗ 📜list_of_hospitals_in_ireland.csv  
- ┃ ┃ ┣ 📂views_emergency_service_api  
- ┃ ┃ ┃ ┗ 📜show_emergency_service_data.py  
- ┃ ┃ ┣ 📜fetch_emergency_service.py  
- ┃ ┃ ┗ 📜store_emergency_service_data_in_database.py  
- ┃ ┣ 📂Footfall_API  
- ┃ ┃ ┣ 📂resources  
- ┃ ┃ ┃ ┣ 📜footfall_locations.json  
- ┃ ┃ ┃ ┗ 📜pedestrian_footfall.csv  
- ┃ ┃ ┣ 📂views_footfall_api  
- ┃ ┃ ┃ ┗ 📜show_footfall_data.py  
- ┃ ┃ ┣ 📜fetch_footfallapi.py  
- ┃ ┃ ┣ 📜footfall_collections_db.py  
- ┃ ┃ ┗ 📜store_footfall_data_in_database.py  
- ┃ ┣ 📂Logs  
- ┃ ┃ ┣ 📜bus_api.log  
- ┃ ┃ ┗ 📜service_logs.py  
- ┃ ┣ 📂ML_models  
- ┃ ┃ ┣ 📜bikes_usage_prediction.py  
- ┃ ┃ ┗ 📜footfall_prediction.py  
- ┃ ┣ 📂Parkings_API  
- ┃ ┃ ┣ 📂views_parkings_api  
- ┃ ┃ ┃ ┣ 📜show_parkings_availability.py  
- ┃ ┃ ┃ ┗ 📜show_parkings_locations.py  
- ┃ ┃ ┣ 📜fetch_parkingsapi.py  
- ┃ ┃ ┣ 📜parkings_collections_db.py  
- ┃ ┃ ┗ 📜store_parkingsdata_to_database.py  
- ┃ ┣ 📂Parkings_Recreational_Places_API  
- ┃ ┃ ┣ 📂resources  
- ┃ ┃ ┃ ┣ 📜Beaches.csv  
- ┃ ┃ ┃ ┣ 📜Cinemas.csv  
- ┃ ┃ ┃ ┣ 📜Parks.csv  
- ┃ ┃ ┃ ┣ 📜PlayingPitches.csv  
- ┃ ┃ ┃ ┗ 📜disabledparkings.csv  
- ┃ ┃ ┣ 📂views_rec_places_api  
- ┃ ┃ ┃ ┗ 📜show_rec_places_parkings.py  
- ┃ ┃ ┣ 📜recreational_places_parkings_collections_db.py  
- ┃ ┃ ┗ 📜store_recreational_locations_in_db.py  
- ┃ ┣ 📂Population_API  
- ┃ ┃ ┣ 📂resources  
- ┃ ┃ ┃ ┣ 📜dublin_population.csv  
- ┃ ┃ ┃ ┗ 📜ireland_population.csv  
- ┃ ┃ ┣ 📜store_population.py  
- ┃ ┃ ┗ 📜views_population.py  
- ┃ ┣ 📂Weather_API  
- ┃ ┃ ┣ 📂views_weather_api  
- ┃ ┃ ┃ ┗ 📜show_weather.py  
- ┃ ┃ ┗ 📜weather_call.py  
- ┃ ┣ 📂migrations  
- ┃ ┃ ┗ 📜__init__.py  
- ┃ ┣ 📜.gitignore  
- ┃ ┣ 📜__init__.py  
- ┃ ┣ 📜admin.py  
- ┃ ┣ 📜apps.py  
- ┃ ┗ 📜urls.py  
- ┣ 📂sustainableCityManagement  
- ┃ ┣ 📂__pycache__  
- ┃ ┃ ┣ 📜__init__.cpython-37.pyc  
- ┃ ┃ ┣ 📜settings.cpython-37.pyc  
- ┃ ┃ ┣ 📜urls.cpython-37.pyc  
- ┃ ┃ ┗ 📜wsgi.cpython-37.pyc  
- ┃ ┣ 📜.gitignore  
- ┃ ┣ 📜__init__.py  
- ┃ ┣ 📜settings.py  
- ┃ ┣ 📜urls.py  
- ┃ ┗ 📜wsgi.py  
- ┣ 📂tests  
- ┃ ┣ 📂Bike_API  
- ┃ ┃ ┣ 📂views_bike_api  
- ┃ ┃ ┃ ┣ 📜test_graph_bike_data.py  
- ┃ ┃ ┃ ┗ 📜test_show_bike_data.py  
- ┃ ┃ ┣ 📜test_fetch_bikeapi.py  
- ┃ ┃ ┣ 📜test_graphvalues_bike.py  
- ┃ ┃ ┣ 📜test_store_bikedata_to_database.py  
- ┃ ┃ ┗ 📜test_store_processed_bikedata_to_db.py  
- ┃ ┣ 📂Bus_API  
- ┃ ┃ ┣ 📂views_bus_api  
- ┃ ┃ ┃ ┣ 📜test_show_bus_data.py  
- ┃ ┃ ┃ ┗ 📜test_show_bus_delays.py  
- ┃ ┃ ┣ 📜test_fetch_busapi.py  
- ┃ ┃ ┣ 📜test_process_bus_delays.py  
- ┃ ┃ ┗ 📜test_store_bus_routes_in_db.py  
- ┃ ┣ 📂Emergency_Service_API  
- ┃ ┃ ┣ 📂views_emergency_service_api  
- ┃ ┃ ┃ ┗ 📜test_show_emergency_service_data.py  
- ┃ ┃ ┣ 📜test_fetch_emergency_service.py  
- ┃ ┃ ┗ 📜test_store_emergency_service_data_in_database.py  
- ┃ ┣ 📂Footfall_API  
- ┃ ┃ ┣ 📂views_footfall_api  
- ┃ ┃ ┃ ┗ 📜test_show_footfall_data.py  
- ┃ ┃ ┣ 📜test_fetch_footfallapi.py  
- ┃ ┃ ┗ 📜test_store_footfall_data_in_database.py  
- ┃ ┣ 📂ML_Models  
- ┃ ┃ ┣ 📜test_bikes_uasge_prediction.py  
- ┃ ┃ ┗ 📜test_footfall_prediction.py  
- ┃ ┣ 📂Parkings_API  
- ┃ ┃ ┣ 📂views_parkings_api  
- ┃ ┃ ┃ ┣ 📜test_show_parkings_availability.py  
- ┃ ┃ ┃ ┗ 📜test_show_parkings_locations.py  
- ┃ ┃ ┣ 📜test_fetch_parkingsapi.py  
- ┃ ┃ ┗ 📜test_store_parkingsdata_to_database.py  
- ┃ ┣ 📂Parkings_Recreational_Places_API  
- ┃ ┃ ┗ 📜test_store_recreational_locations_in_db.py  
- ┃ ┣ 📂Population_API  
- ┃ ┃ ┣ 📜test_store_population.py  
- ┃ ┃ ┗ 📜test_views_population.py  
- ┃ ┗ 📜__init__.py  
- ┣ 📜Dockerfile  
- ┣ 📜Pipfile  
- ┣ 📜Pipfile.lock  
- ┣ 📜db.sqlite3  
- ┣ 📜manage.py  
- ┣ 📜requirements.txt  
+📦sustainableCityManagement 
+ ┣ 📂config 
+ ┃ ┣ 📜dev.env 
+ ┃ ┗ 📜prod.env 
+ ┣ 📂main_project 
+ ┃ ┣ 📂Bike_API 
+ ┃ ┃ ┣ 📂views_bike_api 
+ ┃ ┃ ┃ ┣ 📜graph_bike_data.py 
+ ┃ ┃ ┃ ┗ 📜show_bike_data.py 
+ ┃ ┃ ┣ 📜bike_collections_db.py 
+ ┃ ┃ ┣ 📜fetch_bikeapi.py 
+ ┃ ┃ ┣ 📜graphvalues_bike.py 
+ ┃ ┃ ┣ 📜store_bikedata_to_database.py 
+ ┃ ┃ ┗ 📜store_processed_bikedata_to_db.py 
+ ┃ ┣ 📂Bus_API 
+ ┃ ┃ ┣ 📂resources 
+ ┃ ┃ ┃ ┣ 📜routes.csv 
+ ┃ ┃ ┃ ┣ 📜stop_times.csv 
+ ┃ ┃ ┃ ┣ 📜stop_times_test.csv 
+ ┃ ┃ ┃ ┣ 📜stops.csv 
+ ┃ ┃ ┃ ┣ 📜trips.csv 
+ ┃ ┃ ┃ ┣ 📜trips_paths.json 
+ ┃ ┃ ┃ ┗ 📜trips_test.csv 
+ ┃ ┃ ┣ 📂views_bus_api 
+ ┃ ┃ ┃ ┣ 📜show_bus_delays.py 
+ ┃ ┃ ┃ ┣ 📜show_bus_info.py 
+ ┃ ┃ ┃ ┣ 📜show_bus_paths.py 
+ ┃ ┃ ┃ ┗ 📜show_bus_stops.py 
+ ┃ ┃ ┣ 📜bus_collections_db.py 
+ ┃ ┃ ┣ 📜fetch_busapi.py 
+ ┃ ┃ ┣ 📜process_bus_delays.py 
+ ┃ ┃ ┗ 📜store_bus_routes_data_in_database.py 
+ ┃ ┣ 📂Config 
+ ┃ ┃ ┣ 📜config.yaml 
+ ┃ ┃ ┗ 📜config_handler.py 
+ ┃ ┣ 📂Emergency_Service_API 
+ ┃ ┃ ┣ 📂resources 
+ ┃ ┃ ┃ ┣ 📜fcc_fire_stations_dublin.csv 
+ ┃ ┃ ┃ ┣ 📜fcc_health_centers_dublin.csv 
+ ┃ ┃ ┃ ┣ 📜garda_stations_dublin.csv 
+ ┃ ┃ ┃ ┗ 📜list_of_hospitals_in_ireland.csv 
+ ┃ ┃ ┣ 📂views_emergency_service_api 
+ ┃ ┃ ┃ ┗ 📜show_emergency_service_data.py 
+ ┃ ┃ ┣ 📜fetch_emergency_service.py 
+ ┃ ┃ ┗ 📜store_emergency_service_data_in_database.py 
+ ┃ ┣ 📂Footfall_API 
+ ┃ ┃ ┣ 📂resources 
+ ┃ ┃ ┃ ┣ 📜footfall_locations.json 
+ ┃ ┃ ┃ ┗ 📜pedestrian_footfall.csv 
+ ┃ ┃ ┣ 📂views_footfall_api 
+ ┃ ┃ ┃ ┗ 📜show_footfall_data.py 
+ ┃ ┃ ┣ 📜fetch_footfallapi.py 
+ ┃ ┃ ┣ 📜footfall_collections_db.py 
+ ┃ ┃ ┗ 📜store_footfall_data_in_database.py 
+ ┃ ┣ 📂Logs 
+ ┃ ┃ ┗ 📜service_logs.py 
+ ┃ ┣ 📂ML_models 
+ ┃ ┃ ┣ 📜bikes_usage_prediction.py 
+ ┃ ┃ ┗ 📜footfall_prediction.py 
+ ┃ ┣ 📂Parkings_API 
+ ┃ ┃ ┣ 📂views_parkings_api 
+ ┃ ┃ ┃ ┣ 📜show_parkings_availability.py 
+ ┃ ┃ ┃ ┗ 📜show_parkings_locations.py 
+ ┃ ┃ ┣ 📜fetch_parkingsapi.py 
+ ┃ ┃ ┣ 📜parkings_collections_db.py 
+ ┃ ┃ ┗ 📜store_parkingsdata_to_database.py 
+ ┃ ┣ 📂Parkings_Recreational_Places_API 
+ ┃ ┃ ┣ 📂resources 
+ ┃ ┃ ┃ ┣ 📜Beaches.csv 
+ ┃ ┃ ┃ ┣ 📜Cinemas.csv 
+ ┃ ┃ ┃ ┣ 📜Parks.csv 
+ ┃ ┃ ┃ ┣ 📜PlayingPitches.csv 
+ ┃ ┃ ┃ ┗ 📜disabledparkings.csv 
+ ┃ ┃ ┣ 📂views_rec_places_api 
+ ┃ ┃ ┃ ┗ 📜show_rec_places_parkings.py 
+ ┃ ┃ ┣ 📜recreational_places_parkings_collections_db.py 
+ ┃ ┃ ┗ 📜store_recreational_locations_in_db.py 
+ ┃ ┣ 📂Population_API 
+ ┃ ┃ ┣ 📂resources 
+ ┃ ┃ ┃ ┣ 📜dublin_population.csv 
+ ┃ ┃ ┃ ┗ 📜ireland_population.csv 
+ ┃ ┃ ┣ 📜store_population.py 
+ ┃ ┃ ┗ 📜views_population.py 
+ ┃ ┣ 📂Weather_API 
+ ┃ ┃ ┣ 📂views_weather_api 
+ ┃ ┃ ┃ ┗ 📜show_weather.py 
+ ┃ ┃ ┗ 📜weather_call.py 
+ ┃ ┣ 📂migrations 
+ ┃ ┃ ┗ 📜__init__.py 
+ ┃ ┣ 📜.gitignore 
+ ┃ ┣ 📜__init__.py 
+ ┃ ┣ 📜admin.py 
+ ┃ ┣ 📜apps.py 
+ ┃ ┗ 📜urls.py 
+ ┣ 📂sustainableCityManagement 
+ ┃ ┣ 📜.gitignore 
+ ┃ ┣ 📜__init__.py 
+ ┃ ┣ 📜settings.py 
+ ┃ ┣ 📜urls.py 
+ ┃ ┗ 📜wsgi.py 
+ ┣ 📂tests 
+ ┃ ┣ 📂Bike_API 
+ ┃ ┃ ┣ 📂views_bike_api 
+ ┃ ┃ ┃ ┣ 📜test_graph_bike_data.py 
+ ┃ ┃ ┃ ┗ 📜test_show_bike_data.py 
+ ┃ ┃ ┣ 📜test_fetch_bikeapi.py 
+ ┃ ┃ ┣ 📜test_graphvalues_bike.py 
+ ┃ ┃ ┣ 📜test_store_bikedata_to_database.py 
+ ┃ ┃ ┗ 📜test_store_processed_bikedata_to_db.py 
+ ┃ ┣ 📂Bus_API 
+ ┃ ┃ ┣ 📂views_bus_api 
+ ┃ ┃ ┃ ┣ 📜test_show_bus_data.py 
+ ┃ ┃ ┃ ┗ 📜test_show_bus_delays.py 
+ ┃ ┃ ┣ 📜test_fetch_busapi.py 
+ ┃ ┃ ┣ 📜test_process_bus_delays.py 
+ ┃ ┃ ┗ 📜test_store_bus_routes_in_db.py 
+ ┃ ┣ 📂Emergency_Service_API 
+ ┃ ┃ ┣ 📂views_emergency_service_api 
+ ┃ ┃ ┃ ┗ 📜test_show_emergency_service_data.py 
+ ┃ ┃ ┣ 📜test_fetch_emergency_service.py 
+ ┃ ┃ ┗ 📜test_store_emergency_service_data_in_database.py 
+ ┃ ┣ 📂Footfall_API 
+ ┃ ┃ ┣ 📂views_footfall_api 
+ ┃ ┃ ┃ ┗ 📜test_show_footfall_data.py 
+ ┃ ┃ ┣ 📜test_fetch_footfallapi.py 
+ ┃ ┃ ┗ 📜test_store_footfall_data_in_database.py 
+ ┃ ┣ 📂ML_Models 
+ ┃ ┃ ┣ 📜test_bikes_uasge_prediction.py 
+ ┃ ┃ ┗ 📜test_footfall_prediction.py 
+ ┃ ┣ 📂Parkings_API 
+ ┃ ┃ ┣ 📂views_parkings_api 
+ ┃ ┃ ┃ ┣ 📜test_show_parkings_availability.py 
+ ┃ ┃ ┃ ┗ 📜test_show_parkings_locations.py 
+ ┃ ┃ ┣ 📜test_fetch_parkingsapi.py 
+ ┃ ┃ ┗ 📜test_store_parkingsdata_to_database.py 
+ ┃ ┣ 📂Parkings_Recreational_Places_API 
+ ┃ ┃ ┗ 📜test_store_recreational_locations_in_db.py 
+ ┃ ┣ 📂Population_API 
+ ┃ ┃ ┣ 📜test_store_population.py 
+ ┃ ┃ ┗ 📜test_views_population.py 
+ ┃ ┗ 📜__init__.py 
+ ┣ 📜Dockerfile 
+ ┣ 📜Pipfile 
+ ┣ 📜Pipfile.lock 
+ ┣ 📜db.sqlite3 
+ ┣ 📜manage.py 
+ ┣ 📜requirements.txt 
  ┗ 📜runserver_init.py
 ```
 ## Test
