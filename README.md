@@ -1,4 +1,3 @@
-
 # Sustainable City Management
 # Overview
 This is an interesting project that we assigned to complete as a part of course module Advance Software Engineering. The aim of this project was to develop a dashboard based website covering all major functionalites of a city manager in his dialy routine work. So that, the city manager can collect, analyze and make decision based on the data displayed on the dashboard developed. 
@@ -289,7 +288,7 @@ Tutorials: <https://reactjs.org/>
  - Use  http://127.0.0.1:8000/main/footfall_overall/ for collecting live footfalls around major streets in dublin.
  - Use  http://127.0.0.1:8000footfall_datebased/?days_interval=6&location="name" for collecting predicted footfall for next six days.
 ## Documentation Backend
-- The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/folders/1I2l6W3_I7wzpv2OcQOL-1KvZzZpxgOUw?usp=sharing).
+- The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/u/1/folders/1Yq9ujf-jGGzjF5LW1Owhf_YD3dhy7osw).
 ## File Structure Backend
 Within the repository, you'll find the following directories and files under sustainableCityManagement folder:
 ```
