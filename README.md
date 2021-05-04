@@ -50,7 +50,7 @@ These functionality include,
 | [![Dashboard page](./frontend-pwa/src/assets/github/pic1.PNG)]() | [![Bikes page](./frontend-pwa/src/assets/github/pic2.PNG)]() | [![Buses page ](./frontend-pwa/src/assets/github/pic3.PNG)]() | [![Parkings Page](./frontend-pwa/src/assets/github/pic4.PNG)]() | [![Emergency Services page](./frontend-pwa/src/assets/github/pic5.PNG)]() |  [![Footfalls Page](./frontend-pwa/src/assets/github/pic6.PNG)]() |
 [View More(Live Demo)](https://)
 ## Documentation Frontend
-The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/folders/1I2l6W3_I7wzpv2OcQOL-1KvZzZpxgOUw?usp=sharing).
+The documentation for the project is available at Google Drive [Link](https://drive.google.com/drive/u/1/folders/1Yq9ujf-jGGzjF5LW1Owhf_YD3dhy7osw).
 ## File Structure Frontend
 Within the repository, you'll find the following directories and files under frontend-pwa folder:
 ```
